@@ -45,6 +45,9 @@ function displayStreet(name, lat, lng) {
     // Place a marker on the street
     L.marker([lat, lng]).addTo(map)
         .bindPopup(`Guess this street: ${name}`).openPopup();
+
+    // Display the street name below the map
+    document.getElementById("street-name").innerText = `Random Street: ${name}`;
 }
 
 // Initialize the map
