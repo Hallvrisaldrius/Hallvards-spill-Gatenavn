@@ -22,3 +22,36 @@ function checkAnswer() {
     }
 }
 
+async function loadStreetList() {
+    try {
+        let response = await fetch('streets.txt'); // Load the file
+        let text = await response.text();
+        let lines = text.split('\n').map(line => line.trim()).filter(line => line); // Clean up lines
+
+        // Choose a random street
+        let randomStreet = lines[Math.floor(Math.random() * lines.length)];
+        let [name, lat, lng] = randomStreet.split(','); // Extract name & coordinates
+
+        displayStreet(name, parseFloat(lat), parseFloat(lng));
+    } catch (error) {
+        console.error("Error loading streets:", error);
+    }
+}
+
+function displayStreet(name, lat, lng) {
+    // Set map view to the chosen street
+    map.setView([lat, lng], 16);
+
+    // Place a marker on the street
+    L.marker([lat, lng]).addTo(map)
+        .bindPopup(`Guess this street: ${name}`).openPopup();
+}
+
+// Initialize the map
+var map = L.map('map').setView([59.9139, 10.7522], 14); // Center on Oslo
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; OpenStreetMap contributors'
+}).addTo(map);
+
+// Load the street list when the page loads
+loadStreetList();
