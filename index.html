@@ -1,6 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <!-- Leaflet JavaScript -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Street Name Game</title>
@@ -12,7 +17,7 @@
 </head>
 <body>
     <h1>Street Name Game</h1>
-    <div id="map"></div>
+    <div id="map" style="height: 500px; width: 100%;"></div>
     <input type="text" id="street-input" placeholder="Enter street name">
     <button onclick="checkAnswer()">Submit</button>
     <p id="result"></p>
