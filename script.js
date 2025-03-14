@@ -1,6 +1,7 @@
 // Initialize the map (centered on Oslo)
 var map = L.map('map').setView([59.9139, 10.7522], 14);
 
+// Add Esri World Gray Canvas tile layer (light, minimal labels)
 L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}', {
     attribution: '&copy; Esri &mdash; Esri, HERE, Garmin, FAO, NOAA, USGS, © OpenStreetMap contributors'
 }).addTo(map);
