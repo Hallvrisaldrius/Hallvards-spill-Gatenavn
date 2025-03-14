@@ -1,9 +1,9 @@
 // Initialize the map (centered on Oslo)
 var map = L.map('map').setView([59.9139, 10.7522], 14);
 
-// Add CartoDB Positron tile layer (light style with no text)
-L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
-    attribution: '&copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoIQ, NOAA'
+// Add OpenTopoMap tile layer (no text)
+L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; OpenStreetMap contributors, &copy; OpenTopoMap'
 }).addTo(map);
 
 // Global marker variable
