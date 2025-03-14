@@ -33,13 +33,13 @@ async function loadStreetList() {
 
 // Function to fetch coordinates for a street using OpenStreetMap Nominatim API
 async function geocodeStreet(streetName) {
-    let query = `${streetName}, Oslo, Norway`; // Search within Oslo
+    let query = `${streetName}, Oslo, Norway`; // Ensure search is limited to Oslo
     let url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}`;
 
     try {
         let response = await fetch(url);
         let data = await response.json();
-        console.log("🌍 Nominatim API response:", data); // Debugging log
+        console.log("🌍 Nominatim API response:", data);
 
         if (data.length === 0) {
             console.error("⚠️ Street not found:", streetName);
@@ -51,11 +51,16 @@ async function geocodeStreet(streetName) {
 
         console.log(`📍 Found coordinates for ${streetName}: ${lat}, ${lng}`);
 
-        displayStreet(streetName, lat, lng);
+        if (!isNaN(lat) && !isNaN(lng)) {
+            displayStreet(streetName, lat, lng);
+        } else {
+            console.error("❌ Invalid coordinates:", lat, lng);
+        }
     } catch (error) {
         console.error("❌ Geocoding error:", error);
     }
 }
+
 
 // Function to display the selected street on the map
 function displayStreet(name, lat, lng) {
