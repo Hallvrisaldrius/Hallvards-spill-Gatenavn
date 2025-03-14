@@ -2,8 +2,8 @@
 var map = L.map('map').setView([59.9139, 10.7522], 14);
 
 // Add CartoDB Positron tile layer (light style with no text)
-L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png', {
-    attribution: '&copy; OpenStreetMap contributors, &copy; CartoDB'
+L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; OpenStreetMap contributors, &copy; OpenTopoMap'
 }).addTo(map);
 
 // Global marker variable
