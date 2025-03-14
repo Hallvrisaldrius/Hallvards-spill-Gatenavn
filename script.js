@@ -1,5 +1,5 @@
 // Initialize the map (centered on Oslo, but no auto-centering)
-var map = L.map('map').setView([59.9139, 10.7522], 14);
+var map = L.map('map');
 
 // Use a basemap with no labels (Carto Light No Labels)
 L.tileLayer('https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png', {
