@@ -1,11 +1,10 @@
-// Initialize the map (centered on Oslo)
-var map = L.map('map').setView([59.9139, 10.7522], 14);
+// Initialize the map
+var map = L.map('map').setView([59.9139, 10.7522], 14); // Center on Oslo
 
-// Add CartoDB Positron tile layer (no street names)
-L.tileLayer('https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}.png', {
-    attribution: '&copy; <a href="https://carto.com/attributions">CartoDB</a> &amp; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a>'
+// Add a clean, label-free map tile layer (CartoDB Positron)
+L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png', {
+    attribution: '&copy; OpenStreetMap contributors &copy; CartoDB'
 }).addTo(map);
-
 
 // Global marker variable
 var streetMarker = null;
