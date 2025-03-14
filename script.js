@@ -87,21 +87,31 @@ function extractAllCoordinates(data) {
     return allCoordinates;
 }
 
-// Display all street segments as multiple polylines
+// Display all street segments as multiple polylines and center the map
 function displayStreet(name, coordinateGroups) {
     console.log(`📌 Displaying all segments of: ${name}`);
 
     // Clear previous street polylines
     streetLayer.clearLayers();
 
+    let allCoords = coordinateGroups.flat(); // Flatten coordinate groups
+    if (allCoords.length === 0) {
+        console.error("⚠️ No valid coordinates for centering.");
+        return;
+    }
+
     // Add each segment as a polyline
     coordinateGroups.forEach(coords => {
         L.polyline(coords, { color: "red", weight: 4 }).addTo(streetLayer);
     });
 
-    // Adjust map to fit all segments
-    let bounds = L.latLngBounds(coordinateGroups.flat());
-    map.fitBounds(bounds);
+    // Calculate center of the street
+    let centerLat = allCoords.reduce((sum, coord) => sum + coord[0], 0) / allCoords.length;
+    let centerLng = allCoords.reduce((sum, coord) => sum + coord[1], 0) / allCoords.length;
+    let streetCenter = [centerLat, centerLng];
+
+    // Center the map on the street
+    map.setView(streetCenter, 16); // Zoom level 16 keeps it visible
 
     // Store the correct street name
     document.getElementById("street-name").innerText = name;
