@@ -124,6 +124,13 @@ function displayStreet(name, coordinateGroups) {
     document.getElementById("street-name").innerText = name;
 }
 
+// Listen for Enter key press in the input field
+document.getElementById("street-input").addEventListener("keypress", function(event) {
+    if (event.key === "Enter") {
+        checkAnswer();
+    }
+});
+
 // Check the user's answer
 function checkAnswer() {
     let userInput = document.getElementById("street-input").value;
