@@ -1,9 +1,9 @@
 // Initialize the map (centered on Oslo)
 var map = L.map('map').setView([59.9139, 10.7522], 14);
 
-// Add Carto Light No Labels (fully blank map, no street names)
-L.tileLayer('https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png', {
-    attribution: '&copy; CartoDB, OpenStreetMap contributors'
+// Add OpenTopoMap tile layer (no text)
+L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; OpenStreetMap contributors, &copy; OpenTopoMap'
 }).addTo(map);
 
 // Global marker variable
