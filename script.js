@@ -2,8 +2,8 @@
 var map = L.map('map').setView([59.9139, 10.7522], 14); // Center on Oslo
 
 // Add a clean, label-free map tile layer (CartoDB Positron)
-L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png', {
-    attribution: '&copy; OpenStreetMap contributors &copy; CartoDB'
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; OpenStreetMap contributors'
 }).addTo(map);
 
 // Global marker variable
