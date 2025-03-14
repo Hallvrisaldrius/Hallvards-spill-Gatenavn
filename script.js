@@ -17,15 +17,17 @@ async function loadStreetList() {
         let streets = text.split('\n').map(line => line.trim()).filter(line => line); // Clean up
 
         if (streets.length === 0) {
-            console.error("Street list is empty!");
+            console.error("⚠️ Street list is empty!");
             return;
         }
 
         // Choose a random street
         let randomStreet = streets[Math.floor(Math.random() * streets.length)];
+        console.log("✅ Selected street:", randomStreet);
+
         geocodeStreet(randomStreet); // Get coordinates for the street
     } catch (error) {
-        console.error("Error loading streets:", error);
+        console.error("❌ Error loading streets:", error);
     }
 }
 
@@ -37,23 +39,28 @@ async function geocodeStreet(streetName) {
     try {
         let response = await fetch(url);
         let data = await response.json();
+        console.log("🌍 Nominatim API response:", data); // Debugging log
 
         if (data.length === 0) {
-            console.error("Street not found:", streetName);
+            console.error("⚠️ Street not found:", streetName);
             return;
         }
 
         let lat = parseFloat(data[0].lat);
         let lng = parseFloat(data[0].lon);
 
+        console.log(`📍 Found coordinates for ${streetName}: ${lat}, ${lng}`);
+
         displayStreet(streetName, lat, lng);
     } catch (error) {
-        console.error("Geocoding error:", error);
+        console.error("❌ Geocoding error:", error);
     }
 }
 
 // Function to display the selected street on the map
 function displayStreet(name, lat, lng) {
+    console.log(`📌 Displaying street: ${name} at ${lat}, ${lng}`);
+
     // Set map view to the chosen street's location
     map.setView([lat, lng], 16);
 
@@ -66,10 +73,8 @@ function displayStreet(name, lat, lng) {
     streetMarker = L.marker([lat, lng]).addTo(map)
         .bindPopup(`Guess this street!`).openPopup();
 
-    // Store the correct street name (hidden for guessing)
+    // Store the correct street name
     document.getElementById("street-name").innerText = name;
-
-    console.log("Displayed street:", name, "at", lat, lng); // Debugging log
 }
 
 // Function to check the user's guess
@@ -78,9 +83,9 @@ function checkAnswer() {
     let correctStreet = document.getElementById("street-name").innerText;
 
     if (userInput.toLowerCase() === correctStreet.toLowerCase()) {
-        document.getElementById("result").innerText = "Correct!";
+        document.getElementById("result").innerText = "✅ Correct!";
     } else {
-        document.getElementById("result").innerText = "Try again!";
+        document.getElementById("result").innerText = "❌ Try again!";
     }
 }
 
