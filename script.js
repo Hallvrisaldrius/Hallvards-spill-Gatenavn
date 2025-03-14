@@ -87,7 +87,7 @@ function extractAllCoordinates(data) {
     return allCoordinates;
 }
 
-// Display all street segments and fit the map with a 20% margin
+// Display all street segments as multiple polylines and fit the map with a solid 20% margin
 function displayStreet(name, coordinateGroups) {
     console.log(`📌 Displaying all segments of: ${name}`);
 
@@ -108,19 +108,16 @@ function displayStreet(name, coordinateGroups) {
     // Compute bounding box
     let bounds = L.latLngBounds(allCoords);
 
-    // Expand the bounds by 20% margin
-    let southWest = bounds.getSouthWest();
-    let northEast = bounds.getNorthEast();
-    
-    let latDiff = northEast.lat - southWest.lat;
-    let lngDiff = northEast.lng - southWest.lng;
+    // Expand bounds by 20%
+    let latMargin = (bounds.getNorth() - bounds.getSouth()) * 0.2;
+    let lngMargin = (bounds.getEast() - bounds.getWest()) * 0.2;
 
-    let newSouthWest = L.latLng(southWest.lat - latDiff * 0.2, southWest.lng - lngDiff * 0.2);
-    let newNorthEast = L.latLng(northEast.lat + latDiff * 0.2, northEast.lng + lngDiff * 0.2);
+    let expandedBounds = L.latLngBounds([
+        [bounds.getSouth() - latMargin, bounds.getWest() - lngMargin], // SW corner
+        [bounds.getNorth() + latMargin, bounds.getEast() + lngMargin]  // NE corner
+    ]);
 
-    let expandedBounds = L.latLngBounds(newSouthWest, newNorthEast);
-
-    // Fit the map to the expanded bounds
+    // Fit map to expanded bounds
     map.fitBounds(expandedBounds);
 
     // Store the correct street name
