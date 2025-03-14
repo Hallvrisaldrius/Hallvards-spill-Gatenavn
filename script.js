@@ -6,8 +6,8 @@ L.tileLayer('https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png
     attribution: '&copy; CartoDB, OpenStreetMap contributors'
 }).addTo(map);
 
-// Global variables for polyline and street name
-var streetPolyline = null;
+// Global variables for street polylines
+var streetLayer = L.layerGroup().addTo(map);
 
 // Load and select a random street
 async function loadStreetList() {
@@ -25,17 +25,17 @@ async function loadStreetList() {
         let randomStreet = streets[Math.floor(Math.random() * streets.length)];
         console.log("✅ Selected street:", randomStreet);
 
-        fetchStreetGeometry(randomStreet); // Get full street path
+        fetchStreetGeometry(randomStreet); // Get all segments for the street
     } catch (error) {
         console.error("❌ Error loading streets:", error);
     }
 }
 
-// Query Overpass API to get full street geometry (with multiple segments if necessary)
+// Query Overpass API to get ALL segments for the street
 async function fetchStreetGeometry(streetName) {
     let query = `
         [out:json];
-        way["name"="${streetName}"]["highway"](59.7,10.4,60.1,10.9);
+        way["name"="${streetName}"]["highway"](59.7,10.4,60.1,10.9); 
         (._;>;);
         out body;
     `;
@@ -51,9 +51,9 @@ async function fetchStreetGeometry(streetName) {
             return;
         }
 
-        let coordinates = extractCoordinates(data);
-        if (coordinates.length) {
-            displayStreet(streetName, coordinates);
+        let allCoordinates = extractAllCoordinates(data);
+        if (allCoordinates.length) {
+            displayStreet(streetName, allCoordinates);
         } else {
             console.error("❌ No valid coordinates found for", streetName);
         }
@@ -62,10 +62,10 @@ async function fetchStreetGeometry(streetName) {
     }
 }
 
-// Extract coordinates from Overpass API response (handles multiple segments)
-function extractCoordinates(data) {
+// Extract coordinates for ALL street segments
+function extractAllCoordinates(data) {
     let nodes = {};
-    let coordinates = [];
+    let allCoordinates = [];
 
     // Store all nodes with their coordinates
     data.elements.forEach(element => {
@@ -74,34 +74,34 @@ function extractCoordinates(data) {
         }
     });
 
-    // Extract way (street path) using node references
+    // Extract all ways (street segments)
     data.elements.forEach(element => {
         if (element.type === "way") {
             let wayCoords = element.nodes.map(nodeId => nodes[nodeId]).filter(coord => coord);
             if (wayCoords.length) {
-                coordinates = coordinates.concat(wayCoords); // Concatenate multiple segments into one array
+                allCoordinates.push(wayCoords);
             }
         }
     });
 
-    return coordinates;
+    return allCoordinates;
 }
 
-// Display the full street as a polyline
-function displayStreet(name, coordinates) {
-    console.log(`📌 Displaying street: ${name}`);
+// Display all street segments as multiple polylines
+function displayStreet(name, coordinateGroups) {
+    console.log(`📌 Displaying all segments of: ${name}`);
 
-    // Set the map view to fit the street's path
-    let bounds = L.latLngBounds(coordinates);
+    // Clear previous street polylines
+    streetLayer.clearLayers();
+
+    // Add each segment as a polyline
+    coordinateGroups.forEach(coords => {
+        L.polyline(coords, { color: "red", weight: 4 }).addTo(streetLayer);
+    });
+
+    // Adjust map to fit all segments
+    let bounds = L.latLngBounds(coordinateGroups.flat());
     map.fitBounds(bounds);
-
-    // Remove previous polyline if it exists
-    if (streetPolyline) {
-        map.removeLayer(streetPolyline);
-    }
-
-    // Draw the street polyline
-    streetPolyline = L.polyline(coordinates, { color: "red", weight: 4 }).addTo(map);
 
     // Store the correct street name
     document.getElementById("street-name").innerText = name;
