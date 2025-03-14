@@ -1,26 +1,34 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <!-- Leaflet CSS -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    <!-- Leaflet JavaScript -->
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Street Name Game</title>
-    <script src="script.js" defer></script>
-    <style>
-        body { font-family: Arial, sans-serif; text-align: center; }
-        #map { width: 100%; height: 500px; }
-    </style>
+    <title>Guess the Street</title>
+    <link rel="stylesheet" href="styles.css">
+
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 </head>
 <body>
-    <h1>Street Name Game</h1>
+    <h1>Guess the Street</h1>
+
+    <!-- Map Container -->
     <div id="map" style="height: 500px; width: 100%;"></div>
-    <p id="street-name" style="font-size: 18px; margin-top: 20px;">Street will be displayed here</p>
+
+    <!-- Displayed Random Street (Hidden for Guessing) -->
+    <p id="street-name" style="display: none;"></p>
+
+    <!-- Input Field for User Guess -->
     <input type="text" id="street-input" placeholder="Enter street name">
     <button onclick="checkAnswer()">Submit</button>
+
+    <!-- Result Message -->
     <p id="result"></p>
+
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    
+    <!-- Custom JavaScript -->
+    <script src="script.js"></script>
 </body>
 </html>
