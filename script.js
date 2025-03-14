@@ -9,36 +9,52 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 // Global marker variable
 var streetMarker = null;
 
-// Function to load the street list from the file
+// Function to load the street list and select a random street
 async function loadStreetList() {
     try {
         let response = await fetch('streets.txt'); // Load the file
         let text = await response.text();
-        let lines = text.split('\n').map(line => line.trim()).filter(line => line); // Clean up lines
+        let streets = text.split('\n').map(line => line.trim()).filter(line => line); // Clean up
 
-        if (lines.length === 0) {
+        if (streets.length === 0) {
             console.error("Street list is empty!");
             return;
         }
 
         // Choose a random street
-        let randomStreet = lines[Math.floor(Math.random() * lines.length)];
-        let [name, lat, lng] = randomStreet.split(','); // Extract name & coordinates
-
-        if (!name || isNaN(lat) || isNaN(lng)) {
-            console.error("Invalid street data:", randomStreet);
-            return;
-        }
-
-        displayStreet(name, parseFloat(lat), parseFloat(lng));
+        let randomStreet = streets[Math.floor(Math.random() * streets.length)];
+        geocodeStreet(randomStreet); // Get coordinates for the street
     } catch (error) {
         console.error("Error loading streets:", error);
     }
 }
 
-// Function to display the selected street
+// Function to fetch coordinates for a street using OpenStreetMap Nominatim API
+async function geocodeStreet(streetName) {
+    let query = `${streetName}, Oslo, Norway`; // Search within Oslo
+    let url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}`;
+
+    try {
+        let response = await fetch(url);
+        let data = await response.json();
+
+        if (data.length === 0) {
+            console.error("Street not found:", streetName);
+            return;
+        }
+
+        let lat = parseFloat(data[0].lat);
+        let lng = parseFloat(data[0].lon);
+
+        displayStreet(streetName, lat, lng);
+    } catch (error) {
+        console.error("Geocoding error:", error);
+    }
+}
+
+// Function to display the selected street on the map
 function displayStreet(name, lat, lng) {
-    // Set the map view to the chosen street's location
+    // Set map view to the chosen street's location
     map.setView([lat, lng], 16);
 
     // Remove previous marker if it exists
@@ -50,7 +66,7 @@ function displayStreet(name, lat, lng) {
     streetMarker = L.marker([lat, lng]).addTo(map)
         .bindPopup(`Guess this street!`).openPopup();
 
-    // Store the correct street name in the hidden <p> tag
+    // Store the correct street name (hidden for guessing)
     document.getElementById("street-name").innerText = name;
 
     console.log("Displayed street:", name, "at", lat, lng); // Debugging log
