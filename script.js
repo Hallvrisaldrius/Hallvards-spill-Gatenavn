@@ -25,16 +25,22 @@ async function loadStreetList() {
 
 // Function to display the street on the map
 function displayStreet(name, lat, lng) {
-    // Set map view to the chosen street
+    // Set the map view to the chosen street's location
     map.setView([lat, lng], 16);
 
-    // Place a marker on the street
-    L.marker([lat, lng]).addTo(map)
+    // Remove any existing markers before adding a new one
+    if (window.streetMarker) {
+        map.removeLayer(window.streetMarker);
+    }
+
+    // Add a new marker at the chosen street's location
+    window.streetMarker = L.marker([lat, lng]).addTo(map)
         .bindPopup(`Guess this street!`).openPopup();
 
-    // Update the displayed street name
+    // Store the correct street name in the hidden <p> tag
     document.getElementById("street-name").innerText = name;
 }
+
 
 // Function to check the user's guess
 function checkAnswer() {
