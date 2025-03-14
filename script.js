@@ -1,9 +1,9 @@
-// Initialize the map
-var map = L.map('map').setView([59.9139, 10.7522], 14); // Center on Oslo
+// Initialize the map (centered on Oslo)
+var map = L.map('map').setView([59.9139, 10.7522], 14);
 
-// Add a clean, label-free map tile layer (CartoDB Positron)
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: '&copy; OpenStreetMap contributors'
+// Add CartoDB Positron tile layer (light style with no text)
+L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png', {
+    attribution: '&copy; OpenStreetMap contributors, &copy; CartoDB'
 }).addTo(map);
 
 // Global marker variable
@@ -33,7 +33,7 @@ async function loadStreetList() {
 
 // Function to fetch coordinates for a street using OpenStreetMap Nominatim API
 async function geocodeStreet(streetName) {
-    let query = `${streetName}, Oslo, Norway`; // Ensure search is limited to Oslo
+    let query = `${streetName}, Oslo, Norway`; // Ensure search is within Oslo
     let url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}`;
 
     try {
@@ -60,7 +60,6 @@ async function geocodeStreet(streetName) {
         console.error("❌ Geocoding error:", error);
     }
 }
-
 
 // Function to display the selected street on the map
 function displayStreet(name, lat, lng) {
