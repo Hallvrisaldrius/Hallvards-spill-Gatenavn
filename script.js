@@ -1,4 +1,4 @@
-// Initialize the map (centered on Oslo)
+// Initialize the map (centered on Oslo, but no auto-centering)
 var map = L.map('map').setView([59.9139, 10.7522], 14);
 
 // Use a basemap with no labels (Carto Light No Labels)
@@ -87,7 +87,7 @@ function extractAllCoordinates(data) {
     return allCoordinates;
 }
 
-// Display all street segments as multiple polylines and center the map
+// Display all street segments as multiple polylines and center the map ONLY when displaying a street
 function displayStreet(name, coordinateGroups) {
     console.log(`📌 Displaying all segments of: ${name}`);
 
@@ -110,7 +110,7 @@ function displayStreet(name, coordinateGroups) {
     let centerLng = allCoords.reduce((sum, coord) => sum + coord[1], 0) / allCoords.length;
     let streetCenter = [centerLat, centerLng];
 
-    // Center the map on the street
+    // Only center the map when displaying the street
     map.setView(streetCenter, 16); // Zoom level 16 keeps it visible
 
     // Store the correct street name
