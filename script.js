@@ -87,7 +87,7 @@ function extractAllCoordinates(data) {
     return allCoordinates;
 }
 
-// Display all street segments as multiple polylines and center the map ONLY when displaying a street
+// Display all street segments as multiple polylines and center the map with extra margin
 function displayStreet(name, coordinateGroups) {
     console.log(`📌 Displaying all segments of: ${name}`);
 
@@ -105,13 +105,26 @@ function displayStreet(name, coordinateGroups) {
         L.polyline(coords, { color: "red", weight: 4 }).addTo(streetLayer);
     });
 
-    // Calculate center of the street
-    let centerLat = allCoords.reduce((sum, coord) => sum + coord[0], 0) / allCoords.length;
-    let centerLng = allCoords.reduce((sum, coord) => sum + coord[1], 0) / allCoords.length;
-    let streetCenter = [centerLat, centerLng];
+    // Calculate bounding box for the street
+    let latitudes = allCoords.map(coord => coord[0]);
+    let longitudes = allCoords.map(coord => coord[1]);
 
-    // Only center the map when displaying the street
-    map.setView(streetCenter, 16); // Zoom level 16 keeps it visible
+    let minLat = Math.min(...latitudes);
+    let maxLat = Math.max(...latitudes);
+    let minLng = Math.min(...longitudes);
+    let maxLng = Math.max(...longitudes);
+
+    // Add a 20% margin to the bounds
+    let latMargin = (maxLat - minLat) * 0.2;
+    let lngMargin = (maxLng - minLng) * 0.2;
+
+    let bounds = [
+        [minLat - latMargin, minLng - lngMargin], // Southwest corner
+        [maxLat + latMargin, maxLng + lngMargin]  // Northeast corner
+    ];
+
+    // Fit the map to the bounding box with a margin
+    map.fitBounds(bounds);
 
     // Store the correct street name
     document.getElementById("street-name").innerText = name;
