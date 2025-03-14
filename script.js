@@ -6,8 +6,8 @@ L.tileLayer('https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png
     attribution: '&copy; CartoDB, OpenStreetMap contributors'
 }).addTo(map);
 
-// Global marker variable
-var streetMarker = null;
+// Global variables
+var streetPolyline = null;
 
 // Function to load the street list and select a random street
 async function loadStreetList() {
@@ -25,57 +25,69 @@ async function loadStreetList() {
         let randomStreet = streets[Math.floor(Math.random() * streets.length)];
         console.log("✅ Selected street:", randomStreet);
 
-        geocodeStreet(randomStreet); // Get coordinates for the street
+        fetchStreetGeometry(randomStreet); // Fetch polyline data
     } catch (error) {
         console.error("❌ Error loading streets:", error);
     }
 }
 
-// Function to fetch coordinates for a street using OpenStreetMap Nominatim API
-async function geocodeStreet(streetName) {
-    let query = `${streetName}, Oslo, Norway`; // Ensure search is within Oslo
-    let url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}`;
+// Function to fetch the full street geometry from Overpass API
+async function fetchStreetGeometry(streetName) {
+    let query = `
+        [out:json];
+        way["name"="${streetName}"](59.8,10.4,60.1,10.9);
+        out geom;
+    `;
+
+    let url = `https://overpass-api.de/api/interpreter?data=${encodeURIComponent(query)}`;
 
     try {
         let response = await fetch(url);
         let data = await response.json();
-        console.log("🌍 Nominatim API response:", data);
+        console.log("🌍 Overpass API response:", data);
 
-        if (data.length === 0) {
-            console.error("⚠️ Street not found:", streetName);
+        if (data.elements.length === 0) {
+            console.error("⚠️ No geometry found for:", streetName);
             return;
         }
 
-        let lat = parseFloat(data[0].lat);
-        let lng = parseFloat(data[0].lon);
+        let coordinates = [];
+        data.elements.forEach(way => {
+            if (way.type === "way" && way.geometry) {
+                way.geometry.forEach(point => {
+                    coordinates.push([point.lat, point.lon]);
+                });
+            }
+        });
 
-        console.log(`📍 Found coordinates for ${streetName}: ${lat}, ${lng}`);
-
-        if (!isNaN(lat) && !isNaN(lng)) {
-            displayStreet(streetName, lat, lng);
+        if (coordinates.length > 0) {
+            displayStreetPolyline(streetName, coordinates);
         } else {
-            console.error("❌ Invalid coordinates:", lat, lng);
+            console.error("❌ No valid coordinates for:", streetName);
         }
     } catch (error) {
-        console.error("❌ Geocoding error:", error);
+        console.error("❌ Error fetching street geometry:", error);
     }
 }
 
-// Function to display the selected street on the map
-function displayStreet(name, lat, lng) {
-    console.log(`📌 Displaying street: ${name} at ${lat}, ${lng}`);
+// Function to display the polyline on the map
+function displayStreetPolyline(name, coordinates) {
+    console.log(`📌 Displaying street polyline: ${name}`);
 
-    // Set map view to the chosen street's location
-    map.setView([lat, lng], 16);
-
-    // Remove previous marker if it exists
-    if (streetMarker) {
-        map.removeLayer(streetMarker);
+    // Remove previous polyline if it exists
+    if (streetPolyline) {
+        map.removeLayer(streetPolyline);
     }
 
-    // Add a new marker at the chosen street's location
-    streetMarker = L.marker([lat, lng]).addTo(map)
-        .bindPopup(`Guess this street!`).openPopup();
+    // Draw the polyline on the map
+    streetPolyline = L.polyline(coordinates, {
+        color: "red",
+        weight: 5,
+        opacity: 0.8
+    }).addTo(map);
+
+    // Fit the map to the polyline
+    map.fitBounds(streetPolyline.getBounds());
 
     // Store the correct street name
     document.getElementById("street-name").innerText = name;
