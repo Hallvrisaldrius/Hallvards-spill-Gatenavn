@@ -9,11 +9,33 @@ L.tileLayer('https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png
 // Global variables for polyline and street name
 var streetPolyline = null;
 
-// Query Overpass API to get full street geometry (multiple segments)
+// Load and select a random street
+async function loadStreetList() {
+    try {
+        let response = await fetch('streets.txt');
+        let text = await response.text();
+        let streets = text.split('\n').map(line => line.trim()).filter(line => line);
+
+        if (streets.length === 0) {
+            console.error("⚠️ Street list is empty!");
+            return;
+        }
+
+        // Choose a random street
+        let randomStreet = streets[Math.floor(Math.random() * streets.length)];
+        console.log("✅ Selected street:", randomStreet);
+
+        fetchStreetGeometry(randomStreet); // Get full street path
+    } catch (error) {
+        console.error("❌ Error loading streets:", error);
+    }
+}
+
+// Query Overpass API to get full street geometry (with multiple segments if necessary)
 async function fetchStreetGeometry(streetName) {
     let query = `
         [out:json];
-        way["name"="${streetName}"]["highway"](59.7,10.4,60.1,10.9); 
+        way["name"="${streetName}"]["highway"](59.7,10.4,60.1,10.9);
         (._;>;);
         out body;
     `;
@@ -40,33 +62,7 @@ async function fetchStreetGeometry(streetName) {
     }
 }
 
-// Extract coordinates from Overpass API response
-function extractCoordinates(data) {
-    let nodes = {};
-    let coordinates = [];
-
-    // Store all nodes with their coordinates
-    data.elements.forEach(element => {
-        if (element.type === "node") {
-            nodes[element.id] = [element.lat, element.lon];
-        }
-    });
-
-    // Extract all ways (street path segments) using node references
-    data.elements.forEach(element => {
-        if (element.type === "way") {
-            let wayCoords = element.nodes.map(nodeId => nodes[nodeId]).filter(coord => coord);
-            if (wayCoords.length) {
-                coordinates = coordinates.concat(wayCoords); // Concatenate segments
-            }
-        }
-    });
-
-    return coordinates;
-}
-
-
-// Extract coordinates from Overpass API response
+// Extract coordinates from Overpass API response (handles multiple segments)
 function extractCoordinates(data) {
     let nodes = {};
     let coordinates = [];
@@ -83,7 +79,7 @@ function extractCoordinates(data) {
         if (element.type === "way") {
             let wayCoords = element.nodes.map(nodeId => nodes[nodeId]).filter(coord => coord);
             if (wayCoords.length) {
-                coordinates = wayCoords;
+                coordinates = coordinates.concat(wayCoords); // Concatenate multiple segments into one array
             }
         }
     });
