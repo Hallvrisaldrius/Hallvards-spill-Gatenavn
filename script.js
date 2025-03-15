@@ -1,168 +1,180 @@
-document.addEventListener("DOMContentLoaded", function () {
-    // Initialize the map and other functions here after the DOM is loaded
+// Initialize the map without a fixed center
+var map = L.map('map');
 
-    // Initialize the map (centered on Oslo)
-    var map = L.map('map').setView([59.9139, 10.7522], 14);
+// Use a basemap with no labels (Carto Light No Labels)
+L.tileLayer('https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png', {
+    attribution: '&copy; CartoDB, OpenStreetMap contributors'
+}).addTo(map);
 
-    // Use a basemap with no labels (Carto Light No Labels)
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png', {
-        attribution: '&copy; CartoDB, OpenStreetMap contributors'
-    }).addTo(map);
+// Global variables
+var streetLayer = L.layerGroup().addTo(map);
+let incorrectGuesses = new Set(); // Store wrong guesses uniquely
+let attempts = 0; // Track the number of attempts
+let points = 3; // Store points (start with 3 points)
+let correctStreet = ''; // Store the correct street name
 
-    // Global variables for street polylines
-    var streetLayer = L.layerGroup().addTo(map);
+// Load and select a random street
+async function loadStreetList() {
+    try {
+        let response = await fetch('streets.txt');
+        let text = await response.text();
+        let streets = text.split('\n').map(line => line.trim()).filter(line => line);
 
-    // Load and select a random street
-    async function loadStreetList() {
-        try {
-            let response = await fetch('streets.txt');
-            let text = await response.text();
-            let streets = text.split('\n').map(line => line.trim()).filter(line => line);
-
-            if (streets.length === 0) {
-                console.error("⚠️ Street list is empty!");
-                return;
-            }
-
-            // Choose a random street
-            let randomStreet = streets[Math.floor(Math.random() * streets.length)];
-            console.log("✅ Selected street:", randomStreet);
-
-            fetchStreetGeometry(randomStreet); // Get all segments for the street
-        } catch (error) {
-            console.error("❌ Error loading streets:", error);
-        }
-    }
-
-    // Query Overpass API to get ALL segments for the street
-    async function fetchStreetGeometry(streetName) {
-        let query = `
-            [out:json];
-            way["name"="${streetName}"]["highway"](59.7,10.4,60.1,10.9); 
-            (._;>;);
-            out body;
-        `;
-        let url = `https://overpass-api.de/api/interpreter?data=${encodeURIComponent(query)}`;
-
-        try {
-            let response = await fetch(url);
-            let data = await response.json();
-            console.log("🗺 Overpass API response:", data);
-
-            if (!data.elements.length) {
-                console.error("⚠️ Street not found:", streetName);
-                return;
-            }
-
-            let allCoordinates = extractAllCoordinates(data);
-            if (allCoordinates.length) {
-                displayStreet(streetName, allCoordinates);
-            } else {
-                console.error("❌ No valid coordinates found for", streetName);
-            }
-        } catch (error) {
-            console.error("❌ Overpass API error:", error);
-        }
-    }
-
-    // Extract coordinates for ALL street segments
-    function extractAllCoordinates(data) {
-        let nodes = {};
-        let allCoordinates = [];
-
-        // Store all nodes with their coordinates
-        data.elements.forEach(element => {
-            if (element.type === "node") {
-                nodes[element.id] = [element.lat, element.lon];
-            }
-        });
-
-        // Extract all ways (street segments)
-        data.elements.forEach(element => {
-            if (element.type === "way") {
-                let wayCoords = element.nodes.map(nodeId => nodes[nodeId]).filter(coord => coord);
-                if (wayCoords.length) {
-                    allCoordinates.push(wayCoords);
-                }
-            }
-        });
-
-        return allCoordinates;
-    }
-
-    // Display all street segments as multiple polylines and center the map
-    function displayStreet(name, coordinateGroups) {
-        console.log(`📌 Displaying all segments of: ${name}`);
-
-        // Clear previous street polylines
-        streetLayer.clearLayers();
-
-        let allCoords = coordinateGroups.flat(); // Flatten coordinate groups
-        if (allCoords.length === 0) {
-            console.error("⚠️ No valid coordinates for centering.");
+        if (streets.length === 0) {
+            console.error("⚠️ Street list is empty!");
             return;
         }
 
-        // Add each segment as a polyline
-        coordinateGroups.forEach(coords => {
-            L.polyline(coords, { color: "red", weight: 4 }).addTo(streetLayer);
-        });
-
-        // Calculate center of the street
-        let centerLat = allCoords.reduce((sum, coord) => sum + coord[0], 0) / allCoords.length;
-        let centerLng = allCoords.reduce((sum, coord) => sum + coord[1], 0) / allCoords.length;
-        let streetCenter = [centerLat, centerLng];
-
-        // Center the map on the street
-        map.setView(streetCenter, 16); // Zoom level 16 keeps it visible
-
-        // Store the correct street name
-        document.getElementById("street-name").innerText = name;
-    }
-
-    // Check the user's answer
-function checkAnswer() {
-    // Check if the answer is correct and update points
-    let userInput = document.getElementById("street-input").value;
-    let correctStreet = document.getElementById("street-name").innerText;
-
-    if (userInput.toLowerCase() === correctStreet.toLowerCase()) {
-        updatePointsText(3); // Update the points if the answer is correct
-    } else {
-        updatePointsText(currentPoints - 1); // Deduct one point for wrong answer
+        let randomStreet = streets[Math.floor(Math.random() * streets.length)];
+        console.log("✅ Selected street:", randomStreet);
+        fetchStreetGeometry(randomStreet);
+    } catch (error) {
+        console.error("❌ Error loading streets:", error);
     }
 }
 
+// Query Overpass API to get ALL segments for the street
+async function fetchStreetGeometry(streetName) {
+    let query = `
+        [out:json];
+        way["name"="${streetName}"]["highway"](59.7,10.4,60.1,10.9); 
+        (._;>;);
+        out body;
+    `;
+    let url = `https://overpass-api.de/api/interpreter?data=${encodeURIComponent(query)}`;
 
-    // Update the points text
-    function updatePointsText() {
-        let points = getRemainingPoints();
-        let submitButton = document.getElementById("submit-btn");
-        submitButton.innerText = `Submit - ${points} points`;
+    try {
+        let response = await fetch(url);
+        let data = await response.json();
+        console.log("🗺 Overpass API response:", data);
+
+        if (!data.elements.length) {
+            console.error("⚠️ Street not found:", streetName);
+            return;
+        }
+
+        let allCoordinates = extractAllCoordinates(data);
+        if (allCoordinates.length) {
+            displayStreet(streetName, allCoordinates);
+        } else {
+            console.error("❌ No valid coordinates found for", streetName);
+        }
+    } catch (error) {
+        console.error("❌ Overpass API error:", error);
+    }
+}
+
+// Extract coordinates for ALL street segments
+function extractAllCoordinates(data) {
+    let nodes = {};
+    let allCoordinates = [];
+
+    data.elements.forEach(element => {
+        if (element.type === "node") {
+            nodes[element.id] = [element.lat, element.lon];
+        }
+    });
+
+    data.elements.forEach(element => {
+        if (element.type === "way") {
+            let wayCoords = element.nodes.map(nodeId => nodes[nodeId]).filter(coord => coord);
+            if (wayCoords.length) {
+                allCoordinates.push(wayCoords);
+            }
+        }
+    });
+
+    return allCoordinates;
+}
+
+// Display all street segments and center the map
+function displayStreet(name, coordinateGroups) {
+    console.log(`📌 Displaying all segments of: ${name}`);
+    streetLayer.clearLayers();
+
+    let allCoords = coordinateGroups.flat();
+    if (allCoords.length === 0) {
+        console.error("⚠️ No valid coordinates for centering.");
+        return;
     }
 
-    // Get remaining points based on attempts
-    function getRemainingPoints() {
-        return Math.max(0, 4 - attempts); // If attempts exceed 3, return 0 points
+    coordinateGroups.forEach(coords => {
+        L.polyline(coords, { color: "red", weight: 4 }).addTo(streetLayer);
+    });
+
+    // Create bounding box
+    let bounds = L.latLngBounds(allCoords);
+    let expandedBounds = bounds.pad(0.2); // 20% margin
+    map.fitBounds(expandedBounds);
+
+    // Store the correct street name globally
+    correctStreet = name;
+}
+
+// Update the button text to show current points
+function updateButtonText() {
+    const submitButton = document.querySelector('button');
+    submitButton.innerText = `Submit - ${points} points`;
+}
+
+// Check the user's answer
+function checkAnswer() {
+    let userInput = document.getElementById("street-input").value.trim();
+    let resultDiv = document.getElementById("result");
+    let wrongList = document.getElementById("wrong-guesses");
+
+    resultDiv.innerText = ""; // Clear previous messages
+
+    if (userInput.toLowerCase() === correctStreet.toLowerCase()) {
+        // Award points based on attempt number
+        resultDiv.innerText = `✅ Correct! You scored ${points} points.`;
+        resultDiv.style.color = "green";
+    } else {
+        // Deduct points after a wrong guess
+        if (attempts === 1) {
+            points = 2; // 2 points after first wrong guess
+        } else if (attempts === 2) {
+            points = 1; // 1 point after second wrong guess
+        } else if (attempts >= 3) {
+            points = 0; // 0 points after 3 wrong guesses
+        }
+
+        // Add incorrect guess if it's not already listed
+        if (userInput !== "" && !incorrectGuesses.has(userInput.toLowerCase())) {
+            incorrectGuesses.add(userInput.toLowerCase());
+
+            let listItem = document.createElement("li");
+            listItem.innerHTML = `❌ ${userInput}`;
+            listItem.style.color = "red";
+            listItem.style.margin = "5px 0";
+            wrongList.appendChild(listItem);
+        }
     }
 
-    let attempts = 0;
+    // Clear input field and update attempts
+    document.getElementById("street-input").value = "";
+    attempts++;
 
-    // Start a new round of the game
-    function startRound() {
-        attempts = 0;
-        document.getElementById("result").innerText = '';
-        loadStreetList();
+    // Update the points text message and button text after each attempt
+    updateButtonText();
+
+    // After 3 attempts, display the correct answer if not already guessed
+    if (attempts >= 4) {
+        resultDiv.innerText = `❌ The correct street was: ${correctStreet}`;
+        resultDiv.style.color = "red";
     }
+}
 
-    // Add wrong guesses to the list
-    function addWrongGuess(guess) {
-        let wrongGuessesList = document.getElementById("wrong-guesses");
-        let listItem = document.createElement("li");
-        listItem.innerHTML = `${guess} <span style="color:red;">❌</span>`;
-        wrongGuessesList.appendChild(listItem);
+// Listen for "Enter" key press in input field
+document.getElementById("street-input").addEventListener("keypress", function (event) {
+    if (event.key === "Enter") {
+        event.preventDefault();
+        checkAnswer();
     }
-
-    // Start a new round on page load
-    startRound();
 });
+
+// Load a random street when the page loads
+loadStreetList();
+
+// Initially set the button text
+updateButtonText();
