@@ -8,7 +8,9 @@ L.tileLayer('https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png
 
 // Global variables
 var streetLayer = L.layerGroup().addTo(map);
-let incorrectGuesses = new Set(); // Store wrong guesses uniquely
+let incorrectGuesses = new Set();
+let attempts = 0;
+let score = 0;
 
 // Load and select a random street
 async function loadStreetList() {
@@ -24,6 +26,14 @@ async function loadStreetList() {
 
         let randomStreet = streets[Math.floor(Math.random() * streets.length)];
         console.log("✅ Selected street:", randomStreet);
+
+        // Reset game state
+        incorrectGuesses.clear();
+        attempts = 0;
+        document.getElementById("wrong-guesses").innerHTML = "";
+        document.getElementById("result").innerText = "";
+        document.getElementById("street-name").style.display = "none"; // Hide correct answer initially
+
         fetchStreetGeometry(randomStreet);
     } catch (error) {
         console.error("❌ Error loading streets:", error);
@@ -118,10 +128,15 @@ function checkAnswer() {
     resultDiv.innerText = ""; // Clear previous messages
 
     if (userInput.toLowerCase() === correctStreet.toLowerCase()) {
-        resultDiv.innerText = "✅ Correct!";
+        let pointsEarned = attempts === 0 ? 3 : attempts === 1 ? 2 : attempts === 2 ? 1 : 0;
+        score += pointsEarned;
+        resultDiv.innerText = `✅ Correct! You earned ${pointsEarned} points!`;
         resultDiv.style.color = "green";
+        updateScoreDisplay();
+        
+        // Load a new street after a short delay
+        setTimeout(loadStreetList, 2000);
     } else {
-        // Add incorrect guess if it's not already listed
         if (userInput !== "" && !incorrectGuesses.has(userInput.toLowerCase())) {
             incorrectGuesses.add(userInput.toLowerCase());
 
@@ -130,6 +145,19 @@ function checkAnswer() {
             listItem.style.color = "red";
             listItem.style.margin = "5px 0";
             wrongList.appendChild(listItem);
+        }
+
+        attempts++;
+
+        // If 3 wrong attempts, reveal the correct answer
+        if (attempts >= 3) {
+            resultDiv.innerText = `❌ Out of attempts! The correct answer was: ${correctStreet}`;
+            resultDiv.style.color = "red";
+            document.getElementById("street-name").style.display = "block"; // Show correct answer
+            updateScoreDisplay();
+            
+            // Load a new street after a short delay
+            setTimeout(loadStreetList, 3000);
         }
     }
 
@@ -144,6 +172,11 @@ document.getElementById("street-input").addEventListener("keypress", function (e
         checkAnswer();
     }
 });
+
+// Update the score display
+function updateScoreDisplay() {
+    document.getElementById("score").innerText = `Score: ${score}`;
+}
 
 // Load a random street when the page loads
 loadStreetList();
