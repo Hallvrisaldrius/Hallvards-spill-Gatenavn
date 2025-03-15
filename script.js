@@ -115,13 +115,12 @@ function checkAnswer() {
     let resultDiv = document.getElementById("result");
     let wrongList = document.getElementById("wrong-guesses");
 
+    resultDiv.innerText = ""; // Clear previous messages
+
     if (userInput.toLowerCase() === correctStreet.toLowerCase()) {
         resultDiv.innerText = "✅ Correct!";
         resultDiv.style.color = "green";
     } else {
-        resultDiv.innerText = "❌ Try again!";
-        resultDiv.style.color = "red";
-
         // Add incorrect guess if it's not already listed
         if (userInput !== "" && !incorrectGuesses.has(userInput.toLowerCase())) {
             incorrectGuesses.add(userInput.toLowerCase());
