@@ -118,50 +118,25 @@ function updateButtonText() {
 }
 
 // Check the user's answer
+// Function to check the user's answer and update points
 function checkAnswer() {
-    let userInput = document.getElementById("street-input").value.trim();
-    let resultDiv = document.getElementById("result");
-    let wrongList = document.getElementById("wrong-guesses");
+    let userInput = document.getElementById("street-input").value;
+    let correctStreet = document.getElementById("street-name").innerText;
+    let points = parseInt(document.getElementById("submit-btn").innerText.split(' ')[2]);
 
-    resultDiv.innerText = ""; // Clear previous messages
-
+    // If the guess is correct
     if (userInput.toLowerCase() === correctStreet.toLowerCase()) {
-        // Award points based on attempt number
-        resultDiv.innerText = `✅ Correct! You scored ${points} points.`;
-        resultDiv.style.color = "green";
+        document.getElementById("result").innerText = "✅ Correct!";
+        document.getElementById("submit-btn").disabled = true; // Disable the button after correct answer
     } else {
-        // Deduct points after a wrong guess
-        if (attempts === 1) {
-            points = 2; // 2 points after first wrong guess
-        } else if (attempts === 2) {
-            points = 1; // 1 point after second wrong guess
-        } else if (attempts >= 3) {
-            points = 0; // 0 points after 3 wrong guesses
+        // Deduct points if the guess is wrong
+        points--;
+        document.getElementById("submit-btn").innerText = `Submit - ${points} points`; // Update button text with remaining points
+
+        if (points === 0) {
+            document.getElementById("result").innerText = `❌ The correct street is: ${correctStreet}`;
+            document.getElementById("submit-btn").disabled = true; // Disable the button after all attempts
         }
-
-        // Add incorrect guess if it's not already listed
-        if (userInput !== "" && !incorrectGuesses.has(userInput.toLowerCase())) {
-            incorrectGuesses.add(userInput.toLowerCase());
-
-            let listItem = document.createElement("li");
-            listItem.innerHTML = `❌ ${userInput}`;
-            listItem.style.color = "red";
-            listItem.style.margin = "5px 0";
-            wrongList.appendChild(listItem);
-        }
-    }
-
-    // Clear input field and update attempts
-    document.getElementById("street-input").value = "";
-    attempts++;
-
-    // Update the points text message and button text after each attempt
-    updateButtonText();
-
-    // After 3 attempts, display the correct answer if not already guessed
-    if (attempts >= 4) {
-        resultDiv.innerText = `❌ The correct street was: ${correctStreet}`;
-        resultDiv.style.color = "red";
     }
 }
 
