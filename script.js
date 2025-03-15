@@ -107,7 +107,7 @@ function displayStreet(name, coordinateGroups) {
     let expandedBounds = bounds.pad(0.2); // 20% margin
     map.fitBounds(expandedBounds);
 
-    // Store the correct street name
+    // Store the correct street name globally
     correctStreet = name;
 }
 
