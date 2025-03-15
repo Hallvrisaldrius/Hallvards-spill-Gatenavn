@@ -111,6 +111,20 @@ function displayStreet(name, coordinateGroups) {
     correctStreet = name;
 }
 
+// Update the points message based on attempts
+function updatePointsText() {
+    let pointsText = document.getElementById("points-text");
+    if (attempts === 1) {
+        pointsText.innerText = "3 points for correct answer";
+    } else if (attempts === 2) {
+        pointsText.innerText = "2 points for correct answer";
+    } else if (attempts === 3) {
+        pointsText.innerText = "1 point for correct answer";
+    } else {
+        pointsText.innerText = "";
+    }
+}
+
 // Check the user's answer
 function checkAnswer() {
     let userInput = document.getElementById("street-input").value.trim();
@@ -130,10 +144,7 @@ function checkAnswer() {
             points = 1;
         }
 
-        // Update the points display
-        document.getElementById("points").innerText = `Points: ${points}`;
-        
-        resultDiv.innerText = `✅ Correct!`;
+        resultDiv.innerText = `✅ Correct! You scored ${points} points.`;
         resultDiv.style.color = "green";
     } else {
         // Add incorrect guess if it's not already listed
@@ -151,6 +162,9 @@ function checkAnswer() {
     // Clear input field and update attempts
     document.getElementById("street-input").value = "";
     attempts++;
+
+    // Update the points text message after each attempt
+    updatePointsText();
 
     // After 3 attempts, display the correct answer if not already guessed
     if (attempts >= 4) {
