@@ -132,16 +132,37 @@ document.getElementById("street-input").addEventListener("keypress", function(ev
 });
 
 // Check the user's answer
+// Store incorrect guesses
+let incorrectGuesses = [];
+
+// Function to check the user's answer
 function checkAnswer() {
-    let userInput = document.getElementById("street-input").value;
-    let correctStreet = document.getElementById("street-name").innerText;
+    let userInput = document.getElementById("street-input").value.trim();
+    let correctStreet = document.getElementById("street-name").innerText.trim();
+    let resultDiv = document.getElementById("result");
+    let wrongList = document.getElementById("wrong-guesses");
 
     if (userInput.toLowerCase() === correctStreet.toLowerCase()) {
-        document.getElementById("result").innerText = "✅ Correct!";
+        resultDiv.innerText = "✅ Correct!";
+        resultDiv.style.color = "green";
     } else {
-        document.getElementById("result").innerText = "❌ Try again!";
+        resultDiv.innerText = "❌ Try again!";
+        resultDiv.style.color = "red";
+
+        // Add incorrect guess to the list if not already added
+        if (!incorrectGuesses.includes(userInput) && userInput !== "") {
+            incorrectGuesses.push(userInput);
+            let listItem = document.createElement("li");
+            listItem.innerHTML = `❌ ${userInput}`;
+            listItem.style.color = "red";
+            wrongList.appendChild(listItem);
+        }
     }
+
+    // Clear input field after guess
+    document.getElementById("street-input").value = "";
 }
+
 
 // Load a random street when the page loads
 loadStreetList();
