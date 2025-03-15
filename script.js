@@ -121,7 +121,7 @@ function updatePointsText() {
     } else if (attempts === 3) {
         pointsText.innerText = "1 point for correct answer";
     } else {
-        pointsText.innerText = "";
+        pointsText.innerText = ""; // Clear the points message after 3 attempts
     }
 }
 
