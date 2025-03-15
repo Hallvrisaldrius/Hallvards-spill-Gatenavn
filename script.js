@@ -1,4 +1,4 @@
-// Initialize the map (centered on Oslo, but no auto-centering)
+// Initialize the map without a fixed center
 var map = L.map('map');
 
 // Use a basemap with no labels (Carto Light No Labels)
@@ -6,8 +6,9 @@ L.tileLayer('https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png
     attribution: '&copy; CartoDB, OpenStreetMap contributors'
 }).addTo(map);
 
-// Global variables for street polylines
+// Global variables
 var streetLayer = L.layerGroup().addTo(map);
+let incorrectGuesses = []; // Store wrong guesses
 
 // Load and select a random street
 async function loadStreetList() {
@@ -21,11 +22,9 @@ async function loadStreetList() {
             return;
         }
 
-        // Choose a random street
         let randomStreet = streets[Math.floor(Math.random() * streets.length)];
         console.log("✅ Selected street:", randomStreet);
-
-        fetchStreetGeometry(randomStreet); // Get all segments for the street
+        fetchStreetGeometry(randomStreet);
     } catch (error) {
         console.error("❌ Error loading streets:", error);
     }
@@ -67,14 +66,12 @@ function extractAllCoordinates(data) {
     let nodes = {};
     let allCoordinates = [];
 
-    // Store all nodes with their coordinates
     data.elements.forEach(element => {
         if (element.type === "node") {
             nodes[element.id] = [element.lat, element.lon];
         }
     });
 
-    // Extract all ways (street segments)
     data.elements.forEach(element => {
         if (element.type === "way") {
             let wayCoords = element.nodes.map(nodeId => nodes[nodeId]).filter(coord => coord);
@@ -87,55 +84,31 @@ function extractAllCoordinates(data) {
     return allCoordinates;
 }
 
-// Display all street segments as multiple polylines and fit the map with a solid 20% margin
+// Display all street segments and center the map
 function displayStreet(name, coordinateGroups) {
     console.log(`📌 Displaying all segments of: ${name}`);
-
-    // Clear previous street polylines
     streetLayer.clearLayers();
 
-    let allCoords = coordinateGroups.flat(); // Flatten coordinate groups
+    let allCoords = coordinateGroups.flat();
     if (allCoords.length === 0) {
         console.error("⚠️ No valid coordinates for centering.");
         return;
     }
 
-    // Add each segment as a polyline
     coordinateGroups.forEach(coords => {
         L.polyline(coords, { color: "red", weight: 4 }).addTo(streetLayer);
     });
 
-    // Compute bounding box
+    // Create bounding box
     let bounds = L.latLngBounds(allCoords);
-
-    // Expand bounds by 20%
-    let latMargin = (bounds.getNorth() - bounds.getSouth()) * 0.2;
-    let lngMargin = (bounds.getEast() - bounds.getWest()) * 0.2;
-
-    let expandedBounds = L.latLngBounds([
-        [bounds.getSouth() - latMargin, bounds.getWest() - lngMargin], // SW corner
-        [bounds.getNorth() + latMargin, bounds.getEast() + lngMargin]  // NE corner
-    ]);
-
-    // Fit map to expanded bounds
+    let expandedBounds = bounds.pad(0.2); // 20% margin
     map.fitBounds(expandedBounds);
 
-    // Store the correct street name
+    // Store correct street name
     document.getElementById("street-name").innerText = name;
 }
 
-// Listen for Enter key press in the input field
-document.getElementById("street-input").addEventListener("keypress", function(event) {
-    if (event.key === "Enter") {
-        checkAnswer();
-    }
-});
-
 // Check the user's answer
-// Store incorrect guesses
-let incorrectGuesses = [];
-
-// Function to check the user's answer
 function checkAnswer() {
     let userInput = document.getElementById("street-input").value.trim();
     let correctStreet = document.getElementById("street-name").innerText.trim();
@@ -149,8 +122,8 @@ function checkAnswer() {
         resultDiv.innerText = "❌ Try again!";
         resultDiv.style.color = "red";
 
-        // Add incorrect guess to the list if not already added
-        if (!incorrectGuesses.includes(userInput) && userInput !== "") {
+        // Add incorrect guess if it's not already listed
+        if (userInput !== "" && !incorrectGuesses.includes(userInput)) {
             incorrectGuesses.push(userInput);
             let listItem = document.createElement("li");
             listItem.innerHTML = `❌ ${userInput}`;
@@ -159,10 +132,17 @@ function checkAnswer() {
         }
     }
 
-    // Clear input field after guess
+    // Clear input field
     document.getElementById("street-input").value = "";
 }
 
+// Listen for "Enter" key press in input field
+document.getElementById("street-input").addEventListener("keypress", function (event) {
+    if (event.key === "Enter") {
+        event.preventDefault();
+        checkAnswer();
+    }
+});
 
 // Load a random street when the page loads
 loadStreetList();
