@@ -130,7 +130,10 @@ function checkAnswer() {
             points = 1;
         }
 
-        resultDiv.innerText = `✅ Correct! You scored ${points} points.`;
+        // Update the points display
+        document.getElementById("points").innerText = `Points: ${points}`;
+        
+        resultDiv.innerText = `✅ Correct!`;
         resultDiv.style.color = "green";
     } else {
         // Add incorrect guess if it's not already listed
