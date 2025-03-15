@@ -149,11 +149,15 @@ function checkAnswer() {
 
         attempts++;
 
-        // If 3 wrong attempts, reveal the correct answer
+        // If 3 wrong attempts, reveal the correct answer BELOW the list
         if (attempts >= 3) {
-            resultDiv.innerText = `❌ Out of attempts! The correct answer was: ${correctStreet}`;
-            resultDiv.style.color = "red";
-            document.getElementById("street-name").style.display = "block"; // Show correct answer
+            let correctAnswerItem = document.createElement("li");
+            correctAnswerItem.innerHTML = `✅ The correct answer was: <strong>${correctStreet}</strong>`;
+            correctAnswerItem.style.color = "blue";
+            correctAnswerItem.style.marginTop = "10px";
+            wrongList.appendChild(correctAnswerItem);
+
+            resultDiv.innerText = ""; // No extra text above
             updateScoreDisplay();
             
             // Load a new street after a short delay
