@@ -121,20 +121,18 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     // Check the user's answer
-    function checkAnswer() {
-        let userInput = document.getElementById("street-input").value;
-        let correctStreet = document.getElementById("street-name").innerText;
+function checkAnswer() {
+    // Check if the answer is correct and update points
+    let userInput = document.getElementById("street-input").value;
+    let correctStreet = document.getElementById("street-name").innerText;
 
-        // Update points text on the button
-        updatePointsText();
-
-        if (userInput.toLowerCase() === correctStreet.toLowerCase()) {
-            document.getElementById("result").innerText = "✅ Correct!";
-        } else {
-            document.getElementById("result").innerText = "❌ Try again!";
-            addWrongGuess(userInput);
-        }
+    if (userInput.toLowerCase() === correctStreet.toLowerCase()) {
+        updatePointsText(3); // Update the points if the answer is correct
+    } else {
+        updatePointsText(currentPoints - 1); // Deduct one point for wrong answer
     }
+}
+
 
     // Update the points text
     function updatePointsText() {
