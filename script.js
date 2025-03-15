@@ -10,7 +10,7 @@ L.tileLayer('https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png
 var streetLayer = L.layerGroup().addTo(map);
 let incorrectGuesses = new Set(); // Store wrong guesses uniquely
 let attempts = 0; // Track the number of attempts
-let points = 0; // Store points
+let points = 3; // Start with 3 points
 let correctStreet = ''; // Store the correct street name
 
 // Load and select a random street
@@ -114,14 +114,12 @@ function displayStreet(name, coordinateGroups) {
 // Update the points message based on attempts
 function updatePointsText() {
     let pointsText = document.getElementById("points-text");
-    if (attempts === 1) {
-        pointsText.innerText = "3 points for correct answer";
-    } else if (attempts === 2) {
-        pointsText.innerText = "2 points for correct answer";
-    } else if (attempts === 3) {
-        pointsText.innerText = "1 point for correct answer";
+
+    // Deduct 1 point for each wrong guess
+    if (points > 0) {
+        pointsText.innerText = `${points} point${points > 1 ? "s" : ""} for correct answer`;
     } else {
-        pointsText.innerText = ""; // Clear the points message after 3 attempts
+        pointsText.innerText = ""; // Clear the points message after 0 points
     }
 }
 
@@ -135,18 +133,14 @@ function checkAnswer() {
 
     if (userInput.toLowerCase() === correctStreet.toLowerCase()) {
         // Award points based on attempt number
-        points = 0;
-        if (attempts === 1) {
-            points = 3;
-        } else if (attempts === 2) {
-            points = 2;
-        } else if (attempts === 3) {
-            points = 1;
-        }
-
-        resultDiv.innerText = `✅ Correct! You scored ${points} points.`;
+        resultDiv.innerText = `✅ Correct! You scored ${points} point${points > 1 ? "s" : ""}.`;
         resultDiv.style.color = "green";
     } else {
+        // Deduct a point after a wrong guess and update points text
+        if (points > 0) {
+            points--; // Deduct 1 point
+        }
+
         // Add incorrect guess if it's not already listed
         if (userInput !== "" && !incorrectGuesses.has(userInput.toLowerCase())) {
             incorrectGuesses.add(userInput.toLowerCase());
