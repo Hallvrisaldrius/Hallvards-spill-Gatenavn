@@ -8,7 +8,7 @@ L.tileLayer('https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png
 
 // Global variables
 var streetLayer = L.layerGroup().addTo(map);
-let incorrectGuesses = []; // Store wrong guesses
+let incorrectGuesses = new Set(); // Store wrong guesses uniquely
 
 // Load and select a random street
 async function loadStreetList() {
@@ -123,11 +123,13 @@ function checkAnswer() {
         resultDiv.style.color = "red";
 
         // Add incorrect guess if it's not already listed
-        if (userInput !== "" && !incorrectGuesses.includes(userInput)) {
-            incorrectGuesses.push(userInput);
+        if (userInput !== "" && !incorrectGuesses.has(userInput.toLowerCase())) {
+            incorrectGuesses.add(userInput.toLowerCase());
+
             let listItem = document.createElement("li");
             listItem.innerHTML = `❌ ${userInput}`;
             listItem.style.color = "red";
+            listItem.style.margin = "5px 0";
             wrongList.appendChild(listItem);
         }
     }
