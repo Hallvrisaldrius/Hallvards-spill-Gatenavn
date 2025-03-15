@@ -10,7 +10,7 @@ L.tileLayer('https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png
 var streetLayer = L.layerGroup().addTo(map);
 let incorrectGuesses = new Set(); // Store wrong guesses uniquely
 let attempts = 0; // Track the number of attempts
-let points = 3; // Store points (start with 3 points)
+let points = 3; // Start with 3 points
 let correctStreet = ''; // Store the correct street name
 
 // Load and select a random street
@@ -111,10 +111,18 @@ function displayStreet(name, coordinateGroups) {
     correctStreet = name;
 }
 
-// Update the button text to show current points
-function updateButtonText() {
-    const submitButton = document.querySelector('button');
-    submitButton.innerText = `Submit - ${points} points`;
+// Update the points message based on attempts
+function updatePointsText() {
+    let pointsText = document.getElementById("points-text");
+    if (points === 3) {
+        pointsText.innerText = "3 points for correct answer";
+    } else if (points === 2) {
+        pointsText.innerText = "2 points for correct answer";
+    } else if (points === 1) {
+        pointsText.innerText = "1 point for correct answer";
+    } else {
+        pointsText.innerText = ""; // Clear the points message after 3 attempts
+    }
 }
 
 // Check the user's answer
@@ -127,16 +135,20 @@ function checkAnswer() {
 
     if (userInput.toLowerCase() === correctStreet.toLowerCase()) {
         // Award points based on attempt number
+        if (attempts === 1) {
+            points = 3;
+        } else if (attempts === 2) {
+            points = 2;
+        } else if (attempts === 3) {
+            points = 1;
+        }
+
         resultDiv.innerText = `✅ Correct! You scored ${points} points.`;
         resultDiv.style.color = "green";
     } else {
-        // Deduct points after a wrong guess
-        if (attempts === 1) {
-            points = 2; // 2 points after first wrong guess
-        } else if (attempts === 2) {
-            points = 1; // 1 point after second wrong guess
-        } else if (attempts >= 3) {
-            points = 0; // 0 points after 3 wrong guesses
+        // Deduct 1 point for each wrong guess
+        if (points > 0) {
+            points--;
         }
 
         // Add incorrect guess if it's not already listed
@@ -155,8 +167,8 @@ function checkAnswer() {
     document.getElementById("street-input").value = "";
     attempts++;
 
-    // Update the points text message and button text after each attempt
-    updateButtonText();
+    // Update the points text message after each attempt
+    updatePointsText();
 
     // After 3 attempts, display the correct answer if not already guessed
     if (attempts >= 4) {
@@ -175,6 +187,3 @@ document.getElementById("street-input").addEventListener("keypress", function (e
 
 // Load a random street when the page loads
 loadStreetList();
-
-// Initially set the button text
-updateButtonText();
