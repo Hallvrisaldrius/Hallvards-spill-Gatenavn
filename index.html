@@ -20,14 +20,15 @@
 
     <!-- Input Field for User Guess -->
     <input type="text" id="street-input" placeholder="Enter street name">
-    <button onclick="checkAnswer()">Submit</button>
+
+    <!-- Submit Button (points will be dynamically updated here) -->
+    <button id="submit-btn" onclick="checkAnswer()">Submit - 3 points</button>
+
+    <!-- List of Wrong Guesses -->
     <ul id="wrong-guesses" style="list-style: none; padding: 0;"></ul>
 
     <!-- Result Message -->
     <p id="result"></p>
-
-    <!-- Points Text: Always visible -->
-    <p id="points-text">3 points for correct answer</p>
 
     <!-- Leaflet JS -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
