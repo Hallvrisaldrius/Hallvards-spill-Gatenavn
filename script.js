@@ -124,33 +124,21 @@ function checkAnswer() {
     } else {
         wrongGuesses.push(userInput);
 
-        // Display wrong guesses with a red X (insert at the top)
+        // Display wrong guesses with a red X (newest first)
         let wrongGuessesList = document.getElementById("wrong-guesses");
         let listItem = document.createElement("li");
         listItem.innerHTML = `<span style="color: red;">❌ ${userInput}</span>`;
-        
-        // Insert at the beginning of the list
-        wrongGuessesList.prepend(listItem);
+        wrongGuessesList.prepend(listItem); // Add to the top
 
         // Decrease points and update display
         points--;
         updatePointsDisplay();
 
-        // After the third wrong guess, reveal the correct answer but still display the guess
+        // After the third wrong guess, reveal the correct answer
         if (wrongGuesses.length >= 3) {
             document.getElementById("result").innerText = `❌ The correct answer was: ${correctStreet}`;
             startRound(); // Start a new round
         }
-    }
-}
-
-    // Clear input field
-    document.getElementById("street-input").value = "";
-
-    // After 3 failed attempts, reveal the correct answer
-    if (points === 0) {
-        resultDiv.innerText = `❌ The correct street was: ${correctStreet}`;
-        resultDiv.style.color = "red";
     }
 }
 
