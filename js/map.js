@@ -1,8 +1,8 @@
 // map.js
 
 // Global variable for the map and streetLayer
-let map;
-let streetLayer;
+export let map;
+export let streetLayer;
 
 // Function to initialize the map
 export function initializeMap() {
