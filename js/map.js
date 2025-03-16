@@ -1,13 +1,20 @@
-// Initialize the map without a default center
-var map = L.map('map');
+// map.js
+
+// Initialize the map (centered on Oslo)
+var map = L.map('map').setView([59.9139, 10.7522], 14);
 
 // Use a basemap with no labels (Carto Light No Labels)
 L.tileLayer('https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png', {
     attribution: '&copy; CartoDB, OpenStreetMap contributors'
 }).addTo(map);
 
-// Function to display street coordinates on the map
-function displayStreet(coordinateGroups) {
+// Global variable for street polylines
+export var streetLayer = L.layerGroup().addTo(map);  // Exporting the streetLayer
+
+// Function to display all street segments as multiple polylines
+export function displayStreet(name, coordinateGroups) {
+    console.log(`📌 Displaying all segments of: ${name}`);
+
     // Clear previous street polylines
     streetLayer.clearLayers();
 
@@ -22,10 +29,13 @@ function displayStreet(coordinateGroups) {
         L.polyline(coords, { color: "red", weight: 4 }).addTo(streetLayer);
     });
 
-    // Fit map to the full extent of the street
-    let bounds = L.latLngBounds(allCoords);
-    map.fitBounds(bounds.pad(0.2)); // Adds a 20% margin
+    // Calculate the center of the street
+    let centerLat = allCoords.reduce((sum, coord) => sum + coord[0], 0) / allCoords.length;
+    let centerLng = allCoords.reduce((sum, coord) => sum + coord[1], 0) / allCoords.length;
+    let streetCenter = [centerLat, centerLng];
+
+    // Center the map on the street
+    map.setView(streetCenter, 16); // Zoom level 16 keeps it visible
 }
 
-// Expose map-related functions
-export { map, displayStreet };
+// Other map-related functions (if needed)...
