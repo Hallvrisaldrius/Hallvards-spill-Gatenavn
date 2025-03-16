@@ -1,5 +1,8 @@
 var currentRound = 1;
 var totalPoints = 0;
+var wrongGuesses = 0;
+var correctStreet = ""; // Global variable to store the correct street name
+var maxWrongGuesses = 3; // Maximum wrong guesses per round
 
 // Initialize the map (centered on Oslo)
 var map = L.map('map').setView([59.9139, 10.7522], 14);
@@ -11,8 +14,6 @@ L.tileLayer('https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png
 
 // Global variables for street polylines
 var streetLayer = L.layerGroup().addTo(map);
-
-var correctStreet = ""; // Global variable to store the correct street name
 
 // Load and select a random street
 async function loadStreetList() {
@@ -160,8 +161,32 @@ function checkAnswer() {
         let points = parseInt(pointsText.innerText.split(" ")[0]) - 1;
         pointsText.innerText = points > 0 ? `${points} points for a correct answer` : "0 points";
         document.getElementById("wrong-guesses").innerHTML += `<li>${userInput} ❌</li>`;
+
+        // Increment wrong guesses count
+        wrongGuesses++;
+
+        // If three wrong guesses, show the correct street name and move to the next round
+        if (wrongGuesses >= maxWrongGuesses) {
+            document.getElementById("round-result").innerText = `The correct street was: ${correctStreet}`;
+            currentRound++; // Move to the next round
+            wrongGuesses = 0; // Reset wrong guesses
+            startRound(); // Start a new round
+        }
     }
 }
+
+// Handle Enter key press for submitting answer or moving to the next round
+document.getElementById("street-input").addEventListener("keydown", function(event) {
+    if (event.key === "Enter") {
+        // If the correct answer was given or three wrong guesses were made, advance to the next round
+        if (document.getElementById("round-result").innerText.includes("Correct") || wrongGuesses >= maxWrongGuesses) {
+            currentRound++;
+            startRound(); // Start next round
+        } else {
+            checkAnswer(); // Submit the guess
+        }
+    }
+});
 
 // Start the first round when the page loads
 startRound();
