@@ -1,6 +1,10 @@
-// Declare global variables
-let correctStreet = ""; // Store the correct street name
-let attemptCount = 0; // Track the number of attempts
+// game.js
+
+import { loadStreetList } from './street.js';
+
+// Store the correct street name and attempt counter
+let correctStreet = '';
+let attemptCount = 0;
 
 // Function to load the street list and select a random street
 async function loadStreetList() {
@@ -16,7 +20,7 @@ async function loadStreetList() {
 
         // Choose a random street
         correctStreet = streets[Math.floor(Math.random() * streets.length)];
-        console.log("✅ Selected street:", correctStreet);
+        console.log("✅ Selected street:", correctStreet); // Log to check the correct street
 
         startRound(); // Start the round after loading the street
     } catch (error) {
@@ -38,6 +42,8 @@ function startRound() {
 function checkAnswer() {
     let userInput = document.getElementById("street-input").value.trim();
     if (!userInput) return; // Avoid empty guesses
+
+    console.log(`Checking guess: ${userInput}`); // Log user input for debugging
 
     let points = 3 - attemptCount;
     attemptCount++;
