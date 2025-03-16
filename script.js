@@ -116,35 +116,31 @@ function displayStreet(name, coordinateGroups) {
 // Check the user's answer
 function checkAnswer() {
     let userInput = document.getElementById("street-input").value.trim();
-    let resultDiv = document.getElementById("result");
-    let wrongList = document.getElementById("wrong-guesses");
-
-    resultDiv.innerText = ""; // Clear previous messages
+    let correctStreet = document.getElementById("street-name").innerText;
 
     if (userInput.toLowerCase() === correctStreet.toLowerCase()) {
-        // Award points based on remaining attempts
-        resultDiv.innerText = `✅ Correct! You scored ${points} points.`;
-        resultDiv.style.color = "green";
+        document.getElementById("result").innerText = `✅ Correct! You got ${points} points.`;
+        startRound(); // Start a new round
     } else {
-        // Only decrease points if still above 0
-        if (points > 0) {
-            points--;
-        }
+        wrongGuesses.push(userInput);
 
-        // Update the points text immediately
-        updatePointsText();
+        // Display wrong guesses with a red X
+        let wrongGuessesList = document.getElementById("wrong-guesses");
+        let listItem = document.createElement("li");
+        listItem.innerHTML = `<span style="color: red;">❌ ${userInput}</span>`;
+        wrongGuessesList.appendChild(listItem);
 
-        // Add incorrect guess if it's not already listed
-        if (userInput !== "" && !incorrectGuesses.has(userInput.toLowerCase())) {
-            incorrectGuesses.add(userInput.toLowerCase());
+        // Decrease points and update display
+        points--;
+        updatePointsDisplay();
 
-            let listItem = document.createElement("li");
-            listItem.innerHTML = `❌ ${userInput}`;
-            listItem.style.color = "red";
-            listItem.style.margin = "5px 0";
-            wrongList.appendChild(listItem);
+        // After the third wrong guess, reveal the correct answer but still display the guess
+        if (wrongGuesses.length >= 3) {
+            document.getElementById("result").innerText = `❌ The correct answer was: ${correctStreet}`;
+            startRound(); // Start a new round
         }
     }
+}
 
     // Clear input field
     document.getElementById("street-input").value = "";
