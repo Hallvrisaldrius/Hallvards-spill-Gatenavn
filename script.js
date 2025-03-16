@@ -12,6 +12,8 @@ L.tileLayer('https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png
 // Global variables for street polylines
 var streetLayer = L.layerGroup().addTo(map);
 
+var correctStreet = ""; // Global variable to store the correct street name
+
 // Load and select a random street
 async function loadStreetList() {
     try {
@@ -117,6 +119,7 @@ function displayStreet(name, coordinateGroups) {
     map.setView(streetCenter, 16); // Zoom level 16 keeps it visible
 
     // Store the correct street name
+    correctStreet = name;
     document.getElementById("street-name").innerText = name;
 }
 
@@ -124,6 +127,7 @@ function displayStreet(name, coordinateGroups) {
 function startRound() {
     if (currentRound > 3) {
         alert(`Game Over! Your total score is: ${totalPoints}`);
+        document.getElementById("round-number").innerText = `Game Over! Final Score: ${totalPoints}`;
         return; // End the game after 3 rounds
     }
 
@@ -134,7 +138,7 @@ function startRound() {
     document.getElementById("street-input").value = "";
     document.getElementById("wrong-guesses").innerHTML = "";
     document.getElementById("points-text").innerText = "3 points for a correct answer";
-    document.getElementById("result").innerText = "";
+    document.getElementById("round-result").innerText = "";
 
     // Load a random street for this round
     loadStreetList();
@@ -143,12 +147,13 @@ function startRound() {
 // Check the user's answer
 function checkAnswer() {
     let userInput = document.getElementById("street-input").value;
-    let correctStreet = document.getElementById("street-name").innerText;
     let pointsText = document.getElementById("points-text");
 
     if (userInput.toLowerCase() === correctStreet.toLowerCase()) {
-        totalPoints += parseInt(pointsText.innerText); // Add the points for the correct guess
+        totalPoints += parseInt(pointsText.innerText.split(' ')[0]); // Add the points for the correct guess
         document.getElementById("round-result").innerText = `Correct! Points: ${totalPoints}`;
+        document.getElementById("total-points").innerText = `Total Points: ${totalPoints}`; // Update total points
+
         currentRound++; // Move to the next round
         startRound(); // Start a new round
     } else {
