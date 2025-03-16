@@ -1,5 +1,7 @@
 var currentRound = 1;
 var totalPoints = 0;
+var attempts = 0;
+var correctStreet = "";
 
 // Initialize the map (centered on Oslo)
 var map = L.map('map').setView([59.9139, 10.7522], 14);
@@ -25,10 +27,10 @@ async function loadStreetList() {
         }
 
         // Choose a random street
-        let randomStreet = streets[Math.floor(Math.random() * streets.length)];
-        console.log("✅ Selected street:", randomStreet);
+        correctStreet = streets[Math.floor(Math.random() * streets.length)];
+        console.log("✅ Selected street:", correctStreet);
 
-        fetchStreetGeometry(randomStreet); // Get all segments for the street
+        fetchStreetGeometry(correctStreet); // Get all segments for the street
     } catch (error) {
         console.error("❌ Error loading streets:", error);
     }
@@ -56,7 +58,7 @@ async function fetchStreetGeometry(streetName) {
 
         let allCoordinates = extractAllCoordinates(data);
         if (allCoordinates.length) {
-            displayStreet(streetName, allCoordinates);
+            displayStreet(allCoordinates);
         } else {
             console.error("❌ No valid coordinates found for", streetName);
         }
@@ -91,8 +93,8 @@ function extractAllCoordinates(data) {
 }
 
 // Display all street segments as multiple polylines and center the map
-function displayStreet(name, coordinateGroups) {
-    console.log(`📌 Displaying all segments of: ${name}`);
+function displayStreet(coordinateGroups) {
+    console.log(`📌 Displaying all segments of: ${correctStreet}`);
 
     // Clear previous street polylines
     streetLayer.clearLayers();
@@ -115,14 +117,6 @@ function displayStreet(name, coordinateGroups) {
 
     // Center the map on the street
     map.setView(streetCenter, 16); // Zoom level 16 keeps it visible
-
-    // Safely update the street name element
-    let streetNameElement = document.getElementById("street-name");
-    if (streetNameElement) {
-        streetNameElement.innerText = name;
-    } else {
-        console.error("❌ Could not find street-name element to update.");
-    }
 }
 
 // Start a new round and update the round number
@@ -139,6 +133,7 @@ function startRound() {
     }
 
     // Reset guess data for a new round
+    attempts = 0;
     document.getElementById("street-input").value = "";
     document.getElementById("wrong-guesses").innerHTML = "";
     document.getElementById("points-text").innerText = "3 points for a correct answer";
@@ -151,7 +146,6 @@ function startRound() {
 // Check the user's answer
 function checkAnswer() {
     let userInput = document.getElementById("street-input").value;
-    let correctStreet = document.getElementById("street-name").innerText;
     let pointsText = document.getElementById("points-text");
 
     // Ensure the correct street name is available
