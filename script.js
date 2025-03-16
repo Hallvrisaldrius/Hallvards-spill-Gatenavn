@@ -116,8 +116,13 @@ function displayStreet(name, coordinateGroups) {
     // Center the map on the street
     map.setView(streetCenter, 16); // Zoom level 16 keeps it visible
 
-    // Store the correct street name
-    document.getElementById("street-name").innerText = name;
+    // Safely update the street name element
+    let streetNameElement = document.getElementById("street-name");
+    if (streetNameElement) {
+        streetNameElement.innerText = name;
+    } else {
+        console.error("❌ Could not find street-name element to update.");
+    }
 }
 
 // Start a new round and update the round number
@@ -127,8 +132,11 @@ function startRound() {
         return; // End the game after 3 rounds
     }
 
-    // Update round number display
-    document.getElementById("round-number").innerText = `Round: ${currentRound}`;
+    // Safely update round number
+    let roundNumberElement = document.getElementById("round-number");
+    if (roundNumberElement) {
+        roundNumberElement.innerText = `Round: ${currentRound}`;
+    }
 
     // Reset guess data for a new round
     document.getElementById("street-input").value = "";
@@ -146,8 +154,14 @@ function checkAnswer() {
     let correctStreet = document.getElementById("street-name").innerText;
     let pointsText = document.getElementById("points-text");
 
+    // Ensure the correct street name is available
+    if (!correctStreet) {
+        console.error("❌ Street name is not available for comparison.");
+        return;
+    }
+
     if (userInput.toLowerCase() === correctStreet.toLowerCase()) {
-        totalPoints += parseInt(pointsText.innerText); // Add the points for the correct guess
+        totalPoints += parseInt(pointsText.innerText.split(" ")[0]); // Add the points for the correct guess
         document.getElementById("round-result").innerText = `Correct! Points: ${totalPoints}`;
         document.getElementById("total-points").innerText = `Total Points: ${totalPoints}`; // Update total points
         currentRound++; // Move to the next round
