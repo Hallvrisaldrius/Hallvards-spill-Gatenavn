@@ -159,5 +159,12 @@ function checkAnswer() {
     }
 }
 
+// Listen for Enter key press to submit guess
+document.getElementById("street-input").addEventListener("keydown", function(event) {
+    if (event.key === "Enter") {
+        checkAnswer();
+    }
+});
+
 // Start the first round when the page loads
 startRound();
