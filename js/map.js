@@ -1,41 +1,41 @@
 // map.js
 
-// Initialize the map (centered on Oslo)
-var map = L.map('map').setView([59.9139, 10.7522], 14);
+// Global variable for the map and streetLayer
+let map;
+let streetLayer;
 
-// Use a basemap with no labels (Carto Light No Labels)
-L.tileLayer('https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png', {
-    attribution: '&copy; CartoDB, OpenStreetMap contributors'
-}).addTo(map);
+// Function to initialize the map
+export function initializeMap() {
+    // Initialize the map (centered on Oslo)
+    map = L.map('map').setView([59.9139, 10.7522], 14);
 
-// Global variable for street polylines
-export var streetLayer = L.layerGroup().addTo(map);  // Exporting the streetLayer
+    // Use a basemap with no labels (Carto Light No Labels)
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png', {
+        attribution: '&copy; CartoDB, OpenStreetMap contributors'
+    }).addTo(map);
 
-// Function to display all street segments as multiple polylines
+    // Initialize the streetLayer as a layer group on the map
+    streetLayer = L.layerGroup().addTo(map);
+}
+
+// Function to display the street on the map
 export function displayStreet(name, coordinateGroups) {
     console.log(`📌 Displaying all segments of: ${name}`);
 
     // Clear previous street polylines
     streetLayer.clearLayers();
 
-    let allCoords = coordinateGroups.flat(); // Flatten coordinate groups
-    if (allCoords.length === 0) {
-        console.error("⚠️ No valid coordinates for centering.");
-        return;
-    }
-
     // Add each segment as a polyline
     coordinateGroups.forEach(coords => {
         L.polyline(coords, { color: "red", weight: 4 }).addTo(streetLayer);
     });
 
-    // Calculate the center of the street
+    // Calculate center of the street
+    let allCoords = coordinateGroups.flat(); // Flatten the array of coordinates
     let centerLat = allCoords.reduce((sum, coord) => sum + coord[0], 0) / allCoords.length;
     let centerLng = allCoords.reduce((sum, coord) => sum + coord[1], 0) / allCoords.length;
     let streetCenter = [centerLat, centerLng];
 
-    // Center the map on the street
-    map.setView(streetCenter, 16); // Zoom level 16 keeps it visible
+    // Center the map on the street with a margin for a better view
+    map.setView(streetCenter, 15); // Adjust zoom as needed for a better margin around the street
 }
-
-// Other map-related functions (if needed)...
