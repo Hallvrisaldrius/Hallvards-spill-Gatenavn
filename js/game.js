@@ -1,69 +1,45 @@
-// game.js
+import { loadStreetList, currentStreet } from './street.js';
+import { updatePointsText, displayWrongGuesses } from './utils.js';
 
-import { loadStreetList } from './street.js';
+// Global variables for the game
+var remainingPoints = 3;
+var wrongGuesses = [];
 
-// Store the correct street name and attempt counter
-let correctStreet = '';
-let attemptCount = 0;
-
-// Function to start a new round
-async function startRound() {
-    correctStreet = await loadStreetList();  // Get the correct street name
-    if (correctStreet) {
-        attemptCount = 0; // Reset attempt count
-        document.getElementById("street-input").value = ""; // Clear input field
-        document.getElementById("result").innerText = ""; // Clear result message
-        document.getElementById("wrong-guesses").innerHTML = ""; // Clear wrong guesses list
-        document.getElementById("points-text").innerText = "3 points for correct answer"; // Set initial points text
-        document.getElementById("street-name").style.display = "none"; // Hide the street name until the end
-    }
-}
-
-// Function to check the user's guess
+// Check the user's answer
 function checkAnswer() {
     let userInput = document.getElementById("street-input").value.trim();
-    if (!userInput) return; // Avoid empty guesses
+    
+    if (!userInput) return; // Ignore empty input
 
-    console.log(`Checking guess: ${userInput}`); // Log user input for debugging
-
-    let points = 3 - attemptCount;
-    attemptCount++;
-
-    if (userInput.toLowerCase() === correctStreet.toLowerCase()) {
-        // Correct guess
-        document.getElementById("result").innerText = `✅ Correct! You earned ${points} point(s).`;
-        document.getElementById("street-name").innerText = correctStreet; // Display correct street name
-        document.getElementById("street-name").style.display = "block"; // Show the street name
-        document.getElementById("points-text").style.display = "none"; // Hide points after correct guess
+    if (userInput.toLowerCase() === currentStreet.toLowerCase()) {
+        document.getElementById("result").innerText = `✅ Correct! You earned ${remainingPoints} points!`;
+        document.getElementById("points-text").style.display = "none";
     } else {
-        // Wrong guess
-        let wrongList = document.getElementById("wrong-guesses");
-        let li = document.createElement("li");
-        li.innerText = userInput;
-        li.style.color = "red"; // Add red color for wrong answers
-        wrongList.appendChild(li);
+        wrongGuesses.push(userInput);
+        displayWrongGuesses(wrongGuesses);
+        
+        remainingPoints = Math.max(0, remainingPoints - 1); // Decrease but never below 0
+        updatePointsText(remainingPoints);
 
-        // Update points and display message
-        if (attemptCount === 1) {
-            document.getElementById("points-text").innerText = "2 points for correct answer";
-        } else if (attemptCount === 2) {
-            document.getElementById("points-text").innerText = "1 point for correct answer";
-        } else if (attemptCount >= 3) {
-            // After 3 wrong attempts, show the correct answer
-            document.getElementById("result").innerText = `❌ No more attempts. The correct answer was: ${correctStreet}`;
-            document.getElementById("street-name").innerText = correctStreet; // Display the correct street name
-            document.getElementById("street-name").style.display = "block"; // Show the street name
-            document.getElementById("points-text").style.display = "none"; // Hide points text
+        if (remainingPoints === 0) {
+            document.getElementById("result").innerText = `❌ No more attempts. The correct answer was: ${currentStreet}`;
         }
     }
+
+    document.getElementById("street-input").value = ""; // Clear input field
 }
 
-// Function to submit the answer when "enter" is pressed
-document.getElementById("street-input").addEventListener("keypress", function(event) {
-    if (event.key === "Enter") {
-        checkAnswer();
-    }
-});
+// Start a new round
+function startRound() {
+    remainingPoints = 3;
+    wrongGuesses = [];
+    document.getElementById("wrong-guesses").innerHTML = "";
+    document.getElementById("result").innerText = "";
+    document.getElementById("points-text").innerText = "3 points for a correct answer";
+    document.getElementById("points-text").style.display = "block";
 
-// Start the game when the page loads
-startRound();
+    loadStreetList();
+}
+
+// Expose game-related functions
+export { startRound, checkAnswer };
