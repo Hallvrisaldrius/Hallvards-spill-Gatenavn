@@ -1,4 +1,4 @@
-import { loadStreetList } from './script.js'; 
+import { loadStreetList } from './street.js';
 
 // game.js
 let remainingPoints = 3;
