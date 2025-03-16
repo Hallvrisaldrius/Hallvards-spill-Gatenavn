@@ -149,12 +149,9 @@ function checkAnswer() {
     if (userInput.toLowerCase() === correctStreet.toLowerCase()) {
         totalPoints += parseInt(pointsText.innerText); // Add the points for the correct guess
         document.getElementById("round-result").innerText = `Correct! Points: ${totalPoints}`;
-        document.getElementById("total-points").innerText = `Total Points: ${totalPoints}`;
-        
+        document.getElementById("total-points").innerText = `Total Points: ${totalPoints}`; // Update total points
         currentRound++; // Move to the next round
-        
-        // Delay before the next round starts
-        setTimeout(startRound, 3000); // 3 seconds delay
+        startRound(); // Start a new round
     } else {
         let points = parseInt(pointsText.innerText.split(" ")[0]) - 1;
         pointsText.innerText = points > 0 ? `${points} points for a correct answer` : "0 points";
