@@ -124,11 +124,13 @@ function checkAnswer() {
     } else {
         wrongGuesses.push(userInput);
 
-        // Display wrong guesses with a red X
+        // Display wrong guesses with a red X (insert at the top)
         let wrongGuessesList = document.getElementById("wrong-guesses");
         let listItem = document.createElement("li");
         listItem.innerHTML = `<span style="color: red;">❌ ${userInput}</span>`;
-        wrongGuessesList.appendChild(listItem);
+        
+        // Insert at the beginning of the list
+        wrongGuessesList.prepend(listItem);
 
         // Decrease points and update display
         points--;
