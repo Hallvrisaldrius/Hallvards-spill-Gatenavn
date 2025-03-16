@@ -11,8 +11,10 @@ var streetLayer = L.layerGroup().addTo(map);
 var currentStreet = "";
 var remainingPoints = 3;
 var wrongGuesses = [];
+var round = 1;  // Track the current round
+var totalPoints = 0;  // Track the accumulated total score
 
-// Load and select a random street
+// Load and select a random street for each round
 async function loadStreetList() {
     try {
         let response = await fetch('streets.txt');
@@ -24,7 +26,7 @@ async function loadStreetList() {
             return;
         }
 
-        // Choose a random street
+        // Choose a random street for the current round
         let randomStreet = streets[Math.floor(Math.random() * streets.length)];
         console.log("✅ Selected street:", randomStreet);
 
@@ -118,6 +120,7 @@ function checkAnswer() {
     if (!userInput) return; // Ignore empty input
 
     if (userInput.toLowerCase() === currentStreet.toLowerCase()) {
+        totalPoints += remainingPoints;  // Add points to the total
         document.getElementById("result").innerText = `✅ Correct! You earned ${remainingPoints} points!`;
         document.getElementById("points-text").style.display = "none";
     } else {
@@ -133,6 +136,11 @@ function checkAnswer() {
     }
 
     document.getElementById("street-input").value = ""; // Clear input field
+
+    // End round and proceed to next if necessary
+    if (remainingPoints === 0 || userInput.toLowerCase() === currentStreet.toLowerCase()) {
+        endRound();
+    }
 }
 
 // Display wrong guesses
@@ -157,8 +165,32 @@ function updatePointsText() {
     }
 }
 
-// Reset and start a new round
-function startRound() {
+// End the round and prepare for the next round
+function endRound() {
+    // Display round result and total score so far
+    document.getElementById("round-result").innerText = `Round ${round} complete! Total points: ${totalPoints}`;
+
+    // Prepare for next round
+    if (round < 3) {
+        round++;
+        remainingPoints = 3;  // Reset points for next round
+        wrongGuesses = [];
+        document.getElementById("wrong-guesses").innerHTML = "";
+        document.getElementById("result").innerText = "";
+        document.getElementById("points-text").innerText = "3 points for a correct answer";
+        document.getElementById("points-text").style.display = "block";
+        loadStreetList();
+    } else {
+        // After all rounds
+        document.getElementById("round-result").innerText = `Game Over! Your final score: ${totalPoints}`;
+        document.getElementById("street-input").disabled = true;  // Disable input after game ends
+    }
+}
+
+// Reset and start a new game
+function startGame() {
+    round = 1;
+    totalPoints = 0;
     remainingPoints = 3;
     wrongGuesses = [];
     document.getElementById("wrong-guesses").innerHTML = "";
@@ -176,5 +208,5 @@ document.getElementById("street-input").addEventListener("keypress", function(ev
     }
 });
 
-// Load the first round
-startRound();
+// Start the first round when the page loads
+startGame();
