@@ -1,8 +1,5 @@
 var currentRound = 1;
 var totalPoints = 0;
-var wrongGuesses = 0;
-var correctStreet = ""; // Global variable to store the correct street name
-var maxWrongGuesses = 3; // Maximum wrong guesses per round
 
 // Initialize the map (centered on Oslo)
 var map = L.map('map').setView([59.9139, 10.7522], 14);
@@ -120,7 +117,6 @@ function displayStreet(name, coordinateGroups) {
     map.setView(streetCenter, 16); // Zoom level 16 keeps it visible
 
     // Store the correct street name
-    correctStreet = name;
     document.getElementById("street-name").innerText = name;
 }
 
@@ -128,7 +124,6 @@ function displayStreet(name, coordinateGroups) {
 function startRound() {
     if (currentRound > 3) {
         alert(`Game Over! Your total score is: ${totalPoints}`);
-        document.getElementById("round-number").innerText = `Game Over! Final Score: ${totalPoints}`;
         return; // End the game after 3 rounds
     }
 
@@ -139,7 +134,7 @@ function startRound() {
     document.getElementById("street-input").value = "";
     document.getElementById("wrong-guesses").innerHTML = "";
     document.getElementById("points-text").innerText = "3 points for a correct answer";
-    document.getElementById("round-result").innerText = "";
+    document.getElementById("result").innerText = "";
 
     // Load a random street for this round
     loadStreetList();
@@ -148,45 +143,24 @@ function startRound() {
 // Check the user's answer
 function checkAnswer() {
     let userInput = document.getElementById("street-input").value;
+    let correctStreet = document.getElementById("street-name").innerText;
     let pointsText = document.getElementById("points-text");
 
     if (userInput.toLowerCase() === correctStreet.toLowerCase()) {
-        totalPoints += parseInt(pointsText.innerText.split(' ')[0]); // Add the points for the correct guess
+        totalPoints += parseInt(pointsText.innerText); // Add the points for the correct guess
         document.getElementById("round-result").innerText = `Correct! Points: ${totalPoints}`;
-        document.getElementById("total-points").innerText = `Total Points: ${totalPoints}`; // Update total points
-
+        document.getElementById("total-points").innerText = `Total Points: ${totalPoints}`;
+        
         currentRound++; // Move to the next round
-        startRound(); // Start a new round
+        
+        // Delay before the next round starts
+        setTimeout(startRound, 3000); // 3 seconds delay
     } else {
         let points = parseInt(pointsText.innerText.split(" ")[0]) - 1;
         pointsText.innerText = points > 0 ? `${points} points for a correct answer` : "0 points";
         document.getElementById("wrong-guesses").innerHTML += `<li>${userInput} ❌</li>`;
-
-        // Increment wrong guesses count
-        wrongGuesses++;
-
-        // If three wrong guesses, show the correct street name and move to the next round
-        if (wrongGuesses >= maxWrongGuesses) {
-            document.getElementById("round-result").innerText = `The correct street was: ${correctStreet}`;
-            currentRound++; // Move to the next round
-            wrongGuesses = 0; // Reset wrong guesses
-            startRound(); // Start a new round
-        }
     }
 }
-
-// Handle Enter key press for submitting answer or moving to the next round
-document.getElementById("street-input").addEventListener("keydown", function(event) {
-    if (event.key === "Enter") {
-        // If the correct answer was given or three wrong guesses were made, advance to the next round
-        if (document.getElementById("round-result").innerText.includes("Correct") || wrongGuesses >= maxWrongGuesses) {
-            currentRound++;
-            startRound(); // Start next round
-        } else {
-            checkAnswer(); // Submit the guess
-        }
-    }
-});
 
 // Start the first round when the page loads
 startRound();
