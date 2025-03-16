@@ -1,32 +1,31 @@
-// map.js
-let map = L.map('map');
+// Initialize the map without a default center
+var map = L.map('map');
 
-// Initialize the map with the default view
-function initializeMap() {
-    map.setView([59.9139, 10.7522], 14);
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png', {
-        attribution: '&copy; CartoDB, OpenStreetMap contributors'
-    }).addTo(map);
-}
+// Use a basemap with no labels (Carto Light No Labels)
+L.tileLayer('https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png', {
+    attribution: '&copy; CartoDB, OpenStreetMap contributors'
+}).addTo(map);
 
-// Function to display street segments
+// Function to display street coordinates on the map
 function displayStreet(coordinateGroups) {
-    let streetLayer = L.layerGroup().addTo(map);
+    // Clear previous street polylines
     streetLayer.clearLayers();
 
-    let allCoords = coordinateGroups.flat();
+    let allCoords = coordinateGroups.flat(); // Flatten coordinate groups
     if (allCoords.length === 0) {
         console.error("⚠️ No valid coordinates for centering.");
         return;
     }
 
+    // Add each segment as a polyline
     coordinateGroups.forEach(coords => {
         L.polyline(coords, { color: "red", weight: 4 }).addTo(streetLayer);
     });
 
-    // Fit map to street segments with a 20% margin
+    // Fit map to the full extent of the street
     let bounds = L.latLngBounds(allCoords);
     map.fitBounds(bounds.pad(0.2)); // Adds a 20% margin
 }
 
-export { initializeMap, displayStreet };
+// Expose map-related functions
+export { map, displayStreet };
