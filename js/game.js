@@ -1,3 +1,5 @@
+import { loadStreetList } from './script.js'; 
+
 // game.js
 let remainingPoints = 3;
 let wrongGuesses = [];
