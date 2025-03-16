@@ -1,19 +1,19 @@
-// Initialize the map (centered on Oslo)
-var map = L.map('map').setView([59.9139, 10.7522], 14);
+// Initialize the map (no default center)
+var map = L.map('map');
 
-// Use a basemap with no labels (Carto Light No Labels)
+// Use a basemap with no labels
 L.tileLayer('https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png', {
     attribution: '&copy; CartoDB, OpenStreetMap contributors'
 }).addTo(map);
 
-// Global variables for street polylines and game state
+// Global variables
 var streetLayer = L.layerGroup().addTo(map);
 var correctStreet = "";
-var points = 3;
-var incorrectGuesses = new Set();
+var availablePoints = 3;
+var wrongGuesses = [];
 
-// Load and select a random street
-async function loadStreetList() {
+// Load and start a new round
+async function startRound() {
     try {
         let response = await fetch('streets.txt');
         let text = await response.text();
@@ -24,11 +24,17 @@ async function loadStreetList() {
             return;
         }
 
-        // Choose a random street
         correctStreet = streets[Math.floor(Math.random() * streets.length)];
         console.log("✅ Selected street:", correctStreet);
 
-        fetchStreetGeometry(correctStreet); // Get all segments for the street
+        wrongGuesses = [];
+        availablePoints = 3;
+        updatePointsText();
+        document.getElementById("wrong-guesses").innerHTML = "";
+        document.getElementById("result").innerText = "";
+        document.getElementById("street-input").value = "";
+
+        fetchStreetGeometry(correctStreet);
     } catch (error) {
         console.error("❌ Error loading streets:", error);
     }
@@ -70,14 +76,12 @@ function extractAllCoordinates(data) {
     let nodes = {};
     let allCoordinates = [];
 
-    // Store all nodes with their coordinates
     data.elements.forEach(element => {
         if (element.type === "node") {
             nodes[element.id] = [element.lat, element.lon];
         }
     });
 
-    // Extract all ways (street segments)
     data.elements.forEach(element => {
         if (element.type === "way") {
             let wayCoords = element.nodes.map(nodeId => nodes[nodeId]).filter(coord => coord);
@@ -90,82 +94,76 @@ function extractAllCoordinates(data) {
     return allCoordinates;
 }
 
-// Display all street segments as multiple polylines and center the map
+// Display street segments and center the map
 function displayStreet(name, coordinateGroups) {
     console.log(`📌 Displaying all segments of: ${name}`);
 
-    // Clear previous street polylines
     streetLayer.clearLayers();
 
-    let allCoords = coordinateGroups.flat(); // Flatten coordinate groups
+    let allCoords = coordinateGroups.flat();
     if (allCoords.length === 0) {
         console.error("⚠️ No valid coordinates for centering.");
         return;
     }
 
-    // Add each segment as a polyline
     coordinateGroups.forEach(coords => {
         L.polyline(coords, { color: "red", weight: 4 }).addTo(streetLayer);
     });
 
-    // Fit the map to the street bounds with a 20% margin
     let bounds = L.latLngBounds(allCoords);
     map.fitBounds(bounds.pad(0.2));
 }
 
-// Check the user's answer
+// Check user input
 function checkAnswer() {
     let userInput = document.getElementById("street-input").value.trim();
-    let correctStreet = document.getElementById("street-name").innerText;
 
     if (userInput.toLowerCase() === correctStreet.toLowerCase()) {
-        document.getElementById("result").innerText = `✅ Correct! You got ${points} points.`;
-        startRound(); // Start a new round
+        document.getElementById("result").innerText = `✅ Correct! You earned ${availablePoints} points!`;
+        startRound();
     } else {
         wrongGuesses.push(userInput);
+        updateWrongGuesses();
 
-        // Display wrong guesses with a red X (newest first)
-        let wrongGuessesList = document.getElementById("wrong-guesses");
-        let listItem = document.createElement("li");
-        listItem.innerHTML = `<span style="color: red;">❌ ${userInput}</span>`;
-        wrongGuessesList.prepend(listItem); // Add to the top
-
-        // Decrease points and update display
-        points--;
-        updatePointsDisplay();
-
-        // After the third wrong guess, reveal the correct answer
-        if (wrongGuesses.length >= 3) {
-            document.getElementById("result").innerText = `❌ The correct answer was: ${correctStreet}`;
-            startRound(); // Start a new round
+        if (availablePoints > 1) {
+            availablePoints--;
+            updatePointsText();
+        } else {
+            availablePoints = 0;
+            updatePointsText();
+            document.getElementById("result").innerText = `❌ The correct street was: ${correctStreet}`;
+            startRound();
         }
     }
 }
 
-// Update the points message based on remaining points
+// Update wrong guesses list
+function updateWrongGuesses() {
+    let list = document.getElementById("wrong-guesses");
+    list.innerHTML = "";
+    wrongGuesses.forEach(guess => {
+        let item = document.createElement("li");
+        item.innerHTML = `❌ ${guess}`;
+        list.appendChild(item);
+    });
+}
+
+// Update points display
 function updatePointsText() {
     let pointsText = document.getElementById("points-text");
-    if (points > 0) {
-        pointsText.innerText = `${points} points for correct answer`;
+    if (availablePoints > 0) {
+        pointsText.innerText = `${availablePoints} points for correct answer`;
     } else {
-        pointsText.innerText = ""; // Hide the text when points reach 0
+        pointsText.innerText = "";
     }
 }
 
-// Initialize points at the start of a new round
-function startRound() {
-    points = 3; // Reset points to 3 at the start
-    incorrectGuesses.clear();
-    document.getElementById("wrong-guesses").innerHTML = ""; // Clear previous wrong guesses
-    updatePointsText();
-    loadStreetList();
-}
-
+// Submit on Enter key
 document.getElementById("street-input").addEventListener("keypress", function(event) {
     if (event.key === "Enter") {
         checkAnswer();
     }
 });
 
-// Load a random street when the page loads
+// Start the first round
 startRound();
