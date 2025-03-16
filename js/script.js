@@ -1,13 +1,5 @@
-// script.js
-import { initializeMap } from './map.js';
-import { loadStreetList } from './street.js';
-import { checkAnswer, startRound } from './game.js';
-
-// Initialize map
-initializeMap();
-
-// Start the first round
-startRound();
+import { startRound } from './game.js';
+import { updatePointsText } from './utils.js';
 
 // Allow pressing Enter to submit
 document.getElementById("street-input").addEventListener("keypress", function(event) {
@@ -15,3 +7,6 @@ document.getElementById("street-input").addEventListener("keypress", function(ev
         checkAnswer();
     }
 });
+
+// Load the first round
+startRound();
