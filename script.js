@@ -175,7 +175,6 @@ function startRound() {
     loadStreetList();
 }
 
-// Allow pressing Enter to submit
 document.getElementById("street-input").addEventListener("keypress", function(event) {
     if (event.key === "Enter") {
         checkAnswer();
@@ -183,4 +182,4 @@ document.getElementById("street-input").addEventListener("keypress", function(ev
 });
 
 // Load a random street when the page loads
-loadStreetList();
+startRound();
