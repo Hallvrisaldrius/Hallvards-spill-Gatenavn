@@ -1,10 +1,3 @@
-// Initialize variables
-var points = 3;
-var attempts = 0;
-var maxAttempts = 3;
-var correctStreet = "";
-var gameEnded = false;
-
 // Initialize the map (centered on Oslo)
 var map = L.map('map').setView([59.9139, 10.7522], 14);
 
@@ -13,8 +6,11 @@ L.tileLayer('https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png
     attribution: '&copy; CartoDB, OpenStreetMap contributors'
 }).addTo(map);
 
-// Global variables for street polylines
+// Global variables for street polylines and game state
 var streetLayer = L.layerGroup().addTo(map);
+var correctStreet = "";
+var points = 3;
+var incorrectGuesses = new Set();
 
 // Load and select a random street
 async function loadStreetList() {
@@ -29,18 +25,10 @@ async function loadStreetList() {
         }
 
         // Choose a random street
-        let randomStreet = streets[Math.floor(Math.random() * streets.length)];
-        console.log("✅ Selected street:", randomStreet);
+        correctStreet = streets[Math.floor(Math.random() * streets.length)];
+        console.log("✅ Selected street:", correctStreet);
 
-        fetchStreetGeometry(randomStreet); // Get all segments for the street
-        correctStreet = randomStreet; // Store the correct street name
-        gameEnded = false; // Reset the game state
-
-        // Reset points and attempts
-        points = 3;
-        attempts = 0;
-        updatePointsText();
-        document.getElementById("wrong-guesses").innerHTML = ""; // Clear previous wrong guesses
+        fetchStreetGeometry(correctStreet); // Get all segments for the street
     } catch (error) {
         console.error("❌ Error loading streets:", error);
     }
@@ -120,37 +108,79 @@ function displayStreet(name, coordinateGroups) {
         L.polyline(coords, { color: "red", weight: 4 }).addTo(streetLayer);
     });
 
-    // Calculate center of the street
-    let centerLat = allCoords.reduce((sum, coord) => sum + coord[0], 0) / allCoords.length;
-    let centerLng = allCoords.reduce((sum, coord) => sum + coord[1], 0) / allCoords.length;
-    let streetCenter = [centerLat, centerLng];
-
-    // Center the map on the street
-    map.setView(streetCenter, 16); // Zoom level 16 keeps it visible
-
-    // Store the correct street name
-    document.getElementById("street-name").innerText = name;
+    // Fit the map to the street bounds with a 20% margin
+    let bounds = L.latLngBounds(allCoords);
+    map.fitBounds(bounds.pad(0.2));
 }
 
 // Check the user's answer
 function checkAnswer() {
-    if (gameEnded) return; // Prevent further guesses after the game ends
-
     let userInput = document.getElementById("street-input").value.trim();
-    let correctStreetName = document.getElementById("street-name").innerText;
+    let resultDiv = document.getElementById("result");
+    let wrongList = document.getElementById("wrong-guesses");
 
-    // If the guess is correct
-    if (userInput.toLowerCase() === correctStreetName.toLowerCase()) {
-        points = points > 0 ? points : 0; // Ensure no negative points
-        document.getElementById("result").innerText = `✅ Correct! You scored ${points} point(s).`;
-        gameEnded = true;
-        document.getElementById("points-text").style.display = "none"; // Hide points text
-        setTimeout(loadStreetList, 3000); // Restart the game after 3 seconds
+    resultDiv.innerText = ""; // Clear previous messages
+
+    if (userInput.toLowerCase() === correctStreet.toLowerCase()) {
+        // Award points based on remaining attempts
+        resultDiv.innerText = `✅ Correct! You scored ${points} points.`;
+        resultDiv.style.color = "green";
     } else {
-        // If the guess is wrong
-        attempts++;
-        points = Math.max(0, points - 1); // Deduct 1 point per wrong attempt
-        updatePointsText(); // Update the points text
+        // Only decrease points if still above 0
+        if (points > 0) {
+            points--;
+        }
 
-        // Add the wrong guess to the list
-        
+        // Update the points text immediately
+        updatePointsText();
+
+        // Add incorrect guess if it's not already listed
+        if (userInput !== "" && !incorrectGuesses.has(userInput.toLowerCase())) {
+            incorrectGuesses.add(userInput.toLowerCase());
+
+            let listItem = document.createElement("li");
+            listItem.innerHTML = `❌ ${userInput}`;
+            listItem.style.color = "red";
+            listItem.style.margin = "5px 0";
+            wrongList.appendChild(listItem);
+        }
+    }
+
+    // Clear input field
+    document.getElementById("street-input").value = "";
+
+    // After 3 failed attempts, reveal the correct answer
+    if (points === 0) {
+        resultDiv.innerText = `❌ The correct street was: ${correctStreet}`;
+        resultDiv.style.color = "red";
+    }
+}
+
+// Update the points message based on remaining points
+function updatePointsText() {
+    let pointsText = document.getElementById("points-text");
+    if (points > 0) {
+        pointsText.innerText = `${points} points for correct answer`;
+    } else {
+        pointsText.innerText = ""; // Hide the text when points reach 0
+    }
+}
+
+// Initialize points at the start of a new round
+function startRound() {
+    points = 3; // Reset points to 3 at the start
+    incorrectGuesses.clear();
+    document.getElementById("wrong-guesses").innerHTML = ""; // Clear previous wrong guesses
+    updatePointsText();
+    loadStreetList();
+}
+
+// Allow pressing Enter to submit
+document.getElementById("street-input").addEventListener("keypress", function(event) {
+    if (event.key === "Enter") {
+        checkAnswer();
+    }
+});
+
+// Load a random street when the page loads
+loadStreetList();
