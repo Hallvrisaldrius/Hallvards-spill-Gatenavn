@@ -1,7 +1,10 @@
 // street.js
-import { displayStreet } from './map.js';
+import { initializeMap, streetLayer, displayStreet } from './map.js';
 
-// Function to fetch street geometry data from the Overpass API
+// Initialize the map first
+initializeMap();
+
+// Fetch the street geometry
 export async function fetchStreetGeometry(streetName) {
     let query = `
         [out:json];
@@ -23,7 +26,7 @@ export async function fetchStreetGeometry(streetName) {
 
         let allCoordinates = extractAllCoordinates(data);
         if (allCoordinates.length) {
-            displayStreet(streetName, allCoordinates);  // Use the displayStreet function from map.js
+            displayStreet(streetName, allCoordinates); // Call displayStreet once the map is initialized
         } else {
             console.error("❌ No valid coordinates found for", streetName);
         }
@@ -32,7 +35,7 @@ export async function fetchStreetGeometry(streetName) {
     }
 }
 
-// Extract coordinates for all street segments from the Overpass API data
+// Extract coordinates for ALL street segments
 function extractAllCoordinates(data) {
     let nodes = {};
     let allCoordinates = [];
@@ -55,26 +58,4 @@ function extractAllCoordinates(data) {
     });
 
     return allCoordinates;
-}
-
-// Function to load a random street from a list (from streets.txt)
-export async function loadStreetList() {
-    try {
-        let response = await fetch('streets.txt');
-        let text = await response.text();
-        let streets = text.split('\n').map(line => line.trim()).filter(line => line);
-
-        if (streets.length === 0) {
-            console.error("⚠️ Street list is empty!");
-            return;
-        }
-
-        // Choose a random street
-        let randomStreet = streets[Math.floor(Math.random() * streets.length)];
-        console.log("✅ Selected street:", randomStreet);
-
-        fetchStreetGeometry(randomStreet);  // Get the geometry for the random street
-    } catch (error) {
-        console.error("❌ Error loading streets:", error);
-    }
 }
