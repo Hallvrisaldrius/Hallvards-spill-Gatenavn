@@ -168,7 +168,7 @@ function checkAnswer() {
 }
 
 // Listen for Enter key press to submit guess
-document.getElementById("street-input").addEventListener("keydown", function(event) {
+document.getElementById("street-input").addEventListener("keypress", function (event) {
     if (event.key === "Enter") {
         checkAnswer();
     }
