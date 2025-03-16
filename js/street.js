@@ -1,10 +1,8 @@
+// street.js
 import { displayStreet } from './map.js';
 
-// Global variable for the current street
-var currentStreet = "";
-
-// Query Overpass API to get ALL segments for the street
-async function fetchStreetGeometry(streetName) {
+// Function to fetch street geometry data from the Overpass API
+export async function fetchStreetGeometry(streetName) {
     let query = `
         [out:json];
         way["name"="${streetName}"]["highway"](59.7,10.4,60.1,10.9); 
@@ -16,6 +14,7 @@ async function fetchStreetGeometry(streetName) {
     try {
         let response = await fetch(url);
         let data = await response.json();
+        console.log("🗺 Overpass API response:", data);
 
         if (!data.elements.length) {
             console.error("⚠️ Street not found:", streetName);
@@ -24,7 +23,7 @@ async function fetchStreetGeometry(streetName) {
 
         let allCoordinates = extractAllCoordinates(data);
         if (allCoordinates.length) {
-            displayStreet(allCoordinates);
+            displayStreet(streetName, allCoordinates);  // Use the displayStreet function from map.js
         } else {
             console.error("❌ No valid coordinates found for", streetName);
         }
@@ -33,7 +32,7 @@ async function fetchStreetGeometry(streetName) {
     }
 }
 
-// Extract coordinates for ALL street segments
+// Extract coordinates for all street segments from the Overpass API data
 function extractAllCoordinates(data) {
     let nodes = {};
     let allCoordinates = [];
@@ -58,8 +57,8 @@ function extractAllCoordinates(data) {
     return allCoordinates;
 }
 
-// Function to load a random street
-async function loadStreetList() {
+// Function to load a random street from a list (from streets.txt)
+export async function loadStreetList() {
     try {
         let response = await fetch('streets.txt');
         let text = await response.text();
@@ -72,12 +71,10 @@ async function loadStreetList() {
 
         // Choose a random street
         let randomStreet = streets[Math.floor(Math.random() * streets.length)];
-        currentStreet = randomStreet;
-        fetchStreetGeometry(randomStreet);
+        console.log("✅ Selected street:", randomStreet);
+
+        fetchStreetGeometry(randomStreet);  // Get the geometry for the random street
     } catch (error) {
         console.error("❌ Error loading streets:", error);
     }
 }
-
-// Expose street-related functions
-export { loadStreetList, currentStreet };
