@@ -6,36 +6,17 @@ import { loadStreetList } from './street.js';
 let correctStreet = '';
 let attemptCount = 0;
 
-// Function to load the street list and select a random street
-async function loadStreetList() {
-    try {
-        let response = await fetch('streets.txt'); // Load the file
-        let text = await response.text();
-        let streets = text.split('\n').map(line => line.trim()).filter(line => line); // Clean up
-
-        if (streets.length === 0) {
-            console.error("⚠️ Street list is empty!");
-            return;
-        }
-
-        // Choose a random street
-        correctStreet = streets[Math.floor(Math.random() * streets.length)];
-        console.log("✅ Selected street:", correctStreet); // Log to check the correct street
-
-        startRound(); // Start the round after loading the street
-    } catch (error) {
-        console.error("❌ Error loading streets:", error);
-    }
-}
-
 // Function to start a new round
-function startRound() {
-    attemptCount = 0; // Reset attempt count
-    document.getElementById("street-input").value = ""; // Clear input field
-    document.getElementById("result").innerText = ""; // Clear result message
-    document.getElementById("wrong-guesses").innerHTML = ""; // Clear wrong guesses list
-    document.getElementById("points-text").innerText = "3 points for correct answer"; // Set initial points text
-    document.getElementById("street-name").style.display = "none"; // Hide the street name until the end
+async function startRound() {
+    correctStreet = await loadStreetList();  // Get the correct street name
+    if (correctStreet) {
+        attemptCount = 0; // Reset attempt count
+        document.getElementById("street-input").value = ""; // Clear input field
+        document.getElementById("result").innerText = ""; // Clear result message
+        document.getElementById("wrong-guesses").innerHTML = ""; // Clear wrong guesses list
+        document.getElementById("points-text").innerText = "3 points for correct answer"; // Set initial points text
+        document.getElementById("street-name").style.display = "none"; // Hide the street name until the end
+    }
 }
 
 // Function to check the user's guess
@@ -85,4 +66,4 @@ document.getElementById("street-input").addEventListener("keypress", function(ev
 });
 
 // Start the game when the page loads
-loadStreetList();
+startRound();
