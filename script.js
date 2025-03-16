@@ -1,20 +1,18 @@
-// Initialize the map without a default center
-var map = L.map('map');
+var currentRound = 1;
+var totalPoints = 0;
+
+// Initialize the map (centered on Oslo)
+var map = L.map('map').setView([59.9139, 10.7522], 14);
 
 // Use a basemap with no labels (Carto Light No Labels)
 L.tileLayer('https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png', {
     attribution: '&copy; CartoDB, OpenStreetMap contributors'
 }).addTo(map);
 
-// Global variables
+// Global variables for street polylines
 var streetLayer = L.layerGroup().addTo(map);
-var currentStreet = "";
-var remainingPoints = 3;
-var wrongGuesses = [];
-var round = 1;  // Track the current round
-var totalPoints = 0;  // Track the accumulated total score
 
-// Load and select a random street for each round
+// Load and select a random street
 async function loadStreetList() {
     try {
         let response = await fetch('streets.txt');
@@ -26,12 +24,11 @@ async function loadStreetList() {
             return;
         }
 
-        // Choose a random street for the current round
+        // Choose a random street
         let randomStreet = streets[Math.floor(Math.random() * streets.length)];
         console.log("✅ Selected street:", randomStreet);
 
-        currentStreet = randomStreet;
-        fetchStreetGeometry(randomStreet);
+        fetchStreetGeometry(randomStreet); // Get all segments for the street
     } catch (error) {
         console.error("❌ Error loading streets:", error);
     }
@@ -50,6 +47,7 @@ async function fetchStreetGeometry(streetName) {
     try {
         let response = await fetch(url);
         let data = await response.json();
+        console.log("🗺 Overpass API response:", data);
 
         if (!data.elements.length) {
             console.error("⚠️ Street not found:", streetName);
@@ -58,7 +56,7 @@ async function fetchStreetGeometry(streetName) {
 
         let allCoordinates = extractAllCoordinates(data);
         if (allCoordinates.length) {
-            displayStreet(allCoordinates);
+            displayStreet(streetName, allCoordinates);
         } else {
             console.error("❌ No valid coordinates found for", streetName);
         }
@@ -93,7 +91,9 @@ function extractAllCoordinates(data) {
 }
 
 // Display all street segments as multiple polylines and center the map
-function displayStreet(coordinateGroups) {
+function displayStreet(name, coordinateGroups) {
+    console.log(`📌 Displaying all segments of: ${name}`);
+
     // Clear previous street polylines
     streetLayer.clearLayers();
 
@@ -108,105 +108,55 @@ function displayStreet(coordinateGroups) {
         L.polyline(coords, { color: "red", weight: 4 }).addTo(streetLayer);
     });
 
-    // Fit map to the full extent of the street
-    let bounds = L.latLngBounds(allCoords);
-    map.fitBounds(bounds.pad(0.2)); // Adds a 20% margin
+    // Calculate center of the street
+    let centerLat = allCoords.reduce((sum, coord) => sum + coord[0], 0) / allCoords.length;
+    let centerLng = allCoords.reduce((sum, coord) => sum + coord[1], 0) / allCoords.length;
+    let streetCenter = [centerLat, centerLng];
+
+    // Center the map on the street
+    map.setView(streetCenter, 16); // Zoom level 16 keeps it visible
+
+    // Store the correct street name
+    document.getElementById("street-name").innerText = name;
+}
+
+// Start a new round and update the round number
+function startRound() {
+    if (currentRound > 3) {
+        alert(`Game Over! Your total score is: ${totalPoints}`);
+        return; // End the game after 3 rounds
+    }
+
+    // Update round number display
+    document.getElementById("round-number").innerText = `Round: ${currentRound}`;
+
+    // Reset guess data for a new round
+    document.getElementById("street-input").value = "";
+    document.getElementById("wrong-guesses").innerHTML = "";
+    document.getElementById("points-text").innerText = "3 points for a correct answer";
+    document.getElementById("result").innerText = "";
+
+    // Load a random street for this round
+    loadStreetList();
 }
 
 // Check the user's answer
 function checkAnswer() {
-    let userInput = document.getElementById("street-input").value.trim();
-    
-    if (!userInput) return; // Ignore empty input
-
-    if (userInput.toLowerCase() === currentStreet.toLowerCase()) {
-        totalPoints += remainingPoints;  // Add points to the total
-        document.getElementById("result").innerText = `✅ Correct! You earned ${remainingPoints} points!`;
-        document.getElementById("points-text").style.display = "none";
-    } else {
-        wrongGuesses.push(userInput);
-        displayWrongGuesses();
-        
-        remainingPoints = Math.max(0, remainingPoints - 1); // Decrease but never below 0
-        updatePointsText();
-
-        if (remainingPoints === 0) {
-            document.getElementById("result").innerText = `❌ No more attempts. The correct answer was: ${currentStreet}`;
-        }
-    }
-
-    document.getElementById("street-input").value = ""; // Clear input field
-
-    // End round and proceed to next if necessary
-    if (remainingPoints === 0 || userInput.toLowerCase() === currentStreet.toLowerCase()) {
-        endRound();
-    }
-}
-
-// Display wrong guesses
-function displayWrongGuesses() {
-    let wrongList = document.getElementById("wrong-guesses");
-    wrongList.innerHTML = ""; // Clear previous list
-
-    wrongGuesses.forEach(guess => {
-        let li = document.createElement("li");
-        li.innerHTML = `<span style="color: red;">❌ ${guess}</span>`;
-        wrongList.appendChild(li);
-    });
-}
-
-// Update points text
-function updatePointsText() {
+    let userInput = document.getElementById("street-input").value;
+    let correctStreet = document.getElementById("street-name").innerText;
     let pointsText = document.getElementById("points-text");
-    if (remainingPoints > 0) {
-        pointsText.innerText = `${remainingPoints} points for a correct answer`;
+
+    if (userInput.toLowerCase() === correctStreet.toLowerCase()) {
+        totalPoints += parseInt(pointsText.innerText); // Add the points for the correct guess
+        document.getElementById("round-result").innerText = `Correct! Points: ${totalPoints}`;
+        currentRound++; // Move to the next round
+        startRound(); // Start a new round
     } else {
-        pointsText.style.display = "none"; // Hide when no points left
+        let points = parseInt(pointsText.innerText.split(" ")[0]) - 1;
+        pointsText.innerText = points > 0 ? `${points} points for a correct answer` : "0 points";
+        document.getElementById("wrong-guesses").innerHTML += `<li>${userInput} ❌</li>`;
     }
 }
-
-// End the round and prepare for the next round
-function endRound() {
-    // Display round result and total score so far
-    document.getElementById("round-result").innerText = `Round ${round} complete! Total points: ${totalPoints}`;
-
-    // Prepare for next round
-    if (round < 3) {
-        round++;
-        remainingPoints = 3;  // Reset points for next round
-        wrongGuesses = [];
-        document.getElementById("wrong-guesses").innerHTML = "";
-        document.getElementById("result").innerText = "";
-        document.getElementById("points-text").innerText = "3 points for a correct answer";
-        document.getElementById("points-text").style.display = "block";
-        loadStreetList();
-    } else {
-        // After all rounds
-        document.getElementById("round-result").innerText = `Game Over! Your final score: ${totalPoints}`;
-        document.getElementById("street-input").disabled = true;  // Disable input after game ends
-    }
-}
-
-// Reset and start a new game
-function startGame() {
-    round = 1;
-    totalPoints = 0;
-    remainingPoints = 3;
-    wrongGuesses = [];
-    document.getElementById("wrong-guesses").innerHTML = "";
-    document.getElementById("result").innerText = "";
-    document.getElementById("points-text").innerText = "3 points for a correct answer";
-    document.getElementById("points-text").style.display = "block";
-
-    loadStreetList();
-}
-
-// Allow pressing Enter to submit
-document.getElementById("street-input").addEventListener("keypress", function(event) {
-    if (event.key === "Enter") {
-        checkAnswer();
-    }
-});
 
 // Start the first round when the page loads
-startGame();
+startRound();
