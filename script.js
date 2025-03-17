@@ -7,7 +7,6 @@ L.tileLayer('https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png
 // Global variables
 var streetLayer = L.layerGroup().addTo(map);
 var streets = [];
-var usedStreets = [];  // To track used streets
 var currentStreet = "";
 var currentPoints = 3;
 var totalScore = 0;
@@ -35,7 +34,6 @@ async function loadStreetList() {
 
 // Start a new round
 function startRound() {
-    // Ensure elements exist before modifying
     let roundNumberElement = document.getElementById("round-number");
     let pointsDisplayElement = document.getElementById("points-display");
     let totalScoreElement = document.getElementById("total-score");
@@ -47,8 +45,7 @@ function startRound() {
     document.getElementById("wrong-guesses").innerHTML = "";
     document.getElementById("street-input").value = "";
 
-    // Select a street that hasn't been used yet
-    currentStreet = getRandomStreet();
+    currentStreet = streets[Math.floor(Math.random() * streets.length)];
     console.log("✅ Selected street:", currentStreet);
     
     currentPoints = 3;
@@ -138,21 +135,6 @@ function displayStreet(coordinateGroups) {
 
     let bounds = L.latLngBounds(allCoords);
     map.fitBounds(bounds.pad(0.2)); // Add margin
-}
-
-// Get a random street that has not been used yet
-function getRandomStreet() {
-    let availableStreets = streets.filter(street => !usedStreets.includes(street));
-
-    if (availableStreets.length === 0) {
-        alert("All streets have been used. Restarting the game.");
-        usedStreets = []; // Reset used streets if all streets have been used
-        availableStreets = streets; // Allow reuse of streets
-    }
-
-    let randomStreet = availableStreets[Math.floor(Math.random() * availableStreets.length)];
-    usedStreets.push(randomStreet); // Mark this street as used
-    return randomStreet;
 }
 
 // Check the user's answer
@@ -296,10 +278,7 @@ document.getElementById("street-input").addEventListener("keydown", function(eve
 setupSuggestionClicks();
 
 // Event listener for input field to show suggestions
-document.getElementById("street-input").addEventListener("input", function(event) {
-    let input = event.target.value;
-    showSuggestions(input);
-});
+document.getElementById("street-input").addEventListener("input", showSuggestions);
 
 // Event listener for "Enter" key to submit the answer
 document.getElementById("street-input").addEventListener("keypress", function(event) {
