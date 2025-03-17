@@ -191,7 +191,6 @@ function setupSuggestionClicks() {
             if (event.target && event.target.nodeName === "LI") {
                 let selectedStreet = event.target.innerText.trim();
                 document.getElementById("street-input").value = selectedStreet;
-                checkAnswer(); // Automatically submit when a suggestion is clicked
             }
         });
     }
