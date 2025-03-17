@@ -13,20 +13,10 @@ var totalScore = 0;
 var round = 1;
 const maxRounds = 3;
 
-// Show loading spinner
-function showLoadingSpinner() {
-    document.getElementById('loading-spinner').style.display = 'flex';
-}
-
-// Hide loading spinner
-function hideLoadingSpinner() {
-    document.getElementById('loading-spinner').style.display = 'none';
-}
 
 // Load streets from text file
 async function loadStreetList() {
     try {
-        showLoadingSpinner(); // Show the spinner
         let response = await fetch('streets.txt');
         let text = await response.text();
         streets = text.split('\n').map(line => line.trim()).filter(line => line);
@@ -35,8 +25,7 @@ async function loadStreetList() {
             console.error("⚠️ Street list is empty!");
             return;
         }
-
-        hideLoadingSpinner(); // Hide the spinner once streets are loaded
+        
         startRound();
     } catch (error) {
         hideLoadingSpinner(); // Hide the spinner in case of an error
@@ -65,8 +54,19 @@ function startRound() {
     fetchStreetGeometry(currentStreet);
 }
 
+// Show loading spinner
+function showLoadingSpinner() {
+    document.getElementById('loading-spinner').style.display = 'flex';
+}
+
+// Hide loading spinner
+function hideLoadingSpinner() {
+    document.getElementById('loading-spinner').style.display = 'none';
+}
+
 // Fetch street geometry from OpenStreetMap Overpass API
 async function fetchStreetGeometry(streetName) {
+    showLoadingSpinner(); // Show the spinner
     let query = `
         [out:json];
         way["name"="${streetName}"]["highway"](59.7,10.4,60.1,10.9);
@@ -91,9 +91,12 @@ async function fetchStreetGeometry(streetName) {
         } else {
             console.error("❌ No valid coordinates found for", streetName);
         }
-    } catch (error) {
+    } catch (error) {   
+        hideLoadingSpinner(); // Hide the spinner if something goes wrong
         console.error("❌ Overpass API error:", error);
     }
+    
+    hideLoadingSpinner(); // Hide the spinner once streets are loaded
 }
 
 // Extract all coordinates for a street
