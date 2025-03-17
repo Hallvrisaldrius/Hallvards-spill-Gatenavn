@@ -33,11 +33,6 @@ async function loadStreetList() {
 
 // Start a new round
 function startRound() {
-    if (round > maxRounds) {
-        alert(`Game Over! Final Score: ${totalScore} points`);
-        return;
-    }
-
     // Ensure elements exist before modifying
     let roundNumberElement = document.getElementById("round-number");
     let pointsDisplayElement = document.getElementById("points-display");
@@ -155,9 +150,7 @@ function checkAnswer() {
         let pointsDisplayElement = document.getElementById("points-display");
         if (currentPoints === 0) {
             alert(`The correct answer was: ${currentStreet}`);
-            totalScore += 0; // No points awarded
-            document.getElementById("total-score").innerText = `Total Score: ${totalScore}`; // ✅ Ensure score is updated
-            round++;
+            finishRound()
             startRound();
         } else if (pointsDisplayElement) {
             pointsDisplayElement.innerText = `${currentPoints} points for a correct answer`;
@@ -176,6 +169,21 @@ function recordWrongGuess(guess) {
         wrongGuessesList.insertBefore(listItem, wrongGuessesList.firstChild);
     }
 }
+
+function finishRound() {
+    // Add round points to total score
+    totalScore += currentPoints;
+    document.getElementById("total-score").innerText = `Total Points: ${totalScore}`;
+
+    if (round < totalRounds) {
+        round++;
+        startRound();
+    } else {
+        // Display finish message
+        alert(`Game Over! You scored a total of ${totalScore} points.`);
+    }
+}
+
 
 // Allow pressing "Enter" to submit
 document.getElementById("street-input").addEventListener("keypress", function (event) {
