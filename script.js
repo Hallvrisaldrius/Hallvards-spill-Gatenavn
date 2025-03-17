@@ -135,7 +135,7 @@ document.addEventListener("DOMContentLoaded", function () {
         } else {
             recordWrongGuess(userInput);
     
-            if (currentPoints > 0) {
+            if (currentPoints > 1) {
                 currentPoints--
                 document.getElementById("points-display").innerText = `${currentPoints} points for a correct answer`;
             } else {
