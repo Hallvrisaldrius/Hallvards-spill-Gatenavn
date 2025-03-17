@@ -125,7 +125,8 @@ function displayStreet(coordinateGroups) {
 // Check the user's answer
 function checkAnswer() {
     let userInput = document.getElementById("street-input").value.trim();
-    
+    console.log("User input:", userInput); // Debugging log
+
     if (userInput.toLowerCase() === currentStreet.toLowerCase()) {
         totalScore += currentPoints;
         document.getElementById("total-score").innerText = `Total Score: ${totalScore}`;
@@ -151,6 +152,7 @@ function checkAnswer() {
         }
     }
 }
+
 
 // Store wrong guesses
 function recordWrongGuess(guess) {
