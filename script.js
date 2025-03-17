@@ -134,10 +134,12 @@ function checkAnswer() {
     let userInput = document.getElementById("street-input").value.trim();
     
     if (userInput.toLowerCase() === currentStreet.toLowerCase()) {
-        totalScore += currentPoints;
+        totalScore += currentPoints; // ✅ Update total score immediately
 
         let totalScoreElement = document.getElementById("total-score");
-        if (totalScoreElement) totalScoreElement.innerText = `Total Score: ${totalScore}`;
+        if (totalScoreElement) {
+            totalScoreElement.innerText = `Total Score: ${totalScore}`; // ✅ Display updated score
+        }
 
         if (round < maxRounds) {
             round++;
