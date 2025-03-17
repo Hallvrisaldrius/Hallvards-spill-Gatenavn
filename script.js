@@ -38,10 +38,16 @@ function startRound() {
         return;
     }
 
-    document.getElementById("round-number").innerText = `Round ${round} of ${maxRounds}`;
-    document.getElementById("wrong-guesses").innerHTML = "";
+    // Check that elements exist before modifying them
+    let roundElement = document.getElementById("round-number");
+    let pointsDisplayElement = document.getElementById("points-display");
+    let wrongGuessesElement = document.getElementById("wrong-guesses");
+
+    if (roundElement) roundElement.innerText = `Round ${round} of ${maxRounds}`;
+    if (pointsDisplayElement) pointsDisplayElement.innerText = "3 points for a correct answer";
+    if (wrongGuessesElement) wrongGuessesElement.innerHTML = "";
+
     document.getElementById("street-input").value = "";
-    document.getElementById("points-display").innerText = "3 points for a correct answer";
 
     currentStreet = streets[Math.floor(Math.random() * streets.length)];
     console.log("✅ Selected street:", currentStreet);
@@ -124,8 +130,15 @@ function displayStreet(coordinateGroups) {
 
 // Check the user's answer
 function checkAnswer() {
-    let userInput = document.getElementById("street-input").value.trim();
-    console.log("User input:", userInput); // Debugging log
+    let userInputElement = document.getElementById("street-input");
+    let userInput = userInputElement ? userInputElement.value.trim() : "";
+
+    console.log("🔍 User Input:", userInput);
+
+    if (!userInput) {
+        console.warn("⚠️ Empty input submitted.");
+        return;
+    }
 
     if (userInput.toLowerCase() === currentStreet.toLowerCase()) {
         totalScore += currentPoints;
@@ -143,27 +156,33 @@ function checkAnswer() {
             currentPoints--;
         }
 
+        let pointsDisplayElement = document.getElementById("points-display");
         if (currentPoints === 0) {
             alert(`The correct answer was: ${currentStreet}`);
             round++;
             startRound();
-        } else {
-            document.getElementById("points-display").innerText = `${currentPoints} points for a correct answer`;
+        } else if (pointsDisplayElement) {
+            pointsDisplayElement.innerText = `${currentPoints} points for a correct answer`;
         }
     }
 }
 
-
 // Store wrong guesses
 function recordWrongGuess(guess) {
     let wrongGuessesList = document.getElementById("wrong-guesses");
+
+    if (!wrongGuessesList) {
+        console.warn("⚠️ Could not find wrong guesses list.");
+        return;
+    }
+
     let listItem = document.createElement("li");
     listItem.innerHTML = `❌ ${guess}`;
     wrongGuessesList.appendChild(listItem);
 }
 
 // Allow pressing "Enter" to submit
-document.getElementById("street-input").addEventListener("keypress", function (event) {
+document.getElementById("street-input")?.addEventListener("keypress", function (event) {
     if (event.key === "Enter") {
         checkAnswer();
     }
