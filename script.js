@@ -38,9 +38,9 @@ function startRound() {
     let pointsDisplayElement = document.getElementById("points-display");
     let totalScoreElement = document.getElementById("total-score");
 
-    if (roundNumberElement) roundNumberElement.innerText = Round ${round} of ${maxRounds};
+    if (roundNumberElement) roundNumberElement.innerText = `Round ${round} of ${maxRounds}`;
     if (pointsDisplayElement) pointsDisplayElement.innerText = "3 points for a correct answer";
-    if (totalScoreElement) totalScoreElement.innerText = Total Score: ${totalScore};
+    if (totalScoreElement) totalScoreElement.innerText = `Total Score: ${totalScore}`;
 
     document.getElementById("wrong-guesses").innerHTML = "";
     document.getElementById("street-input").value = "";
@@ -54,13 +54,13 @@ function startRound() {
 
 // Fetch street geometry from OpenStreetMap Overpass API
 async function fetchStreetGeometry(streetName) {
-    let query = 
+    let query = `
         [out:json];
         way["name"="${streetName}"]["highway"](59.7,10.4,60.1,10.9);
         (._;>;);
         out body;
-    ;
-    let url = https://overpass-api.de/api/interpreter?data=${encodeURIComponent(query)};
+    `;
+    let url = `https://overpass-api.de/api/interpreter?data=${encodeURIComponent(query)}`;
 
     try {
         let response = await fetch(url);
@@ -129,17 +129,22 @@ function checkAnswer() {
     let userInput = document.getElementById("street-input").value.trim();
 
     if (userInput.toLowerCase() === currentStreet.toLowerCase()) {
-        alert(You are correct! This is ${currentStreet});
-        finishRound();
+        alert(`You are correct! This is ${currentStreet}`);
+        totalScore += currentPoints; // Add round points to total
+        document.getElementById("total-score").innerText = `Total Score: ${totalScore}`;
+        finishRound(); // End the round properly
     } else {
         recordWrongGuess(userInput);
-
         if (currentPoints > 0) {
-            currentPoints--
-            document.getElementById("points-display").innerText = ${currentPoints} points for a correct answer;
-        } else {
-            alert(The correct answer was: ${currentStreet});
-            finishRound();
+            currentPoints--;
+        }
+
+        let pointsDisplayElement = document.getElementById("points-display");
+        if (currentPoints === 0) {
+            alert(`The correct answer was: ${currentStreet}`);
+            finishRound(); // No need to call startRound again here
+        } else if (pointsDisplayElement) {
+            pointsDisplayElement.innerText = `${currentPoints} points for a correct answer`;
         }
     }
 }
@@ -149,7 +154,7 @@ function recordWrongGuess(guess) {
     let wrongGuessesList = document.getElementById("wrong-guesses");
     if (wrongGuessesList) {
         let listItem = document.createElement("li");
-        listItem.innerHTML = ❌ ${guess};
+        listItem.innerHTML = `❌ ${guess}`;
 
         // Insert the new item at the beginning of the list
         wrongGuessesList.insertBefore(listItem, wrongGuessesList.firstChild);
@@ -157,17 +162,11 @@ function recordWrongGuess(guess) {
 }
 
 function finishRound() {
-    // Add round points to total score
-    totalScore += currentPoints;
-    document.getElementById("total-score").innerText = Total Points: ${totalScore};
-
     if (round < maxRounds) {
         round++;
-        document.getElementById("round-number").innerText =Round ${round} of ${maxRounds};
         startRound();
     } else {
-        // Display finish message
-        alert(Game Over! You scored a total of ${totalScore} points.);
+        alert(`Game Over! You scored a total of ${totalScore} points.`);
     }
 }
 
@@ -181,5 +180,3 @@ document.getElementById("street-input").addEventListener("keypress", function (e
 
 // Load the first street when the page loads
 loadStreetList();
-
-How will it look with DOMContentLoaded correctly implemented for all fields on the page?
