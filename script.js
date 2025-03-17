@@ -145,25 +145,24 @@ function startRound() {
 
 // Check the user's answer
 function checkAnswer() {
-    let userInput = document.getElementById("street-input").value;
-    let pointsText = document.getElementById("points-text");
-
-    // Ensure the correct street name is available
-    if (!correctStreet) {
-        console.error("❌ Street name is not available for comparison.");
-        return;
-    }
+    let userInput = document.getElementById("street-input").value.trim();
+    let correctStreet = document.getElementById("street-name").innerText;
 
     if (userInput.toLowerCase() === correctStreet.toLowerCase()) {
-        totalPoints += parseInt(pointsText.innerText.split(" ")[0]); // Add the points for the correct guess
-        document.getElementById("round-result").innerText = `Correct! Points: ${totalPoints}`;
-        document.getElementById("total-points").innerText = `Total Points: ${totalPoints}`; // Update total points
-        currentRound++; // Move to the next round
-        startRound(); // Start a new round
+        document.getElementById("result").innerText = `✅ Correct! You earned ${currentPoints} points.`;
+        totalPoints += currentPoints; // Add points to total
+        nextRound(); // Move to the next round
     } else {
-        let points = parseInt(pointsText.innerText.split(" ")[0]) - 1;
-        pointsText.innerText = points > 0 ? `${points} points for a correct answer` : "0 points";
-        document.getElementById("wrong-guesses").innerHTML += `<li>${userInput} ❌</li>`;
+        wrongGuesses.push(userInput);
+        updateWrongGuessesList(); // Display incorrect answers
+
+        currentPoints--; // Decrease points
+        updatePointsDisplay(); // Update points text
+
+        if (wrongGuesses.length >= 3) {
+            document.getElementById("result").innerText = `❌ No more attempts! The correct street was: ${correctStreet}`;
+            nextRound(); // Move to the next round even though they failed
+        }
     }
 }
 
