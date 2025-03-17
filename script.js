@@ -130,19 +130,15 @@ function checkAnswer() {
 
     if (userInput.toLowerCase() === currentStreet.toLowerCase()) {
         alert(`You are correct! This is ${currentStreet}`);
-        totalScore += currentPoints; // Add round points to total
-        document.getElementById("total-score").innerText = `Total Score: ${totalScore}`;
         finishRound(); // End the round properly
     } else {
         recordWrongGuess(userInput);
-        if (currentPoints > 0) {
-            currentPoints--;
-        }
-
+        
+        currentPoints--;
         let pointsDisplayElement = document.getElementById("points-display");
         if (currentPoints === 0) {
             alert(`The correct answer was: ${currentStreet}`);
-            finishRound(); // No need to call startRound again here
+            finishRound();
         } else if (pointsDisplayElement) {
             pointsDisplayElement.innerText = `${currentPoints} points for a correct answer`;
         }
@@ -162,6 +158,8 @@ function recordWrongGuess(guess) {
 }
 
 function finishRound() {
+    totalScore += currentPoints; // Add round points to total
+    document.getElementById("total-score").innerText = `Total Score: ${totalScore}`;
     if (round < maxRounds) {
         round++;
         startRound();
