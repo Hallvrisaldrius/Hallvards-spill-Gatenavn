@@ -184,31 +184,48 @@ function finishRound() {
     }
 }
 
+// Event listener for suggestions click
+function setupSuggestionClicks() {
+    let suggestionsList = document.getElementById("suggestions");
+    if (suggestionsList) {
+        suggestionsList.addEventListener("click", function (event) {
+            if (event.target && event.target.nodeName === "LI") {
+                let selectedStreet = event.target.innerText.trim();
+                document.getElementById("street-input").value = selectedStreet;
+                checkAnswer(); // Automatically submit when a suggestion is clicked
+            }
+        });
+    }
+}
 
-// Show suggestions based on input
-function showSuggestions(input) {
+// Display matching street names in the suggestion box
+function showSuggestions() {
+    let input = document.getElementById("street-input").value.trim().toLowerCase();
     let suggestionsList = document.getElementById("suggestions");
     suggestionsList.innerHTML = ""; // Clear previous suggestions
 
-    if (input.length === 0) {
-        suggestionsList.style.display = "none";
-        return;
+    if (input.length > 0) {
+        // Filter streets based on user input
+        let matchedStreets = streets.filter(street => street.toLowerCase().includes(input));
+        
+        matchedStreets.forEach(street => {
+            let listItem = document.createElement("li");
+            listItem.innerText = street;
+            suggestionsList.appendChild(listItem);
+        });
+
+        if (matchedStreets.length > 0) {
+            suggestionsList.style.display = "block"; // Show the suggestions box
+        } else {
+            suggestionsList.style.display = "none"; // Hide if no matches
+        }
+    } else {
+        suggestionsList.style.display = "none"; // Hide if input is empty
     }
-
-    let filteredStreets = streets.filter(street => street.toLowerCase().includes(input.toLowerCase()));
-
-    filteredStreets.forEach(street => {
-        let listItem = document.createElement("li");
-        listItem.innerText = street;
-        listItem.onclick = function() {
-            document.getElementById("street-input").value = street;
-            suggestionsList.style.display = "none"; // Hide suggestions after selecting
-        };
-        suggestionsList.appendChild(listItem);
-    });
-
-    suggestionsList.style.display = filteredStreets.length > 0 ? "block" : "none";
 }
+
+// Call the function to setup click handlers after page load
+setupSuggestionClicks();
 
 // Event listener for input field to show suggestions
 document.getElementById("street-input").addEventListener("input", function(event) {
