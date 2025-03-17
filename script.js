@@ -13,7 +13,6 @@ var totalScore = 0;
 var round = 1;
 const maxRounds = 3;
 
-
 // Load streets from text file
 async function loadStreetList() {
     try {
@@ -242,7 +241,9 @@ document.getElementById("street-input").addEventListener("keypress", function(ev
 
 // Allow pressing "Enter" to submit
 document.getElementById("street-input").addEventListener("blur", function() {
-    document.getElementById("suggestions").style.display = "none";
+    setTimeout(function() {
+        document.getElementById("suggestions").style.display = "none";
+    }, 200); // Delay to allow clicks on suggestions
 });
 
 // Load the first street when the page loads
