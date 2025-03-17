@@ -1,4 +1,4 @@
-// Initialize the map
+// Initialize the map - with change
 var map = L.map('map');
 L.tileLayer('https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png', {
     attribution: '&copy; CartoDB, OpenStreetMap contributors'
