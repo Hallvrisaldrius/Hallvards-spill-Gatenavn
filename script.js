@@ -185,11 +185,47 @@ function finishRound() {
 }
 
 
-// Allow pressing "Enter" to submit
-document.getElementById("street-input").addEventListener("keypress", function (event) {
+// Show suggestions based on input
+function showSuggestions(input) {
+    let suggestionsList = document.getElementById("suggestions");
+    suggestionsList.innerHTML = ""; // Clear previous suggestions
+
+    if (input.length === 0) {
+        suggestionsList.style.display = "none";
+        return;
+    }
+
+    let filteredStreets = streets.filter(street => street.toLowerCase().includes(input.toLowerCase()));
+
+    filteredStreets.forEach(street => {
+        let listItem = document.createElement("li");
+        listItem.innerText = street;
+        listItem.onclick = function() {
+            document.getElementById("street-input").value = street;
+            suggestionsList.style.display = "none"; // Hide suggestions after selecting
+        };
+        suggestionsList.appendChild(listItem);
+    });
+
+    suggestionsList.style.display = filteredStreets.length > 0 ? "block" : "none";
+}
+
+// Event listener for input field to show suggestions
+document.getElementById("street-input").addEventListener("input", function(event) {
+    let input = event.target.value;
+    showSuggestions(input);
+});
+
+// Event listener for "Enter" key to submit the answer
+document.getElementById("street-input").addEventListener("keypress", function(event) {
     if (event.key === "Enter") {
         checkAnswer();
     }
+});
+
+// Allow pressing "Enter" to submit
+document.getElementById("street-input").addEventListener("blur", function() {
+    document.getElementById("suggestions").style.display = "none";
 });
 
 // Load the first street when the page loads
