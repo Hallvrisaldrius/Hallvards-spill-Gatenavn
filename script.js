@@ -130,6 +130,7 @@ function checkAnswer() {
 
     if (userInput.toLowerCase() === currentStreet.toLowerCase()) {
         alert(`You are correct! This is ${currentStreet}`);
+        finishRound();
     } else {
         recordWrongGuess(userInput);
 
@@ -139,9 +140,9 @@ function checkAnswer() {
             pointsDisplayElement.innerText = `${currentPoints} points for a correct answer`;
         } else {
             alert(`The correct answer was: ${currentStreet}`);
+            finishRound();
         }
     }
-    finishRound();
 }
 
 // Store and display wrong guesses
