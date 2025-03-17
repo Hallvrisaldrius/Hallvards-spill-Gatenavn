@@ -150,8 +150,7 @@ function checkAnswer() {
         let pointsDisplayElement = document.getElementById("points-display");
         if (currentPoints === 0) {
             alert(`The correct answer was: ${currentStreet}`);
-            finishRound()
-            startRound();
+            finishRound();
         } else if (pointsDisplayElement) {
             pointsDisplayElement.innerText = `${currentPoints} points for a correct answer`;
         }
