@@ -161,7 +161,7 @@ function finishRound() {
     totalScore += currentPoints;
     document.getElementById("total-score").innerText = `Total Points: ${totalScore}`;
 
-    if (round < totalRounds) {
+    if (round < maxRounds) {
         round++;
         document.getElementById("round_number").innerText =`Round ${round} of ${maxRounds}`;
         startRound();
