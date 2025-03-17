@@ -163,7 +163,7 @@ function finishRound() {
 
     if (round < maxRounds) {
         round++;
-        document.getElementById("round_number").innerText =`Round ${round} of ${maxRounds}`;
+        document.getElementById("round-number").innerText =`Round ${round} of ${maxRounds}`;
         startRound();
     } else {
         // Display finish message
