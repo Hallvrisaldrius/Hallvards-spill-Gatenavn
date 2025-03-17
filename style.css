@@ -75,3 +75,11 @@ button {
 #suggestions li:hover {
     background-color: #f0f0f0;
 }
+
+#map {
+    width: 80vw;  /* 80% of the viewport width */
+    height: 60vh; /* 60% of the viewport height */
+    max-width: 800px; /* Optional max width */
+    max-height: 500px; /* Optional max height */
+    margin: auto; /* Center the map */
+}
