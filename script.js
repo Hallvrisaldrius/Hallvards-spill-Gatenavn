@@ -135,7 +135,7 @@ document.addEventListener("DOMContentLoaded", function () {
         } else {
             recordWrongGuess(userInput);
     
-            if (currentPoints = 1) {
+            if (currentPoints === 1) {
                 alert(`The correct answer was: ${currentStreet}`);
                 finishRound();
             } else {
