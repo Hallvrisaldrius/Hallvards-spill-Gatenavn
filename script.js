@@ -190,7 +190,12 @@ function setupSuggestionClicks() {
         suggestionsList.addEventListener("click", function (event) {
             if (event.target && event.target.nodeName === "LI") {
                 let selectedStreet = event.target.innerText.trim();
-                document.getElementById("street-input").value = selectedStreet;
+                let inputField = document.getElementById("street-input");
+                inputField.value = selectedStreet;
+
+                // Move the cursor to the end of the input field
+                inputField.setSelectionRange(inputField.value.length, inputField.value.length);
+                inputField.focus(); // Ensure the input is focused
             }
         });
     }
