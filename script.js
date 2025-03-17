@@ -75,6 +75,9 @@ async function fetchStreetGeometry(streetName) {
 
     try {
         let response = await fetch(url);
+        if (!response.ok) {
+            throw new Error(`API error: ${response.statusText}`);
+        }
         let data = await response.json();
         console.log("🗺 Overpass API response:", data);
 
@@ -89,7 +92,7 @@ async function fetchStreetGeometry(streetName) {
         } else {
             console.error("❌ No valid coordinates found for", streetName);
         }
-    } catch (error) {   
+    } catch (error) {
         console.error("❌ Overpass API error:", error);
     } finally {
         hideLoadingSpinner(); // Hide the spinner if something goes wrong
