@@ -135,12 +135,12 @@ document.addEventListener("DOMContentLoaded", function () {
         } else {
             recordWrongGuess(userInput);
     
-            if (currentPoints > 1) {
-                currentPoints--
-                document.getElementById("points-display").innerText = `${currentPoints} points for a correct answer`;
-            } else {
+            if (currentPoints = 1) {
                 alert(`The correct answer was: ${currentStreet}`);
                 finishRound();
+            } else {
+                currentPoints--
+                document.getElementById("points-display").innerText = `${currentPoints} points for a correct answer`;
             }
         }
     }
