@@ -160,9 +160,7 @@ function recordWrongGuess(guess) {
 function finishRound() {
     // Add round points to total score
     totalScore += currentPoints;
-    
-    let totalScoreElement = document.getElementById("total-score");
-    totalScoreElement.innerText = `Total Points: ${totalScore}`;
+    document.getElementById("total-score").innerText = `Total Points: ${totalScore}`;
 
     if (round < totalRounds) {
         round++;
