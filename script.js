@@ -158,6 +158,7 @@ function recordWrongGuess(guess) {
 }
 
 function finishRound() {
+    document.getElementById("street-input").value = "";
     totalScore += currentPoints; // Add round points to total
     document.getElementById("total-score").innerText = `Total Score: ${totalScore}`;
     if (round < maxRounds) {
