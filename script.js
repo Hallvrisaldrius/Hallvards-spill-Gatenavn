@@ -130,31 +130,17 @@ function checkAnswer() {
 
     if (userInput.toLowerCase() === currentStreet.toLowerCase()) {
         alert(`You are correct! This is ${currentStreet}`);
-
-        // ✅ Update total score before moving to the next round
-        totalScore += currentPoints;
-        document.getElementById("total-score").innerText = `Total Score: ${totalScore}`;
-
-        if (round < maxRounds) {
-            round++;
-            startRound();
-        } else {
-            alert(`Game Over! Final Score: ${totalScore} points`);
-        }
     } else {
         recordWrongGuess(userInput);
-        if (currentPoints > 0) {
-            currentPoints--;
-        }
 
-        let pointsDisplayElement = document.getElementById("points-display");
         if (currentPoints === 0) {
             alert(`The correct answer was: ${currentStreet}`);
-            finishRound();
         } else if (pointsDisplayElement) {
+            let pointsDisplayElement = document.getElementById("points-display");
             pointsDisplayElement.innerText = `${currentPoints} points for a correct answer`;
         }
     }
+    finishRound();
 }
 
 // Store and display wrong guesses
@@ -176,6 +162,7 @@ function finishRound() {
 
     if (round < totalRounds) {
         round++;
+        document.getElementById("round_number").innerText =`Round ${round} of ${maxRounds}`;
         startRound();
     } else {
         // Display finish message
