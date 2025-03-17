@@ -13,9 +13,20 @@ var totalScore = 0;
 var round = 1;
 const maxRounds = 3;
 
+// Show loading spinner
+function showLoadingSpinner() {
+    document.getElementById('loading-spinner').style.display = 'flex';
+}
+
+// Hide loading spinner
+function hideLoadingSpinner() {
+    document.getElementById('loading-spinner').style.display = 'none';
+}
+
 // Load streets from text file
 async function loadStreetList() {
     try {
+        showLoadingSpinner(); // Show the spinner
         let response = await fetch('streets.txt');
         let text = await response.text();
         streets = text.split('\n').map(line => line.trim()).filter(line => line);
@@ -25,8 +36,10 @@ async function loadStreetList() {
             return;
         }
 
+        hideLoadingSpinner(); // Hide the spinner once streets are loaded
         startRound();
     } catch (error) {
+        hideLoadingSpinner(); // Hide the spinner in case of an error
         console.error("❌ Error loading streets:", error);
     }
 }
