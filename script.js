@@ -171,7 +171,9 @@ function recordWrongGuess(guess) {
     if (wrongGuessesList) {
         let listItem = document.createElement("li");
         listItem.innerHTML = `❌ ${guess}`;
-        wrongGuessesList.appendChild(listItem);
+
+        // Insert the new item at the beginning of the list
+        wrongGuessesList.insertBefore(listItem, wrongGuessesList.firstChild);
     }
 }
 
