@@ -132,14 +132,13 @@ function displayStreet(coordinateGroups) {
 // Check the user's answer
 function checkAnswer() {
     let userInput = document.getElementById("street-input").value.trim();
-    
-    if (userInput.toLowerCase() === currentStreet.toLowerCase()) {
-        totalScore += currentPoints; // ✅ Update total score immediately
 
-        let totalScoreElement = document.getElementById("total-score");
-        if (totalScoreElement) {
-            totalScoreElement.innerText = `Total Score: ${totalScore}`; // ✅ Display updated score
-        }
+    if (userInput.toLowerCase() === currentStreet.toLowerCase()) {
+        alert(`You are correct! This is ${currentStreet}`);
+
+        // ✅ Update total score before moving to the next round
+        totalScore += currentPoints;
+        document.getElementById("total-score").innerText = `Total Score: ${totalScore}`;
 
         if (round < maxRounds) {
             round++;
@@ -156,6 +155,8 @@ function checkAnswer() {
         let pointsDisplayElement = document.getElementById("points-display");
         if (currentPoints === 0) {
             alert(`The correct answer was: ${currentStreet}`);
+            totalScore += 0; // No points awarded
+            document.getElementById("total-score").innerText = `Total Score: ${totalScore}`; // ✅ Ensure score is updated
             round++;
             startRound();
         } else if (pointsDisplayElement) {
