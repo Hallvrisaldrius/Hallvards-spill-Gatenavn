@@ -92,11 +92,10 @@ async function fetchStreetGeometry(streetName) {
             console.error("❌ No valid coordinates found for", streetName);
         }
     } catch (error) {   
-        hideLoadingSpinner(); // Hide the spinner if something goes wrong
         console.error("❌ Overpass API error:", error);
+    } finally {
+        hideLoadingSpinner(); // Hide the spinner if something goes wrong
     }
-    
-    hideLoadingSpinner(); // Hide the spinner once streets are loaded
 }
 
 // Extract all coordinates for a street
