@@ -75,9 +75,3 @@ button {
 #suggestions li:hover {
     background-color: #f0f0f0;
 }
-
-/* Highlighted suggestion */
-#suggestions li.highlighted {
-    background-color: #f0f0f0;
-    font-weight: bold;
-}
