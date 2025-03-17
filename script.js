@@ -1,12 +1,7 @@
-// Initialize the map
-var map = L.map('map');
-L.tileLayer('https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png', {
-    attribution: '&copy; CartoDB, OpenStreetMap contributors'
-}).addTo(map);
-
 // Global variables
 var streetLayer = L.layerGroup().addTo(map);
 var streets = [];
+var usedStreets = [];  // Keep track of used streets
 var currentStreet = "";
 var currentPoints = 3;
 var totalScore = 0;
@@ -24,7 +19,7 @@ async function loadStreetList() {
             console.error("⚠️ Street list is empty!");
             return;
         }
-        
+
         startRound();
     } catch (error) {
         hideLoadingSpinner(); // Hide the spinner in case of an error
@@ -46,9 +41,21 @@ function startRound() {
     document.getElementById("wrong-guesses").innerHTML = "";
     document.getElementById("street-input").value = "";
 
-    currentStreet = streets[Math.floor(Math.random() * streets.length)];
+    // Check if there are remaining streets to choose from
+    if (streets.length - usedStreets.length === 0) {
+        // Reset used streets if all streets have been used
+        usedStreets = [];
+    }
+
+    // Pick a random street that has not been used yet
+    let availableStreets = streets.filter(street => !usedStreets.includes(street));
+    currentStreet = availableStreets[Math.floor(Math.random() * availableStreets.length)];
+
+    // Mark this street as used
+    usedStreets.push(currentStreet);
+
     console.log("✅ Selected street:", currentStreet);
-    
+
     currentPoints = 3;
     fetchStreetGeometry(currentStreet);
 }
@@ -183,72 +190,5 @@ function finishRound() {
     }
 }
 
-// Event listener for suggestions click
-function setupSuggestionClicks() {
-    let suggestionsList = document.getElementById("suggestions");
-    if (suggestionsList) {
-        suggestionsList.addEventListener("click", function (event) {
-            if (event.target && event.target.nodeName === "LI") {
-                let selectedStreet = event.target.innerText.trim();
-                let inputField = document.getElementById("street-input");
-                inputField.value = selectedStreet;
-
-                // Move the cursor to the end of the input field
-                inputField.setSelectionRange(inputField.value.length, inputField.value.length);
-                inputField.focus(); // Ensure the input is focused
-            }
-        });
-    }
-}
-
-// Display matching street names in the suggestion box
-function showSuggestions() {
-    let input = document.getElementById("street-input").value.trim().toLowerCase();
-    let suggestionsList = document.getElementById("suggestions");
-    suggestionsList.innerHTML = ""; // Clear previous suggestions
-
-    if (input.length > 0) {
-        // Filter streets based on user input
-        let matchedStreets = streets.filter(street => street.toLowerCase().includes(input));
-        
-        matchedStreets.forEach(street => {
-            let listItem = document.createElement("li");
-            listItem.innerText = street;
-            suggestionsList.appendChild(listItem);
-        });
-
-        if (matchedStreets.length > 0) {
-            suggestionsList.style.display = "block"; // Show the suggestions box
-        } else {
-            suggestionsList.style.display = "none"; // Hide if no matches
-        }
-    } else {
-        suggestionsList.style.display = "none"; // Hide if input is empty
-    }
-}
-
-// Call the function to setup click handlers after page load
-setupSuggestionClicks();
-
-// Event listener for input field to show suggestions
-document.getElementById("street-input").addEventListener("input", function(event) {
-    let input = event.target.value;
-    showSuggestions(input);
-});
-
-// Event listener for "Enter" key to submit the answer
-document.getElementById("street-input").addEventListener("keypress", function(event) {
-    if (event.key === "Enter") {
-        checkAnswer();
-    }
-});
-
-// Allow pressing "Enter" to submit
-document.getElementById("street-input").addEventListener("blur", function() {
-    setTimeout(function() {
-        document.getElementById("suggestions").style.display = "none";
-    }, 200); // Delay to allow clicks on suggestions
-});
-
-// Load the first street when the page loads
+// Call the function to load streets when the page loads
 loadStreetList();
