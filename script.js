@@ -133,11 +133,12 @@ function checkAnswer() {
     } else {
         recordWrongGuess(userInput);
 
-        if (currentPoints === 0) {
-            alert(`The correct answer was: ${currentStreet}`);
-        } else if (pointsDisplayElement) {
+        if (currentPoints > 0) {
+            currentPoints--
             let pointsDisplayElement = document.getElementById("points-display");
             pointsDisplayElement.innerText = `${currentPoints} points for a correct answer`;
+        } else {
+            alert(`The correct answer was: ${currentStreet}`);
         }
     }
     finishRound();
