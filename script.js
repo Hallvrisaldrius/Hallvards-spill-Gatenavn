@@ -1,7 +1,13 @@
+// Initialize the map
+var map = L.map('map');
+L.tileLayer('https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png', {
+    attribution: '&copy; CartoDB, OpenStreetMap contributors'
+}).addTo(map);
+
 // Global variables
 var streetLayer = L.layerGroup().addTo(map);
 var streets = [];
-var usedStreets = [];  // Keep track of used streets
+var usedStreets = [];  // To track used streets
 var currentStreet = "";
 var currentPoints = 3;
 var totalScore = 0;
@@ -19,7 +25,7 @@ async function loadStreetList() {
             console.error("⚠️ Street list is empty!");
             return;
         }
-
+        
         startRound();
     } catch (error) {
         hideLoadingSpinner(); // Hide the spinner in case of an error
@@ -41,21 +47,10 @@ function startRound() {
     document.getElementById("wrong-guesses").innerHTML = "";
     document.getElementById("street-input").value = "";
 
-    // Check if there are remaining streets to choose from
-    if (streets.length - usedStreets.length === 0) {
-        // Reset used streets if all streets have been used
-        usedStreets = [];
-    }
-
-    // Pick a random street that has not been used yet
-    let availableStreets = streets.filter(street => !usedStreets.includes(street));
-    currentStreet = availableStreets[Math.floor(Math.random() * availableStreets.length)];
-
-    // Mark this street as used
-    usedStreets.push(currentStreet);
-
+    // Select a street that hasn't been used yet
+    currentStreet = getRandomStreet();
     console.log("✅ Selected street:", currentStreet);
-
+    
     currentPoints = 3;
     fetchStreetGeometry(currentStreet);
 }
@@ -145,6 +140,21 @@ function displayStreet(coordinateGroups) {
     map.fitBounds(bounds.pad(0.2)); // Add margin
 }
 
+// Get a random street that has not been used yet
+function getRandomStreet() {
+    let availableStreets = streets.filter(street => !usedStreets.includes(street));
+
+    if (availableStreets.length === 0) {
+        alert("All streets have been used. Restarting the game.");
+        usedStreets = []; // Reset used streets if all streets have been used
+        availableStreets = streets; // Allow reuse of streets
+    }
+
+    let randomStreet = availableStreets[Math.floor(Math.random() * availableStreets.length)];
+    usedStreets.push(randomStreet); // Mark this street as used
+    return randomStreet;
+}
+
 // Check the user's answer
 function checkAnswer() {
     let userInput = document.getElementById("street-input").value.trim();
@@ -190,5 +200,120 @@ function finishRound() {
     }
 }
 
-// Call the function to load streets when the page loads
+let currentHighlightedIndex = -1; // To track the highlighted suggestion
+
+// Event listener for suggestions click
+function setupSuggestionClicks() {
+    let suggestionsList = document.getElementById("suggestions");
+    if (suggestionsList) {
+        suggestionsList.addEventListener("click", function (event) {
+            if (event.target && event.target.nodeName === "LI") {
+                let selectedStreet = event.target.innerText.trim();
+                document.getElementById("street-input").value = selectedStreet;
+                resetHighlight(); // Reset highlighting after selection
+            }
+        });
+    }
+}
+
+// Function to highlight a suggestion
+function highlightSuggestion(index) {
+    let suggestionsList = document.getElementById("suggestions");
+    let items = suggestionsList.getElementsByTagName("li");
+
+    // Reset the highlighting
+    resetHighlight();
+
+    if (items[index]) {
+        items[index].classList.add("highlighted");
+    }
+}
+
+// Function to reset the highlighting
+function resetHighlight() {
+    let suggestionsList = document.getElementById("suggestions");
+    let items = suggestionsList.getElementsByTagName("li");
+    for (let item of items) {
+        item.classList.remove("highlighted");
+    }
+}
+
+// Display matching street names in the suggestion box
+function showSuggestions() {
+    let input = document.getElementById("street-input").value.trim().toLowerCase();
+    let suggestionsList = document.getElementById("suggestions");
+    suggestionsList.innerHTML = ""; // Clear previous suggestions
+
+    if (input.length > 0) {
+        // Filter streets based on user input
+        let matchedStreets = streets.filter(street => street.toLowerCase().includes(input));
+        
+        matchedStreets.forEach(street => {
+            let listItem = document.createElement("li");
+            listItem.innerText = street;
+            suggestionsList.appendChild(listItem);
+        });
+
+        if (matchedStreets.length > 0) {
+            suggestionsList.style.display = "block"; // Show the suggestions box
+        } else {
+            suggestionsList.style.display = "none"; // Hide if no matches
+        }
+    } else {
+        suggestionsList.style.display = "none"; // Hide if input is empty
+    }
+}
+
+// Event listener for keyboard navigation (Up, Down, Enter)
+document.getElementById("street-input").addEventListener("keydown", function(event) {
+    let suggestionsList = document.getElementById("suggestions");
+    let items = suggestionsList.getElementsByTagName("li");
+
+    if (event.key === "ArrowDown") {
+        // Move highlight down
+        if (currentHighlightedIndex < items.length - 1) {
+            currentHighlightedIndex++;
+            highlightSuggestion(currentHighlightedIndex);
+        }
+    } else if (event.key === "ArrowUp") {
+        // Move highlight up
+        if (currentHighlightedIndex > 0) {
+            currentHighlightedIndex--;
+            highlightSuggestion(currentHighlightedIndex);
+        }
+    } else if (event.key === "Enter") {
+        // If an item is highlighted, select it
+        if (currentHighlightedIndex >= 0 && items[currentHighlightedIndex]) {
+            let selectedStreet = items[currentHighlightedIndex].innerText.trim();
+            document.getElementById("street-input").value = selectedStreet;
+            resetHighlight(); // Reset the highlight after selection
+            checkAnswer(); // Automatically submit when pressing Enter
+        }
+    }
+});
+
+// Call the function to setup click handlers after page load
+setupSuggestionClicks();
+
+// Event listener for input field to show suggestions
+document.getElementById("street-input").addEventListener("input", function(event) {
+    let input = event.target.value;
+    showSuggestions(input);
+});
+
+// Event listener for "Enter" key to submit the answer
+document.getElementById("street-input").addEventListener("keypress", function(event) {
+    if (event.key === "Enter") {
+        checkAnswer();
+    }
+});
+
+// Allow pressing "Enter" to submit
+document.getElementById("street-input").addEventListener("blur", function() {
+    setTimeout(function() {
+        document.getElementById("suggestions").style.display = "none";
+    }, 200); // Delay to allow clicks on suggestions
+});
+
+// Load the first street when the page loads
 loadStreetList();
