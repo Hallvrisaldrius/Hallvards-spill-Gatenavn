@@ -16,9 +16,13 @@ const maxRounds = 3;
 // Load streets from text file
 async function loadStreetList() {
     try {
-        let response = await fetch('streets.txt');
-        let text = await response.text();
-        streets = text.split('\n').map(line => line.trim()).filter(line => line);
+        let responseGame = await fetch('streets.txt');
+        let textGame = await responseGame.text();
+        streets = textGame.split('\n').map(line => line.trim()).filter(line => line);
+
+        let responseAll = await fetch('streets_all.txt');
+        let textAll = await responseAll.text();
+        allStreets = textAll.split('\n').map(line => line.trim()).filter(line => line);
 
         if (streets.length === 0) {
             console.error("⚠️ Street list is empty!");
@@ -223,31 +227,34 @@ function resetHighlight() {
     }
 }
 
-// Display matching street names in the suggestion box
 function showSuggestions() {
     let input = document.getElementById("street-input").value.trim().toLowerCase();
     let suggestionsList = document.getElementById("suggestions");
     suggestionsList.innerHTML = ""; // Clear previous suggestions
 
     if (input.length > 0) {
-        // Filter streets based on user input
-        let matchedStreets = streets.filter(street => street.toLowerCase().includes(input));
+        // Filter from allStreets instead of streets
+        let matchedStreets = allStreets.filter(street => street.toLowerCase().includes(input));
+        
+        // Shuffle the results and limit to 10 suggestions for variety
+        matchedStreets = matchedStreets.sort(() => Math.random() - 0.5).slice(0, 10);
         
         matchedStreets.forEach(street => {
             let listItem = document.createElement("li");
             listItem.innerText = street;
+            listItem.addEventListener("click", function() {
+                document.getElementById("street-input").value = street;
+                suggestionsList.style.display = "none";
+            });
             suggestionsList.appendChild(listItem);
         });
 
-        if (matchedStreets.length > 0) {
-            suggestionsList.style.display = "block"; // Show the suggestions box
-        } else {
-            suggestionsList.style.display = "none"; // Hide if no matches
-        }
+        suggestionsList.style.display = matchedStreets.length > 0 ? "block" : "none";
     } else {
-        suggestionsList.style.display = "none"; // Hide if input is empty
+        suggestionsList.style.display = "none";
     }
 }
+
 
 // Event listener for keyboard navigation (Up, Down, Enter)
 document.getElementById("street-input").addEventListener("keydown", function(event) {
