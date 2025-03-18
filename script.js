@@ -1,6 +1,6 @@
 // Initialize the map - with change
 var map = L.map('map');
-L.tileLayer('https://{s}.tile.stamen.com/watercolor/{z}/{x}/{y}.jpg', {
+L.tileLayer('https://{s}.tile.stamen.com/toner/{z}/{x}/{y}.png', {
     attribution: '&copy; Stamen Design, OpenStreetMap contributors'
 }).addTo(map);
 
