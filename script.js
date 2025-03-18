@@ -1,7 +1,7 @@
 // Initialize the map - with change
 var map = L.map('map');
-L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}', {
-    attribution: '&copy; Esri, OpenStreetMap contributors'
+L.tileLayer('https://stamen-tiles.a.ssl.fastly.net/toner-lite/{z}/{x}/{y}.png', {
+    attribution: '&copy; Stamen Design, OpenStreetMap contributors'
 }).addTo(map);
 
 // Global variables
