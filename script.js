@@ -1,8 +1,9 @@
 // Initialize the map - with change
 var map = L.map('map');
-L.tileLayer('https://{s}.basemaps.cartocdn.com/voyager/{z}/{x}/{y}.png', {
+L.tileLayer('https://{s}.basemaps.cartocdn.com/voyager_nolabels/{z}/{x}/{y}.png', {
     attribution: '&copy; CartoDB, OpenStreetMap contributors'
 }).addTo(map);
+
 
 // Global variables
 var streetLayer = L.layerGroup().addTo(map);
