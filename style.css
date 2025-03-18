@@ -48,12 +48,17 @@ button {
     cursor: pointer;
 }
 
+/* Ensure the map controls (zoom) have a higher z-index */
+.leaflet-control-container {
+    z-index: 1000 !important; /* Ensure controls are above other elements */
+}
+
 /* Dropdown suggestions */
 #suggestions {
-    position: absolute; /* Position it relative to the input field */
-    top: calc(100% + 2px); /* Adjusted to make sure suggestions are directly below input */
+    position: absolute;
+    top: calc(100% + 2px);
     left: 0;
-    width: 100%; /* Ensure the suggestion box matches the input field's width */
+    width: 100%;
     background-color: white;
     border: 1px solid #ccc;
     max-height: 150px;
@@ -61,8 +66,8 @@ button {
     list-style: none;
     margin: 0;
     padding: 0;
-    display: none; /* Hidden by default */
-    z-index: 999; /* Make sure suggestions appear on top of other content */
+    display: none;
+    z-index: 999; /* Lower than zoom controls */
 }
 
 /* Each suggestion item */
