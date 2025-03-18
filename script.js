@@ -1,7 +1,7 @@
 // Initialize the map - with change
 var map = L.map('map');
-L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png', {
-    attribution: '&copy; CartoDB, OpenStreetMap contributors'
+L.tileLayer('https://{s}.tile.stamen.com/toner/{z}/{x}/{y}.png', {
+    attribution: '&copy; Stamen Design, OpenStreetMap contributors'
 }).addTo(map);
 
 // Global variables
