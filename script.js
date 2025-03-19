@@ -325,4 +325,4 @@ function showGameOverScreen(score) {
 
 
 // Load the first street when the page loads
-loadStreetList();
+startNewGame();
