@@ -68,7 +68,7 @@ button {
     margin: 0;
     padding: 0;
     display: none;
-    z-index: 9999; /* Maximum z-index to ensure it's above everything */
+    z-index: 9000; /* Maximum z-index to ensure it's above everything */
 }
 
 /* Each suggestion item */
