@@ -307,7 +307,7 @@ document.getElementById("street-input").addEventListener("blur", function() {
 
 function showGameOverScreen(score) {
     let gameOverScreen = document.getElementById("game-over-screen");
-    let scoreDisplay = document.getElementById("final-score");
+    let scoreDisplay = document.getElementById("game-over-text");
     
     // Ensure the score is correctly displayed
     scoreDisplay.innerText = `Game Over! You scored ${score} points`;
