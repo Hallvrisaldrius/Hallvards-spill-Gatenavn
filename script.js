@@ -305,5 +305,18 @@ document.getElementById("street-input").addEventListener("blur", function() {
     }, 200); // Delay to allow clicks on suggestions
 });
 
+function showGameOverScreen(score) {
+    let gameOverScreen = document.getElementById("game-over-screen");
+    let gameOverText = document.getElementById("game-over-text");
+
+    showGameOverScreen(score);
+    gameOverScreen.style.display = "flex"; // Show the overlay
+}
+
+function restartGame() {
+    document.getElementById("game-over-screen").style.display = "none"; // Hide overlay
+    startNewGame(); // Call your existing function to reset the game
+}
+
 // Load the first street when the page loads
 loadStreetList();
