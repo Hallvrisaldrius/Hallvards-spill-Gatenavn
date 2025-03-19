@@ -1,3 +1,31 @@
+#welcome-screen {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    background-color: #f4f4f4;
+}
+
+#welcome-screen h1 {
+    font-size: 2rem;
+    margin-bottom: 20px;
+}
+
+#welcome-screen button {
+    font-size: 1.2rem;
+    padding: 10px 20px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+#welcome-screen button:hover {
+    background-color: #45a049;
+}
+
 /* Spinner Styles */
 #loading-spinner {
     position: fixed;
