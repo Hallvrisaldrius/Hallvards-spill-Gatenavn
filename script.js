@@ -324,7 +324,7 @@ function restartGame() {
 function startNewGame() {
     score = 0;
     round = 0;
-    document.getElementById("game-over").style.display = "none";
+    document.getElementById("game-over-screen").style.display = "none";
     document.getElementById("score").innerText = `Score: ${score}`;
     startNewRound();
 }
