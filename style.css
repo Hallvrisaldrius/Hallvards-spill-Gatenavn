@@ -31,7 +31,7 @@
     position: relative;
     display: flex; /* Aligns the input and button horizontally */
     width: 100%; /* Make sure the input container takes up the full width */
-    z-index: 2000; /* Ensure it's above the map */
+    z-index: 3000; /* Ensure it's above the map */
 }
 
 /* Input field styling */
@@ -51,7 +51,7 @@ button {
 
 /* Ensure the map controls (zoom) have a higher z-index */
 .leaflet-control-container {
-    z-index: 1000 !important; /* Ensure controls are above other elements */
+    z-index: 500; /* Ensure controls are above other elements */
 }
 
 /* Dropdown suggestions */
@@ -68,7 +68,7 @@ button {
     margin: 0;
     padding: 0;
     display: none;
-    z-index: 2000; /* Ensure it appears above the map controls */
+    z-index: 4000; /* Higher than Leaflet controls */
 }
 
 /* Each suggestion item */
