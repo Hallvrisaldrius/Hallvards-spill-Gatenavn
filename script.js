@@ -34,8 +34,6 @@ async function loadStreetList() {
             console.error("⚠️ Street list is empty!");
             return;
         }
-
-        startNewGame();
     } catch (error) {
         document.getElementById('loading-spinner').style.display = 'none';
         console.error("❌ Error loading streets:", error);
