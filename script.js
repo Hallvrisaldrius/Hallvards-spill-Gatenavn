@@ -29,7 +29,7 @@ async function loadStreetList() {
             console.error("⚠️ Street list is empty!");
             return;
         }
-        
+
         startRound();
     } catch (error) {
         hideLoadingSpinner(); // Hide the spinner in case of an error
@@ -324,7 +324,7 @@ function restartGame() {
     document.getElementById("round-number").innerText = `Round ${round} of ${maxRounds}`;
     document.getElementById("total-score").innerText = `Total Score: ${totalScore}`;
     
-    startNewRound(); // Call your existing function to reset the game
+    startRound(); 
 }
 
 // Load the first street when the page loads
