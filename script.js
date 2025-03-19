@@ -317,5 +317,13 @@ function restartGame() {
     startNewGame(); // Call your existing function to reset the game
 }
 
+function startNewGame() {
+    score = 0;
+    round = 0;
+    document.getElementById("game-over").style.display = "none";
+    document.getElementById("score").innerText = `Score: ${score}`;
+    startNewRound();
+}
+
 // Load the first street when the page loads
 loadStreetList();
