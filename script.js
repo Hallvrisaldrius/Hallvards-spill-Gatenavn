@@ -318,9 +318,9 @@ function showGameOverScreen(score) {
 
 function restartGame() {
     document.getElementById("game-over-screen").style.display = "none"; // Hide overlay
+    document.getElementById("round-number").innerText = `Round 1 of ${maxRounds}`;
+    document.getElementById("total-score").innerText = `Total Score: 0`;
     
-    score = 0;
-    round = 1;
     startNewRound(); // Call your existing function to reset the game
 }
 
