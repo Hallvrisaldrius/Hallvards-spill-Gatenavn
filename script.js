@@ -168,11 +168,12 @@ function checkAnswer() {
 
 // Store and display wrong guesses
 function recordWrongGuess(guess) {
+    let wrongGuessesList = document.getElementById("wrong-guesses");
     let listItem = document.createElement("li");
     listItem.innerHTML = `❌ ${guess}`;
 
     // Insert the new item at the beginning of the list
-    document.getElementById("wrong-guesses").insertBefore(listItem, wrongGuessesList.firstChild);
+    wrongGuessesList.insertBefore(listItem, wrongGuessesList.firstChild);
 }
 
 function finishRound() {
