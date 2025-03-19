@@ -35,7 +35,7 @@ async function loadStreetList() {
             return;
         }
 
-        startRound();
+        startNewGame();
     } catch (error) {
         document.getElementById('loading-spinner').style.display = 'none';
         console.error("❌ Error loading streets:", error);
@@ -325,4 +325,4 @@ function showGameOverScreen(score) {
 
 
 // Load the first street when the page loads
-startNewGame();
+loadStreetList();
