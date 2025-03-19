@@ -31,7 +31,7 @@
     position: relative;
     display: flex; /* Aligns the input and button horizontally */
     width: 100%; /* Make sure the input container takes up the full width */
-    z-index: 10000; /* Ensure it's above the map */
+    z-index: 8000; /* Ensure it's above the map */
 }
 
 /* Input field styling */
