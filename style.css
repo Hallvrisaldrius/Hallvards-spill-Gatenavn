@@ -88,4 +88,5 @@ button {
     max-width: 800px; /* Optional max width */
     max-height: 500px; /* Optional max height */
     margin: auto; /* Center the map */
+    position: relative;
 }
