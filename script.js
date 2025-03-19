@@ -1,3 +1,8 @@
+// Show the welcome screen when the page loads
+document.addEventListener("DOMContentLoaded", function() {
+    document.getElementById("welcome-screen").style.display = "flex";
+});
+
 // Initialize the map - with change
 var map = L.map('map');
 L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager_nolabels/{z}/{x}/{y}.png', {
@@ -32,9 +37,21 @@ async function loadStreetList() {
 
         startRound();
     } catch (error) {
-        hideLoadingSpinner(); // Hide the spinner in case of an error
+        document.getElementById('loading-spinner').style.display = 'none';
         console.error("❌ Error loading streets:", error);
     }
+}
+
+function startNewGame() {
+    totalScore = 0
+    round = 1
+
+    document.getElementById("welcome-screen").style.display = "none";
+    document.getElementById("game-over-screen").style.display = "none";
+    document.getElementById("round-number").innerText = `Round ${round} of ${maxRounds}`;
+    document.getElementById("total-score").innerText = `Total Score: ${totalScore}`;
+
+    startRound(); 
 }
 
 // Start a new round
@@ -57,19 +74,9 @@ function startRound() {
     fetchStreetGeometry(currentStreet);
 }
 
-// Show loading spinner
-function showLoadingSpinner() {
-    document.getElementById('loading-spinner').style.display = 'flex';
-}
-
-// Hide loading spinner
-function hideLoadingSpinner() {
-    document.getElementById('loading-spinner').style.display = 'none';
-}
-
 // Fetch street geometry from OpenStreetMap Overpass API
 async function fetchStreetGeometry(streetName) {
-    showLoadingSpinner(); // Show the spinner
+    document.getElementById('loading-spinner').style.display = 'flex';
     let query = `
         [out:json];
         way["name"="${streetName}"]["highway"](59.7,10.4,60.1,10.9);
@@ -100,7 +107,7 @@ async function fetchStreetGeometry(streetName) {
     } catch (error) {
         console.error("❌ Overpass API error:", error);
     } finally {
-        hideLoadingSpinner(); // Hide the spinner if something goes wrong
+        document.getElementById('loading-spinner').style.display = 'none';
     }
 }
 
@@ -316,16 +323,6 @@ function showGameOverScreen(score) {
     gameOverScreen.style.display = "flex";
 }
 
-function restartGame() {
-    totalScore = 0
-    round = 1
-    
-    document.getElementById("game-over-screen").style.display = "none"; // Hide overlay
-    document.getElementById("round-number").innerText = `Round ${round} of ${maxRounds}`;
-    document.getElementById("total-score").innerText = `Total Score: ${totalScore}`;
-    
-    startRound(); 
-}
 
 // Load the first street when the page loads
 loadStreetList();
