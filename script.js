@@ -318,15 +318,10 @@ function showGameOverScreen(score) {
 
 function restartGame() {
     document.getElementById("game-over-screen").style.display = "none"; // Hide overlay
-    startNewGame(); // Call your existing function to reset the game
-}
-
-function startNewGame() {
+    
     score = 0;
-    round = 0;
-    document.getElementById("game-over-screen").style.display = "none";
-    document.getElementById("score").innerText = `Score: ${score}`;
-    startNewRound();
+    round = 1;
+    startNewRound(); // Call your existing function to reset the game
 }
 
 // Load the first street when the page loads
