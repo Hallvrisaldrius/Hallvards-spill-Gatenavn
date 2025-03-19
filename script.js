@@ -307,9 +307,13 @@ document.getElementById("street-input").addEventListener("blur", function() {
 
 function showGameOverScreen(score) {
     let gameOverScreen = document.getElementById("game-over-screen");
-    let gameOverText = document.getElementById("game-over-text");
+    let scoreDisplay = document.getElementById("final-score");
+    
+    // Ensure the score is correctly displayed
+    scoreDisplay.innerText = `Game Over! You scored ${score} points`;
 
-    gameOverScreen.style.display = "flex"; // Show the overlay
+    // Show the game-over screen
+    gameOverScreen.style.display = "flex";
 }
 
 function restartGame() {
