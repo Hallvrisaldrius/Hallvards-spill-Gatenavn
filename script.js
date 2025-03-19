@@ -54,13 +54,9 @@ function startNewGame() {
 
 // Start a new round
 function startRound() {
-    let roundNumberElement = document.getElementById("round-number");
-    let pointsDisplayElement = document.getElementById("points-display");
-    let totalScoreElement = document.getElementById("total-score");
-
-    if (roundNumberElement) roundNumberElement.innerText = `Round ${round} of ${maxRounds}`;
-    if (pointsDisplayElement) pointsDisplayElement.innerText = "3 points for a correct answer";
-    if (totalScoreElement) totalScoreElement.innerText = `Total Score: ${totalScore}`;
+    document.getElementById("round-number").innerText = `Round ${round} of ${maxRounds}`;
+    document.getElementById("points-display").innerText = "3 points for a correct answer";
+    document.getElementById("total-score").innerText = `Total Score: ${totalScore}`;
 
     document.getElementById("wrong-guesses").innerHTML = "";
     document.getElementById("street-input").value = "";
@@ -161,31 +157,27 @@ function checkAnswer() {
         recordWrongGuess(userInput);
         
         currentPoints--;
-        let pointsDisplayElement = document.getElementById("points-display");
         if (currentPoints === 0) {
             alert(`The correct answer was: ${currentStreet}`);
             finishRound();
-        } else if (pointsDisplayElement) {
-            pointsDisplayElement.innerText = `${currentPoints} points for a correct answer`;
+        } else {
+            document.getElementById("points-display").innerText = `${currentPoints} points for a correct answer`;
         }
     }
 }
 
 // Store and display wrong guesses
 function recordWrongGuess(guess) {
-    let wrongGuessesList = document.getElementById("wrong-guesses");
-    if (wrongGuessesList) {
-        let listItem = document.createElement("li");
-        listItem.innerHTML = `❌ ${guess}`;
+    let listItem = document.createElement("li");
+    listItem.innerHTML = `❌ ${guess}`;
 
-        // Insert the new item at the beginning of the list
-        wrongGuessesList.insertBefore(listItem, wrongGuessesList.firstChild);
-    }
+    // Insert the new item at the beginning of the list
+    document.getElementById("wrong-guesses").insertBefore(listItem, wrongGuessesList.firstChild);
 }
 
 function finishRound() {
     document.getElementById("street-input").value = "";
-    totalScore += currentPoints; // Add round points to total
+    totalScore += currentPoints; 
     document.getElementById("total-score").innerText = `Total Score: ${totalScore}`;
     if (round < maxRounds) {
         round++;
@@ -195,42 +187,14 @@ function finishRound() {
     }
 }
 
-let currentHighlightedIndex = -1; // To track the highlighted suggestion
-
 // Event listener for suggestions click
 function setupSuggestionClicks() {
-    let suggestionsList = document.getElementById("suggestions");
-    if (suggestionsList) {
-        suggestionsList.addEventListener("click", function (event) {
-            if (event.target && event.target.nodeName === "LI") {
-                let selectedStreet = event.target.innerText.trim();
-                document.getElementById("street-input").value = selectedStreet;
-                resetHighlight(); // Reset highlighting after selection
-            }
-        });
-    }
-}
-
-// Function to highlight a suggestion
-function highlightSuggestion(index) {
-    let suggestionsList = document.getElementById("suggestions");
-    let items = suggestionsList.getElementsByTagName("li");
-
-    // Reset the highlighting
-    resetHighlight();
-
-    if (items[index]) {
-        items[index].classList.add("highlighted");
-    }
-}
-
-// Function to reset the highlighting
-function resetHighlight() {
-    let suggestionsList = document.getElementById("suggestions");
-    let items = suggestionsList.getElementsByTagName("li");
-    for (let item of items) {
-        item.classList.remove("highlighted");
-    }
+    document.getElementById("suggestions").addEventListener("click", function (event) {
+        if (event.target && event.target.nodeName === "LI") {
+            let selectedStreet = event.target.innerText.trim();
+            document.getElementById("street-input").value = selectedStreet;
+        }
+    });
 }
 
 function showSuggestions() {
@@ -239,7 +203,6 @@ function showSuggestions() {
     suggestionsList.innerHTML = ""; // Clear previous suggestions
 
     if (input.length > 0) {
-        // Filter from allStreets instead of streets
         let matchedStreets = allStreets.filter(street => street.toLowerCase().includes(input));
         
         // Shuffle the results and limit to 10 suggestions for variety
@@ -260,35 +223,6 @@ function showSuggestions() {
         suggestionsList.style.display = "none";
     }
 }
-
-
-// Event listener for keyboard navigation (Up, Down, Enter)
-document.getElementById("street-input").addEventListener("keydown", function(event) {
-    let suggestionsList = document.getElementById("suggestions");
-    let items = suggestionsList.getElementsByTagName("li");
-
-    if (event.key === "ArrowDown") {
-        // Move highlight down
-        if (currentHighlightedIndex < items.length - 1) {
-            currentHighlightedIndex++;
-            highlightSuggestion(currentHighlightedIndex);
-        }
-    } else if (event.key === "ArrowUp") {
-        // Move highlight up
-        if (currentHighlightedIndex > 0) {
-            currentHighlightedIndex--;
-            highlightSuggestion(currentHighlightedIndex);
-        }
-    } else if (event.key === "Enter") {
-        // If an item is highlighted, select it
-        if (currentHighlightedIndex >= 0 && items[currentHighlightedIndex]) {
-            let selectedStreet = items[currentHighlightedIndex].innerText.trim();
-            document.getElementById("street-input").value = selectedStreet;
-            resetHighlight(); // Reset the highlight after selection
-            checkAnswer(); // Automatically submit when pressing Enter
-        }
-    }
-});
 
 // Call the function to setup click handlers after page load
 setupSuggestionClicks();
@@ -311,16 +245,9 @@ document.getElementById("street-input").addEventListener("blur", function() {
 });
 
 function showGameOverScreen(score) {
-    let gameOverScreen = document.getElementById("game-over-screen");
-    let scoreDisplay = document.getElementById("game-over-text");
-    
-    // Ensure the score is correctly displayed
-    scoreDisplay.innerText = `Game Over! You scored ${score} points`;
-
-    // Show the game-over screen
-    gameOverScreen.style.display = "flex";
+    document.getElementById("game-over-text").innerText = `Game Over! You scored ${score} points`;
+    document.getElementById("game-over-screen").style.display = "flex";
 }
 
-
-// Load the first street when the page loads
+// Load the street lists when the page loads
 loadStreetList();
