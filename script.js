@@ -186,7 +186,7 @@ function finishRound() {
         round++;
         startRound();
     } else {
-        alert(`Game Over! You scored a total of ${totalScore} points.`);
+        showGameOverScreen(totalScore)
     }
 }
 
@@ -309,7 +309,6 @@ function showGameOverScreen(score) {
     let gameOverScreen = document.getElementById("game-over-screen");
     let gameOverText = document.getElementById("game-over-text");
 
-    showGameOverScreen(score);
     gameOverScreen.style.display = "flex"; // Show the overlay
 }
 
