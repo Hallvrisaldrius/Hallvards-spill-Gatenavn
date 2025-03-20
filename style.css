@@ -9,7 +9,7 @@
     align-items: center;
     justify-content: center;
     background-color: rgba(244, 244, 244, 0.95); /* Slight transparency */
-    z-index: 1000; /* Ensures it’s on top */
+    z-index: 8000; /* Ensures it’s on top */
 }
 
 #welcome-screen h1 {
@@ -101,7 +101,7 @@ button {
     margin: 0;
     padding: 0;
     display: none;
-    z-index: 9000; /* Maximum z-index to ensure it's above everything */
+    z-index: 7000;
 }
 
 /* Each suggestion item */
