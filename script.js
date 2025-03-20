@@ -197,17 +197,17 @@ function checkAnswer() {
     let userInput = document.getElementById("street-input").value.trim();
 
     if (userInput.toLowerCase() === currentStreet.toLowerCase()) {
-        alert(`You are correct! This is ${currentStreet}`);
+        alert(`Korrekt! Dette er ${currentStreet}`);
         finishRound(); // End the round properly
     } else {
         recordWrongGuess(userInput);
         
         currentPoints--;
         if (currentPoints === 0) {
-            alert(`The correct answer was: ${currentStreet}`);
+            alert(`Riktig svar er: ${currentStreet}`);
             finishRound();
         } else {
-            document.getElementById("points-display").innerText = `${currentPoints} points for a correct answer`;
+            document.getElementById("points-display").innerText = `${currentPoints} poeng for riktig svar`;
         }
     }
 }
@@ -225,7 +225,7 @@ function recordWrongGuess(guess) {
 function finishRound() {
     document.getElementById("street-input").value = "";
     totalScore += currentPoints; 
-    document.getElementById("total-score").innerText = `Total Score: ${totalScore}`;
+    document.getElementById("total-score").innerText = `Poengsum: ${totalScore}`;
     if (round < maxRounds) {
         round++;
         startRound();
@@ -292,7 +292,7 @@ document.getElementById("street-input").addEventListener("blur", function() {
 });
 
 function showGameOverScreen(score) {
-    document.getElementById("game-over-text").innerText = `Game Over! You scored ${score} points`;
+    document.getElementById("game-over-text").innerText = `Spillet er over, du fikk ${score} poeng`;
     document.getElementById("game-over-screen").style.display = "flex";
 }
 
