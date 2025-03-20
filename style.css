@@ -63,6 +63,41 @@
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
 }
+
+#game-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* For larger screens, use two columns */
+@media (min-width: 800px) {
+    #game-container {
+        flex-direction: row;
+        align-items: flex-start;
+    }
+
+    #game-info {
+        flex: 1;
+        max-width: 40%;
+    }
+
+    #map-container {
+        flex: 1;
+        max-width: 60%;
+    }
+}
+
+#map {
+    height: 500px;
+    width: 100%;
+    max-width: 800px; /* Optional max width */
+    max-height: 500px; /* Optional max height */
+    margin: auto; /* Center the map */
+    position: relative;
+    z-index: 0; /* Make sure it's the lowest layer */
+}
+
 /* Container for the input field and suggestions */
 .input-container {
     position: relative;
@@ -117,16 +152,6 @@ button {
 /* Hover effect for suggestions */
 #suggestions li:hover {
     background-color: #f0f0f0;
-}
-
-#map {
-    width: 80vw;  /* 80% of the viewport width */
-    height: 60vh; /* 60% of the viewport height */
-    max-width: 800px; /* Optional max width */
-    max-height: 500px; /* Optional max height */
-    margin: auto; /* Center the map */
-    position: relative;
-    z-index: 0; /* Make sure it's the lowest layer */
 }
 
 #game-over-screen {
