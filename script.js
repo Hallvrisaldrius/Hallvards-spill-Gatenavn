@@ -78,7 +78,7 @@ function setStreetsForGame() {
             streetObj.districts.some(district => selectedDistricts.includes(district))
         )
         .map(streetObj => streetObj.street);
-    console.log(streets.length)
+    console.log("Number of streets in game:", streets.length);
 }
 
 function startButtonPressed() {  
