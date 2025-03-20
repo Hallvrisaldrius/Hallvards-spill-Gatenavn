@@ -36,13 +36,11 @@ async function loadStreetList() {
             districtArray.forEach(d => districtSet.add(d));
             streetsData.push({ street, districts: districtArray });
         });
-        console.log(streetsData);
-        console.log(lines);
         allDistricts = Array.from(districtSet).sort(); // Convert Set to array and sort alphabetically
         populateDistrictFilter(allDistricts); // Function to create the checkmark buttons
     } catch (error) {
         document.getElementById('loading-spinner').style.display = 'none';
-        alert(`❌ Error loading streets:`);
+        console.error("❌ Error loading street list");
     }
 }
 
@@ -72,6 +70,7 @@ function updateSelectedDistricts() {
 }
 
 function setStreetsForGame() {
+    console.log(streetsData)
     streets = streetsData.filter(street => 
         street[1].some(district => districtList.includes(district))
     ).map(street => street[0]);
