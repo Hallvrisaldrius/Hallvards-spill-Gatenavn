@@ -72,7 +72,7 @@ function updateSelectedDistricts() {
 function setStreetsForGame() {
     streets = streetsData
         .filter(streetObj => 
-            streetObj.districts.some(district => districtList.includes(district))
+            streetObj.districts.some(district => selectedDistricts.includes(district))
         )
         .map(streetObj => streetObj.street);
 }
