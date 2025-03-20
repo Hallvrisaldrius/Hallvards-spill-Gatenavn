@@ -22,39 +22,42 @@
         <button onclick="startButtonPressed()">Start spillet</button>
     </div>
 
-    
-    <h1>Hallvards gatespill</h1>
-
-    <!-- Round Display -->
-    <p id="round-number">Round: 1</p>
-
-    <!-- Total Points -->
-    <p id="total-score">Poengsum: 0</p>
-
-    <!-- Points and Round Result -->
-    <p id="points-display">3 poeng for riktig svar</p>
-
-    <div class="input-container">
-        <!-- Input Field for User Guess -->
-        <input type="text" id="street-input" placeholder="Enter street name" oninput="showSuggestions()">
-    
-        <!-- Submit Button -->
-        <button onclick="checkAnswer()">Send</button>
-
-        <!-- Dropdown for suggestions -->
-        <ul id="suggestions"></ul>
-    </div>
-    
-    <!-- Displaying wrong guesses -->
-    <ul id="wrong-guesses" style="list-style: none; padding: 0;"></ul>
-    
     <!-- Loading Spinner -->
     <div id="loading-spinner" style="display: none;">
         <div class="spinner"></div>
     </div>
-    
-    <!-- Map Container -->
-    <div id="map" style="height: 500px; width: 100%;"></div>
+
+    <div id="game-container">
+        <div id="game-info">
+            <h1>Hallvards gatespill</h1>
+            
+            <!-- Round Display -->
+            <p id="round-number">Round: 1</p>
+            
+            <!-- Total Points -->
+            <p id="total-score">Poengsum: 0</p>
+            
+            <!-- Points and Round Result -->
+            <p id="points-display">3 poeng for riktig svar</p>
+            
+            <div class="input-container">
+                <!-- Input Field for User Guess -->
+                <input type="text" id="street-input" placeholder="Enter street name" oninput="showSuggestions()">
+                
+                <!-- Submit Button -->
+                <button onclick="checkAnswer()">Send</button>
+                
+                <!-- Dropdown for suggestions -->
+                <ul id="suggestions"></ul>
+            </div>
+            
+            <!-- Displaying wrong guesses -->
+            <ul id="wrong-guesses" style="list-style: none; padding: 0;"></ul>
+        </div>
+        
+        <!-- Map Container -->
+        <div id="map" style="height: 500px; width: 100%;"></div>
+    </div>
     
     <!-- Leaflet JS -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
