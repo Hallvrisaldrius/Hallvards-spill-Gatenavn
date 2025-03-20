@@ -70,7 +70,6 @@ function updateSelectedDistricts() {
 }
 
 function setStreetsForGame() {
-    console.log(streetsData)
     streets = streetsData.filter(street => 
         street[1].some(district => districtList.includes(district))
     ).map(street => street[0]);
