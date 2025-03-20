@@ -22,6 +22,22 @@ const maxRounds = 3;
 // Load streets from text file
 async function loadStreetList() {
     try {
+        streetsData = [];
+        let districtSet = new Set();
+        
+        let streetList = await fetch('streets.csv');
+        let streetListText = await streetList.text();
+        let lines = streetListText.split('\n').map(line => line.trim()).filter(line => line);
+        lines.forEach(line => {
+            let [street, districtString] = line.split(',')
+            if (!street || !districtString) return;
+            let districtArray = districtString.split('/').map(d => d.trim());
+            districtArray.forEach(d => districtSet.add(d));
+            streetsData.push({ street, districts: districtArray });
+        });
+        allDistricts = Array.from(districtSet).sort(); // Convert Set to array and sort alphabetically
+        populateDistrictFilter(allDistricts); // Function to create the checkmark buttons
+        
         let responseGame = await fetch('streets.txt');
         let textGame = await responseGame.text();
         streets = textGame.split('\n').map(line => line.trim()).filter(line => line);
