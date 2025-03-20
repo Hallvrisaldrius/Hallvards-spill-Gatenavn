@@ -18,6 +18,7 @@ var totalScore = 0;
 var round = 1;
 const maxRounds = 3;
 var streetsData = []; // all streets with districts
+var allStreets = []; // all streets
 let selectedDistricts = []; //the districts that the player chooses
 var streets = []; // all streets within the chosen districts
 
@@ -36,8 +37,11 @@ async function loadStreetList() {
             districtArray.forEach(d => districtSet.add(d));
             streetsData.push({ street, districts: districtArray });
         });
+        allStreets = streetsData.map(streetObj => streetObj.street);
+        
         allDistricts = Array.from(districtSet).sort(); // Convert Set to array and sort alphabetically
         populateDistrictFilter(allDistricts); // Function to create the checkmark buttons
+        
     } catch (error) {
         document.getElementById('loading-spinner').style.display = 'none';
         console.error("❌ Error loading street list");
