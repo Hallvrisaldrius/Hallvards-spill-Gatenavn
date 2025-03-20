@@ -40,18 +40,9 @@ async function loadStreetList() {
         console.log(lines);
         allDistricts = Array.from(districtSet).sort(); // Convert Set to array and sort alphabetically
         populateDistrictFilter(allDistricts); // Function to create the checkmark buttons
-        
-        let responseAll = await fetch('streets_all.txt');
-        let textAll = await responseAll.text();
-        allStreets = textAll.split('\n').map(line => line.trim()).filter(line => line);
-
-        if (streets.length === 0) {
-            console.error("⚠️ Street list is empty!");
-            return;
-        }
     } catch (error) {
         document.getElementById('loading-spinner').style.display = 'none';
-        console.error("❌ Error loading streets:", error);
+        alert(`❌ Error loading streets:`);
     }
 }
 
