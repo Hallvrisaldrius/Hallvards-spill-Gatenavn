@@ -9,7 +9,6 @@ L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager_nolabels/{z}/
     attribution: '&copy; CartoDB, OpenStreetMap contributors'
 }).addTo(map);
 
-
 // Global variables
 var streetLayer = L.layerGroup().addTo(map);
 var currentStreet = "";
