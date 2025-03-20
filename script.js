@@ -39,10 +39,6 @@ async function loadStreetList() {
         allDistricts = Array.from(districtSet).sort(); // Convert Set to array and sort alphabetically
         populateDistrictFilter(allDistricts); // Function to create the checkmark buttons
         
-        let responseGame = await fetch('streets.txt');
-        let textGame = await responseGame.text();
-        streets = textGame.split('\n').map(line => line.trim()).filter(line => line);
-
         let responseAll = await fetch('streets_all.txt');
         let textAll = await responseAll.text();
         allStreets = textAll.split('\n').map(line => line.trim()).filter(line => line);
@@ -80,6 +76,17 @@ function updateSelectedDistricts() {
     selectedDistricts = Array.from(document.querySelectorAll(".district-checkbox:checked"))
                              .map(cb => cb.value);
     console.log("Selected Districts:", selectedDistricts);
+}
+
+function setStreetsForGame() {
+    streets = streetsData.filter(street => 
+        street[1].some(district => districtList.includes(district))
+    ).map(street => street[0]);
+}
+
+function startButtonPressed() {  
+    setStreetsForGame();
+    startNewGame();
 }
 
 function startNewGame() {
