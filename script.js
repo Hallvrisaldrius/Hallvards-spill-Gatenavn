@@ -12,18 +12,18 @@ L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager_nolabels/{z}/
 
 // Global variables
 var streetLayer = L.layerGroup().addTo(map);
-var streets = [];
 var currentStreet = "";
 var currentPoints = 3;
 var totalScore = 0;
 var round = 1;
 const maxRounds = 3;
+var streetsData = []; // all streets with districts
 let selectedDistricts = []; //the districts that the player chooses
+var streets = []; // all streets within the chosen districts
 
 // Load streets from text file
 async function loadStreetList() {
     try {
-        streetsData = [];
         let districtSet = new Set();
         
         let streetList = await fetch('streets.csv');
