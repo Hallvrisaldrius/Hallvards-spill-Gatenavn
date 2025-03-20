@@ -70,9 +70,11 @@ function updateSelectedDistricts() {
 }
 
 function setStreetsForGame() {
-    streets = streetsData.filter(street => 
-        street[1].some(district => selectedDistricts.includes(district))
-    ).map(street => street[0]);
+    streets = streetsData
+        .filter(streetObj => 
+            streetObj.districts.some(district => districtList.includes(district))
+        )
+        .map(streetObj => streetObj.street);
 }
 
 function startButtonPressed() {  
