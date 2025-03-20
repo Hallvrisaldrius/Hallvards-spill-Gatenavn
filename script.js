@@ -37,6 +37,7 @@ async function loadStreetList() {
             streetsData.push({ street, districts: districtArray });
         });
         console.log(streetsData);
+        console.log(lines);
         allDistricts = Array.from(districtSet).sort(); // Convert Set to array and sort alphabetically
         populateDistrictFilter(allDistricts); // Function to create the checkmark buttons
         
