@@ -18,6 +18,7 @@ var currentPoints = 3;
 var totalScore = 0;
 var round = 1;
 const maxRounds = 3;
+let selectedDistricts = []; //the districts that the player chooses
 
 // Load streets from text file
 async function loadStreetList() {
@@ -54,6 +55,31 @@ async function loadStreetList() {
         document.getElementById('loading-spinner').style.display = 'none';
         console.error("❌ Error loading streets:", error);
     }
+}
+
+function populateDistrictFilter(districtList) {
+    let container = document.getElementById("districtFilter");
+
+    districtList.forEach(district => {
+        let label = document.createElement("label");
+        let checkbox = document.createElement("input");
+        
+        checkbox.type = "checkbox";
+        checkbox.value = district;
+        checkbox.className = "district-checkbox";
+        checkbox.addEventListener("change", updateSelectedDistricts);
+        
+        label.appendChild(checkbox);
+        label.appendChild(document.createTextNode(" " + district));
+        container.appendChild(label);
+        container.appendChild(document.createElement("br"));  // New line for readability
+    });
+}
+
+function updateSelectedDistricts() {
+    selectedDistricts = Array.from(document.querySelectorAll(".district-checkbox:checked"))
+                             .map(cb => cb.value);
+    console.log("Selected Districts:", selectedDistricts);
 }
 
 function startNewGame() {
