@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Guess the Street</title>
+    <title>Hallvards gatespill</title>
     <link rel="stylesheet" href="style.css">
 
     <!-- Leaflet CSS -->
@@ -12,34 +12,34 @@
 <body>
     <!-- Welcome Screen -->
     <div id="welcome-screen">
-        <h1>Guess the Street</h1>
+        <h1>Hallvards gatespill</h1>
 
         <!-- Dynamically generated district buttons -->
         <div id="districtFilter">
             <!-- District checkboxes will appear here -->
         </div>
         
-        <button onclick="startButtonPressed()">Start Game</button>
+        <button onclick="startButtonPressed()">Start spillet</button>
     </div>
 
     
-    <h1>Guess the Street</h1>
+    <h1>Hallvards gatespill</h1>
 
     <!-- Round Display -->
     <p id="round-number">Round: 1</p>
 
     <!-- Total Points -->
-    <p id="total-score">Total Points: 0</p>
+    <p id="total-score">Poengsum: 0</p>
 
     <!-- Points and Round Result -->
-    <p id="points-display">3 points for a correct answer</p>
+    <p id="points-display">3 poeng for riktig svar</p>
 
     <div class="input-container">
         <!-- Input Field for User Guess -->
         <input type="text" id="street-input" placeholder="Enter street name" oninput="showSuggestions()">
     
         <!-- Submit Button -->
-        <button onclick="checkAnswer()">Submit</button>
+        <button onclick="checkAnswer()"></button>
 
         <!-- Dropdown for suggestions -->
         <ul id="suggestions"></ul>
@@ -66,8 +66,8 @@
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
     <div id="game-over-screen">
-        <p id="game-over-text">Game over, you scored 0 points</p>
-        <button onclick="startNewGame()">Play Again</button>
+        <p id="game-over-text">Spillet er over, du fikk 0 poeng</p>
+        <button onclick="startNewGame()">Nytt spill</button>
     </div>
     
     <!-- Custom JavaScript -->
