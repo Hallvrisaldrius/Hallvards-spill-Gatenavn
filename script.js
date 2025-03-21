@@ -208,7 +208,7 @@ function checkAnswer() {
         attemptNumber++;
         currentPoints--;
         
-        document.getElementById("hint").innerText = "Hint: " + currentStreet.slice(0, attemptNumber) + "_".repeat(currentStreet.length - attemptNumber);
+        document.getElementById("hint").innerText = "Hint: " + currentStreet.slice(0, attemptNumber) + "_".repeat(currentStreet.length - 2*attemptNumber) + currentStreet.slice(-attemptNumber);
         if (currentPoints === 0) {
             setTimeout(() => {
                 alert(`Riktig svar er: ${currentStreet}`);
