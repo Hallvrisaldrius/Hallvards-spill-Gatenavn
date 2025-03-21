@@ -106,7 +106,7 @@ function startRound() {
     document.getElementById("round-number").innerText = `Runde ${round} av ${maxRounds}`;
     document.getElementById("points-display").innerText = "3 poeng for riktig svar";
     document.getElementById("total-score").innerText = `Poengsum: ${totalScore}`;
-    document.getElementById("hint").innerText = "Hint: " + currentStreet.slice(0, round) + "*".repeat(currentStreet.length - round);
+    document.getElementById("hint").innerText = "Hint: " + "*".repeat(currentStreet.length);
 
     document.getElementById("wrong-guesses").innerHTML = "";
     document.getElementById("street-input").value = "";
@@ -228,6 +228,7 @@ function finishRound() {
     totalScore += currentPoints; 
     document.getElementById("total-score").innerText = `Poengsum: ${totalScore}`;
     if (round < maxRounds) {
+        document.getElementById("hint").innerText = "Hint: " + currentStreet.slice(0, round) + "*".repeat(currentStreet.length - round);
         round++;
         startRound();
     } else {
