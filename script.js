@@ -13,6 +13,7 @@ L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager_nolabels/{z}/
 var streetLayer = L.layerGroup().addTo(map);
 var currentStreet = "";
 var currentPoints = 3;
+var attemptNumber = 0
 var totalScore = 0;
 var round = 1;
 const maxRounds = 3;
@@ -102,6 +103,7 @@ function startRound() {
     currentStreet = streets[Math.floor(Math.random() * streets.length)];
     console.log("✅ Selected street:", currentStreet);
     currentPoints = 3;
+    attemptNumber = 0;
     
     document.getElementById("round-number").innerText = `Runde ${round} av ${maxRounds}`;
     document.getElementById("points-display").innerText = "3 poeng for riktig svar";
@@ -202,8 +204,11 @@ function checkAnswer() {
         finishRound(); // End the round properly
     } else {
         recordWrongGuess(userInput);
-        
+
+        attemptNumber++;
         currentPoints--;
+        
+        document.getElementById("hint").innerText = "Hint: " + currentStreet.slice(0, attemptNumber) + "*".repeat(currentStreet.length - attemptNumber);
         if (currentPoints === 0) {
             alert(`Riktig svar er: ${currentStreet}`);
             finishRound();
@@ -228,7 +233,6 @@ function finishRound() {
     totalScore += currentPoints; 
     document.getElementById("total-score").innerText = `Poengsum: ${totalScore}`;
     if (round < maxRounds) {
-        document.getElementById("hint").innerText = "Hint: " + currentStreet.slice(0, round) + "*".repeat(currentStreet.length - round);
         round++;
         startRound();
     } else {
