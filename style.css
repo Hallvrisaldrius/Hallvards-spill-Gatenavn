@@ -1,3 +1,7 @@
+html, body {
+    height: 100%; /* Full height for both html and body */
+}
+
 #welcome-screen {
     position: fixed;  /* Makes it stay over the game */
     top: 0;
