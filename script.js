@@ -92,17 +92,15 @@ function startNewGame() {
 
     document.getElementById("welcome-screen").style.display = "none";
     document.getElementById("game-over-screen").style.display = "none";
-    document.getElementById("round-number").innerText = `Round ${round} of ${maxRounds}`;
-    document.getElementById("total-score").innerText = `Total Score: ${totalScore}`;
 
     startRound(); 
 }
 
 // Start a new round
 function startRound() {
-    document.getElementById("round-number").innerText = `Round ${round} of ${maxRounds}`;
-    document.getElementById("points-display").innerText = "3 points for a correct answer";
-    document.getElementById("total-score").innerText = `Total Score: ${totalScore}`;
+    document.getElementById("round-number").innerText = `Runde ${round} av ${maxRounds}`;
+    document.getElementById("points-display").innerText = "3 poeng for riktig svar";
+    document.getElementById("total-score").innerText = `Poengsum: ${totalScore}`;
 
     document.getElementById("wrong-guesses").innerHTML = "";
     document.getElementById("street-input").value = "";
@@ -194,7 +192,9 @@ function displayStreet(coordinateGroups) {
 
 // Check the user's answer
 function checkAnswer() {
-    let userInput = document.getElementById("street-input").value.trim();
+    let inputBox = document.getElementById("street-input");
+    let userInput = inputBox.value.trim();
+    inputBox.value = "";
 
     if (userInput.toLowerCase() === currentStreet.toLowerCase()) {
         alert(`Korrekt! Dette er ${currentStreet}`);
@@ -239,7 +239,9 @@ function setupSuggestionClicks() {
     document.getElementById("suggestions").addEventListener("click", function (event) {
         if (event.target && event.target.nodeName === "LI") {
             let selectedStreet = event.target.innerText.trim();
-            document.getElementById("street-input").value = selectedStreet;
+            let inputBox = document.getElementById("street-input")
+            inputBox.value = selectedStreet;
+            inputBox.focus();
         }
     });
 }
