@@ -10,7 +10,7 @@ html, body {
     top: 0;
     left: 0;
     width: 100%;
-    height: 100vh;
+    height: 100%;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -72,8 +72,8 @@ html, body {
 }
 
 #game-container {
-    width: 95%;
-    height: 95%;
+    width: 100%;
+    height: 100%;
     display: flex;
     flex-direction: column;
     gap: 20px;
@@ -81,7 +81,7 @@ html, body {
 
 #map {
     margin: 0; /* Remove margin if there's any */
-    height: 100vh;
+    height: 100%;
     width: 100%;
     position: relative;
     z-index: 0; /* Make sure it's the lowest layer */
