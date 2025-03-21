@@ -108,7 +108,7 @@ function startRound() {
     document.getElementById("round-number").innerText = `Runde ${round} av ${maxRounds}`;
     document.getElementById("points-display").innerText = "3 poeng for riktig svar";
     document.getElementById("total-score").innerText = `Poengsum: ${totalScore}`;
-    document.getElementById("hint").innerText = "Hint: " + "*".repeat(currentStreet.length);
+    document.getElementById("hint").innerText = "Hint: " + "_".repeat(currentStreet.length);
 
     document.getElementById("wrong-guesses").innerHTML = "";
     document.getElementById("street-input").value = "";
@@ -208,7 +208,7 @@ function checkAnswer() {
         attemptNumber++;
         currentPoints--;
         
-        document.getElementById("hint").innerText = "Hint: " + currentStreet.slice(0, attemptNumber) + "*".repeat(currentStreet.length - attemptNumber);
+        document.getElementById("hint").innerText = "Hint: " + currentStreet.slice(0, attemptNumber) + "_".repeat(currentStreet.length - attemptNumber);
         if (currentPoints === 0) {
             alert(`Riktig svar er: ${currentStreet}`);
             finishRound();
