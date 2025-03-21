@@ -210,8 +210,10 @@ function checkAnswer() {
         
         document.getElementById("hint").innerText = "Hint: " + currentStreet.slice(0, attemptNumber) + "_".repeat(currentStreet.length - attemptNumber);
         if (currentPoints === 0) {
-            alert(`Riktig svar er: ${currentStreet}`);
-            finishRound();
+            setTimeout(() => {
+                alert(`Riktig svar er: ${currentStreet}`);
+                finishRound();
+            }, 10); // 10 ms delay
         } else {
             document.getElementById("points-display").innerText = `${currentPoints} poeng for riktig svar`;
         }
