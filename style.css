@@ -66,7 +66,6 @@
 
 #game-container {
     display: flex;
-    min-width: 500px; /* Optional max width */
     flex-direction: column;
     gap: 20px;
 }
@@ -87,13 +86,14 @@
     }
 
     #game-info {
-        flex: 1;
-        max-width: 50%;
+        flex: 0 0 500px; /* Ensures that game-info is at least 500px wide */
+        max-width: 500px; /* Prevents it from becoming wider than 500px */
     }
 
     #map-container {
         flex: 1;
-        max-width: 50%;
+        height: 100%; /* Ensure the map container fills the available height */
+        min-height: 500px; /* Ensure the map container has a minimum height of 500px */
     }
 }
 
