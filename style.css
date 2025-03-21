@@ -1,5 +1,8 @@
 html, body {
+    margin: 0;    /* Remove default margin */
+    padding: 0;   /* Remove default padding */
     height: 100%; /* Full height for both html and body */
+    overflow: hidden; /* Prevent any overflow */
 }
 
 #welcome-screen {
