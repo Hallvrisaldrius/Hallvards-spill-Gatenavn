@@ -71,7 +71,7 @@
 }
 
 /* For larger screens, use two columns */
-@media (min-width: 800px) {
+@media (min-width: 1200px) {
     #game-container {
         flex-direction: row;
         align-items: flex-start;
@@ -89,10 +89,10 @@
 }
 
 #map {
-    height: 500px;
+    height: 100%;
     width: 100%;
-    max-width: 800px; /* Optional max width */
-    max-height: 500px; /* Optional max height */
+    /*max-width: 800px;  Optional max width */
+    /*max-height: 500px; Optional max height */
     margin: auto; /* Center the map */
     position: relative;
     z-index: 0; /* Make sure it's the lowest layer */
