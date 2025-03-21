@@ -98,7 +98,6 @@ html, body {
 
     #map-container {
         flex: 1;
-        min-height: 500px; /* Ensure the map container has a minimum height of 500px */
         height: auto;
     }
 }
