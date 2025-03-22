@@ -123,7 +123,7 @@ async function fetchRandomStreetGeometry(attemptNumber) {
     document.getElementById('loading-spinner').style.display = 'flex';
     let query = `
         [out:json];
-        way["name"="${streetName}"]["highway"](59.7,10.4,60.1,10.9);
+        way["name"="${currentStreet}"]["highway"](59.7,10.4,60.1,10.9);
         (._;>;);
         out body;
     `;
@@ -138,8 +138,8 @@ async function fetchRandomStreetGeometry(attemptNumber) {
         console.log("🗺 Overpass API response:", data);
 
         if (!data.elements.length) {
-            console.error("⚠️ Street not found:", streetName);
-            throw new Error("⚠️ Street not found:", streetName);
+            console.error("⚠️ Street not found:", currentStreet);
+            throw new Error("⚠️ Street not found:", currentStreet);
             return;
         }
 
@@ -147,7 +147,7 @@ async function fetchRandomStreetGeometry(attemptNumber) {
         if (allCoordinates.length) {
             displayStreet(allCoordinates);
         } else {
-            throw new Error("❌ No valid coordinates found for", streetName);
+            throw new Error("❌ No valid coordinates found for", currentStreet);
         }
     } catch (error) {
         attempt++
