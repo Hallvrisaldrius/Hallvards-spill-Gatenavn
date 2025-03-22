@@ -86,7 +86,7 @@ function setStreetsForGame() {
 
 function startButtonPressed() { 
     if (selectedDistricts.length === 0) {
-        alert("Du må velge minst én bydel);
+        alert("Du må velge minst én bydel");
         return;
     } 
     setStreetsForGame();
