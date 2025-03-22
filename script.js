@@ -11,7 +11,7 @@ L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager_nolabels/{z}/
 
 // Global variables
 var streetLayer = L.layerGroup().addTo(map);
-var maxStreetFetchingAttempts = 3;
+var maxStreetFetchingAttempts = 5;
 var currentStreet = "";
 var currentPoints = 3;
 var streetGuessAttempt = 0
