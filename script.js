@@ -14,7 +14,7 @@ var streetLayer = L.layerGroup().addTo(map);
 var maxStreetFetchingAttempts = 3;
 var currentStreet = "";
 var currentPoints = 3;
-var attemptNumber = 0
+var streetGuessAttempt = 0
 var totalScore = 0;
 var round = 1;
 const maxRounds = 3;
@@ -102,7 +102,7 @@ function startNewGame() {
 // Start a new round
 function startRound() {
     currentPoints = 3;
-    attemptNumber = 0;
+    streetGuessAttempt = 0;
     
     document.getElementById("round-number").innerText = `Runde ${round} av ${maxRounds}`;
     document.getElementById("points-display").innerText = "3 poeng for riktig svar";
@@ -112,11 +112,11 @@ function startRound() {
     document.getElementById("wrong-guesses").innerHTML = "";
     document.getElementById("street-input").value = "";
 
-    fetchRandomStreetGeometry(0);
+    fetchRandomStreetGeometry();
 }
 
 // Fetch street geometry from OpenStreetMap Overpass API
-async function fetchRandomStreetGeometry(attemptNumber) {
+async function fetchRandomStreetGeometry(fetchingAttempt = 1) {
     currentStreet = streets[Math.floor(Math.random() * streets.length)];
     console.log("✅ Selected street:", currentStreet);
     
@@ -150,11 +150,11 @@ async function fetchRandomStreetGeometry(attemptNumber) {
             throw new Error("❌ No valid coordinates found for", currentStreet);
         }
     } catch (error) {
-        attempt++
-        if (attempt >= maxStreetFetchingAttempts) {
+        if (fetchingAttempt >= maxStreetFetchingAttempts) {
             alert("❌ Overpass API error:", error);
         } else {
-            fetchRandomStreetGeometry(attempt)
+            fetchingAttempt++
+            fetchRandomStreetGeometry(fetchingAttempt)
         }
     } finally {
         document.getElementById('loading-spinner').style.display = 'none';
@@ -214,10 +214,10 @@ function checkAnswer() {
     } else {
         recordWrongGuess(userInput);
 
-        attemptNumber++;
+        streetGuessAttempt++;
         currentPoints--;
         
-        document.getElementById("hint").innerText = "Hint: " + currentStreet.slice(0, attemptNumber) + "_".repeat(currentStreet.length - 2*attemptNumber) + currentStreet.slice(-attemptNumber);
+        document.getElementById("hint").innerText = "Hint: " + currentStreet.slice(0, streetGuessAttempt) + "_".repeat(currentStreet.length - 2*streetGuessAttempt) + currentStreet.slice(-streetGuessAttempt);
         if (currentPoints === 0) {
             setTimeout(() => {
                 alert(`Riktig svar er: ${currentStreet}`);
