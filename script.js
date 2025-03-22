@@ -11,6 +11,7 @@ L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager_nolabels/{z}/
 
 // Global variables
 var streetLayer = L.layerGroup().addTo(map);
+var maxStreetFetchingAttempts = 3;
 var currentStreet = "";
 var currentPoints = 3;
 var attemptNumber = 0
@@ -21,6 +22,7 @@ var streetsData = []; // all streets with districts
 var allStreets = []; // all streets
 let selectedDistricts = []; //the districts that the player chooses
 var streets = []; // all streets within the chosen districts
+
 
 // Load streets from text file
 async function loadStreetList() {
@@ -99,9 +101,6 @@ function startNewGame() {
 
 // Start a new round
 function startRound() {
-
-    currentStreet = streets[Math.floor(Math.random() * streets.length)];
-    console.log("✅ Selected street:", currentStreet);
     currentPoints = 3;
     attemptNumber = 0;
     
@@ -112,11 +111,15 @@ function startRound() {
 
     document.getElementById("wrong-guesses").innerHTML = "";
     document.getElementById("street-input").value = "";
-    fetchStreetGeometry(currentStreet);
+
+    fetchRandomStreetGeometry(0);
 }
 
 // Fetch street geometry from OpenStreetMap Overpass API
-async function fetchStreetGeometry(streetName) {
+async function fetchRandomStreetGeometry(attemptNumber) {
+    currentStreet = streets[Math.floor(Math.random() * streets.length)];
+    console.log("✅ Selected street:", currentStreet);
+    
     document.getElementById('loading-spinner').style.display = 'flex';
     let query = `
         [out:json];
@@ -136,6 +139,7 @@ async function fetchStreetGeometry(streetName) {
 
         if (!data.elements.length) {
             console.error("⚠️ Street not found:", streetName);
+            throw new Error("⚠️ Street not found:", streetName);
             return;
         }
 
@@ -143,10 +147,15 @@ async function fetchStreetGeometry(streetName) {
         if (allCoordinates.length) {
             displayStreet(allCoordinates);
         } else {
-            console.error("❌ No valid coordinates found for", streetName);
+            throw new Error("❌ No valid coordinates found for", streetName);
         }
     } catch (error) {
-        console.error("❌ Overpass API error:", error);
+        attempt++
+        if (attempt >= maxStreetFetchingAttempts) {
+            alert("❌ Overpass API error:", error);
+        } else {
+            fetchRandomStreetGeometry(attempt)
+        }
     } finally {
         document.getElementById('loading-spinner').style.display = 'none';
     }
