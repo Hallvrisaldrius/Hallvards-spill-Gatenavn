@@ -33,6 +33,7 @@ async function loadStreetList() {
         let districtSet = new Set();
         
         let url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${RANGE}?key=${API_KEY}`;
+        console.log(url);
         let response = await fetch(url);
         let data = await response.json();
 
