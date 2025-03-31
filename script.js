@@ -248,6 +248,7 @@ async function checkAnswer() {
 
     if (userInput.toLowerCase() === currentStreet.toLowerCase()) {
         alert(`Korrekt! Dette er ${currentStreet}`);
+        await new Promise(resolve => setTimeout(resolve, 10));
         await finishRound(); // End the round properly
     } else {
         recordWrongGuess(userInput);
@@ -259,6 +260,7 @@ async function checkAnswer() {
         if (currentPoints === 0) {
             setTimeout(() => {
                 alert(`Riktig svar er: ${currentStreet}`);
+                await new Promise(resolve => setTimeout(resolve, 10));
                 await finishRound();
             }, 10); // 10 ms delay
         } else {
