@@ -362,7 +362,7 @@ document.getElementById("street-input").addEventListener("input", showSuggestion
 // Event listener for "Enter" key to submit the answer
 document.getElementById("street-input").addEventListener("keypress", function(event) {
     if (event.key === "Enter") {
-        checkAnswer();
+        await checkAnswer();
     }
 });
 
