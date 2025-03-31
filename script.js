@@ -258,10 +258,12 @@ async function checkAnswer() {
         document.getElementById("hint").innerText = "Hint: " + currentStreet.slice(0, streetGuessAttempt) + "_".repeat(currentStreet.length - 2 * streetGuessAttempt) + currentStreet.slice(-streetGuessAttempt);
 
         if (currentPoints === 0) {
-            setTimeout(async () => { // ✅ Make the callback async
+            // ✅ Create a separate async function
+            (async function delayedFinishRound() {
+                await new Promise(resolve => setTimeout(resolve, 10)); // Small delay
                 alert(`Riktig svar er: ${currentStreet}`);
                 await finishRound(); // ✅ Now this works!
-            }, 10);
+            })();
         } else {
             document.getElementById("points-display").innerText = `${currentPoints} poeng for riktig svar`;
         }
