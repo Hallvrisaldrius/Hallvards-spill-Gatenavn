@@ -12,7 +12,12 @@ L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager_nolabels/{z}/
 // Global variables
 var streetLayer = L.layerGroup().addTo(map);
 var maxStreetFetchingAttempts = 5;
+
+var currentStreetIndex = 0;
 var currentStreet = "";
+var currentStreetNumberOfGames = 0;
+var currentStreetNumberOfPoints = 0;
+
 var currentPoints = 3;
 var streetGuessAttempt = 0
 var totalScore = 0;
@@ -54,12 +59,14 @@ async function loadStreetList() {
         rows.forEach(row => {
             let street = row[0];
             let districtString = row[1];
+            let numberOfGames = parseInt(rows[rowIndex][2]) || 0;
+            let totalPointsForStreet = parseInt(rows[rowIndex][3]) || 0;
 
             if (!street || !districtString) return;
 
             let districtArray = districtString.split('/').map(d => d.trim());
             districtArray.forEach(d => districtSet.add(d));
-            streetsData.push({ street, districts: districtArray });
+            streetsData.push({ street, districts: districtArray, numberOfGames, totalPointsForStreet });
         });
 
         allStreets = streetsData.map(streetObj => streetObj.street);
@@ -143,7 +150,11 @@ function startRound() {
 
 // Fetch street geometry from OpenStreetMap Overpass API
 async function fetchRandomStreetGeometry(fetchingAttempt = 1) {
-    currentStreet = streets[Math.floor(Math.random() * streets.length)];
+    currentStreetIndex = Math.floor(Math.random() * streets.length);
+    let currentStreetObject = streetsData[currentStreetIndex];
+    currentStreet = streetsData.street;
+    currentStreetNumberOfGames = streetsData.currentStreetNumberOfGames;
+    currentStreetNumberOfPoints = streetsData.currentStreetNumberOfPoints;
     console.log("✅ Selected street:", currentStreet);
     
     document.getElementById('loading-spinner').style.display = 'flex';
@@ -270,12 +281,33 @@ function finishRound() {
     document.getElementById("street-input").value = "";
     totalScore += currentPoints; 
     document.getElementById("total-score").innerText = `Poengsum: ${totalScore}`;
+    updateGameStatistics(currentPoints);
     if (round < maxRounds) {
         round++;
         startRound();
     } else {
         showGameOverScreen(totalScore)
     }
+}
+
+function updateGameStatistics(currentPoint) {
+
+    currentStreetNumberOfGames++;
+    currentStreetNumberOfPoints += currentPoint;
+    
+    // Update the values in the sheet
+    const updateUrl = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/Sheet1!C${currentStreetIndex + 1}:D${currentStreetIndex + 1}?valueInputOption=USER_ENTERED&key=${apiKey}`;
+    
+    await fetch(updateUrl, {
+        method: "PUT",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+            values: [[currentStreetNumberOfGames, currentStreetNumberOfPoints]]
+        })
+    });
+    console.log("✅ Street stats updated");
 }
 
 // Event listener for suggestions click
