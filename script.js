@@ -241,7 +241,7 @@ function displayStreet(coordinateGroups) {
 }
 
 // Check the user's answer
-function checkAnswer() {
+async function checkAnswer() {
     let inputBox = document.getElementById("street-input");
     let userInput = inputBox.value.trim();
     inputBox.value = "";
