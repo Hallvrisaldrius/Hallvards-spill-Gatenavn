@@ -25,7 +25,7 @@ var streets = []; // all streets within the chosen districts
 
 const SHEET_ID = "1RwK7sTXTL6VhxbXc7aPSMsXL_KTGImt-aisTLqlpWnQ";
 const API_KEY = "AIzaSyAOITVqx5tX6e2LfaH3wGyOUdJfP95BcWY";
-const RANGE = "Sheet1!A:B";
+const RANGE = "Oslo!A:B";
 
 // Load streets from text file
 async function loadStreetList() {
