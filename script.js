@@ -153,6 +153,7 @@ async function fetchRandomStreetGeometry(fetchingAttempt = 1) {
         } else {
             throw new Error("❌ No valid coordinates found for", currentStreet);
         }
+        document.getElementById("hint").innerText = "Hint: " + "_".repeat(currentStreet.length);
     } catch (error) {
         if (fetchingAttempt >= maxStreetFetchingAttempts) {
             alert("❌ Overpass API error:", error);
