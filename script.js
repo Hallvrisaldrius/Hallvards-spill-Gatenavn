@@ -248,7 +248,6 @@ async function checkAnswer() {
 
     if (userInput.toLowerCase() === currentStreet.toLowerCase()) {
         alert(`Korrekt! Dette er ${currentStreet}`);
-        await new Promise(resolve => setTimeout(resolve, 10));
         await finishRound(); // End the round properly
     } else {
         recordWrongGuess(userInput);
@@ -256,13 +255,12 @@ async function checkAnswer() {
         streetGuessAttempt++;
         currentPoints--;
         
-        document.getElementById("hint").innerText = "Hint: " + currentStreet.slice(0, streetGuessAttempt) + "_".repeat(currentStreet.length - 2*streetGuessAttempt) + currentStreet.slice(-streetGuessAttempt);
+        document.getElementById("hint").innerText = "Hint: " + currentStreet.slice(0, streetGuessAttempt) + "_".repeat(currentStreet.length - 2 * streetGuessAttempt) + currentStreet.slice(-streetGuessAttempt);
+
         if (currentPoints === 0) {
-            setTimeout(() => {
-                alert(`Riktig svar er: ${currentStreet}`);
-                await new Promise(resolve => setTimeout(resolve, 10));
-                await finishRound();
-            }, 10); // 10 ms delay
+            await new Promise(resolve => setTimeout(resolve, 10)); // Wait 10 ms
+            alert(`Riktig svar er: ${currentStreet}`);
+            await finishRound(); // Now valid because checkAnswer is async
         } else {
             document.getElementById("points-display").innerText = `${currentPoints} poeng for riktig svar`;
         }
