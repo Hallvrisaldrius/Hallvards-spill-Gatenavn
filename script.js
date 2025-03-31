@@ -248,7 +248,7 @@ function checkAnswer() {
 
     if (userInput.toLowerCase() === currentStreet.toLowerCase()) {
         alert(`Korrekt! Dette er ${currentStreet}`);
-        finishRound(); // End the round properly
+        await finishRound(); // End the round properly
     } else {
         recordWrongGuess(userInput);
 
@@ -259,7 +259,7 @@ function checkAnswer() {
         if (currentPoints === 0) {
             setTimeout(() => {
                 alert(`Riktig svar er: ${currentStreet}`);
-                finishRound();
+                await finishRound();
             }, 10); // 10 ms delay
         } else {
             document.getElementById("points-display").innerText = `${currentPoints} poeng for riktig svar`;
@@ -277,7 +277,7 @@ function recordWrongGuess(guess) {
     wrongGuessesList.insertBefore(listItem, wrongGuessesList.firstChild);
 }
 
-function finishRound() {
+async function finishRound() {
     document.getElementById("street-input").value = "";
     totalScore += currentPoints; 
     document.getElementById("total-score").innerText = `Poengsum: ${totalScore}`;
