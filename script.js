@@ -297,17 +297,21 @@ function updateGameStatistics(currentPoint) {
     
     // Update the values in the sheet
     const updateUrl = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/Sheet1!C${currentStreetIndex + 1}:D${currentStreetIndex + 1}?valueInputOption=USER_ENTERED&key=${apiKey}`;
-    
-    await fetch(updateUrl, {
-        method: "PUT",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-            values: [[currentStreetNumberOfGames, currentStreetNumberOfPoints]]
-        })
-    });
-    console.log("✅ Street stats updated");
+
+    try {
+        await fetch(updateUrl, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                values: [[currentStreetNumberOfGames, currentStreetNumberOfPoints]]
+            })
+        });
+        console.log("✅ Street stats updated");
+    } catch (error) {
+        console.error("❌ Failed to update game statistics:", error);
+    }
 }
 
 // Event listener for suggestions click
