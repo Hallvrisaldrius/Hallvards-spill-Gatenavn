@@ -23,30 +23,51 @@ var allStreets = []; // all streets
 let selectedDistricts = []; //the districts that the player chooses
 var streets = []; // all streets within the chosen districts
 
+const SHEET_ID = "1RwK7sTXTL6VhxbXc7aPSMsXL_KTGImt-aisTLqlpWnQ";
+const API_KEY = "AIzaSyAOITVqx5tX6e2LfaH3wGyOUdJfP95BcWY";
+const RANGE = "Sheet1!A:B";
 
 // Load streets from text file
 async function loadStreetList() {
     try {
         let districtSet = new Set();
         
-        let streetList = await fetch('streets.csv');
-        let streetListText = await streetList.text();
-        let lines = streetListText.split('\n').map(line => line.trim()).filter(line => line);
-        lines.forEach(line => {
-            let [street, districtString] = line.split(',')
+        let url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${RANGE}?key=${API_KEY}`;
+        let response = await fetch(url);
+        let data = await response.json();
+
+              // Check for errors
+        if (data.error) {
+            console.error("❌ Error fetching data:", data.error);
+            return;
+        }
+
+        let rows = data.values;
+        
+        // Skip header row if present
+        if (rows[0][0].toLowerCase() === "gate") {
+            rows.shift();
+        }
+
+        // Parse data
+        rows.forEach(row => {
+            let street = row[0];
+            let districtString = row[1];
+
             if (!street || !districtString) return;
+
             let districtArray = districtString.split('/').map(d => d.trim());
             districtArray.forEach(d => districtSet.add(d));
             streetsData.push({ street, districts: districtArray });
         });
+
         allStreets = streetsData.map(streetObj => streetObj.street);
-        
-        allDistricts = Array.from(districtSet).sort(); // Convert Set to array and sort alphabetically
-        populateDistrictFilter(allDistricts); // Function to create the checkmark buttons
-        
+        allDistricts = Array.from(districtSet).sort();
+        populateDistrictFilter(allDistricts);
+
+        console.log("✅ Streets Data:", streetsData);
     } catch (error) {
-        document.getElementById('loading-spinner').style.display = 'none';
-        console.error("❌ Error loading street list");
+        console.error("❌ Failed to fetch street data:", error);
     }
 }
 
