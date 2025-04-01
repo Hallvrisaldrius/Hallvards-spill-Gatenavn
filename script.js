@@ -295,14 +295,15 @@ function updateGameStatistics(currentPoint) {
     
     // Update the values in the sheet
     const updateUrl = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/Sheet1!C${currentStreetIndex + 1}:D${currentStreetIndex + 1}?key=${API_KEY}`;
-
+    
     try {
-        fetch(updateUrl, {
+        await fetch(updateUrl, {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json",
             },
             body: JSON.stringify({
+                valueInputOption: "USER_ENTERED",
                 values: [[currentStreetNumberOfGames, currentStreetNumberOfPoints]]
             })
         });
