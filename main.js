@@ -312,5 +312,32 @@ function showGameOverScreen(score) {
     document.getElementById("game-over-screen").style.display = "flex";
 }
 
+function populateDistrictFilter(districtList) {
+    let container = document.getElementById("districtFilter");
+
+    districtList.forEach(district => {
+        let label = document.createElement("label");
+        let checkbox = document.createElement("input");
+        
+        checkbox.type = "checkbox";
+        checkbox.value = district;
+        checkbox.className = "district-checkbox";
+        checkbox.addEventListener("change", updateSelectedDistricts);
+        
+        label.appendChild(checkbox);
+        label.appendChild(document.createTextNode(" " + district));
+        container.appendChild(label);
+        container.appendChild(document.createElement("br"));
+    });
+}
+
+function updateSelectedDistricts() {
+    selectedDistricts = Array.from(document.querySelectorAll(".district-checkbox:checked"))
+                             .map(cb => cb.value);
+    console.log("Selected Districts:", selectedDistricts);
+}
+
+
 // Load the street lists when the page loads
 streetsData = await loadStreetList(SHEET_ID, RANGE, API_KEY);
+populateDistrictFilter();

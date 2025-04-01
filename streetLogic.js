@@ -32,42 +32,14 @@ export async function loadStreetList(SHEET_ID, RANGE, API_KEY) {
             if (!street || !districtString) return;
 
             let districtArray = districtString.split('/').map(d => d.trim());
-            districtArray.forEach(d => districtSet.add(d));
             streetsData.push({ street, districts: districtArray, numberOfGames, totalPointsForStreet });
         });
 
         console.log("✅ Streets Data:", streetsData);
 
-        let allDistricts = Array.from(districtSet).sort();
-        populateDistrictFilter(allDistricts);
 
         return streetsData;
     } catch (error) {
         console.error("❌ Failed to fetch street data:", error);
     }
-}
-
-function populateDistrictFilter(districtList) {
-    let container = document.getElementById("districtFilter");
-
-    districtList.forEach(district => {
-        let label = document.createElement("label");
-        let checkbox = document.createElement("input");
-        
-        checkbox.type = "checkbox";
-        checkbox.value = district;
-        checkbox.className = "district-checkbox";
-        checkbox.addEventListener("change", updateSelectedDistricts);
-        
-        label.appendChild(checkbox);
-        label.appendChild(document.createTextNode(" " + district));
-        container.appendChild(label);
-        container.appendChild(document.createElement("br"));
-    });
-}
-
-function updateSelectedDistricts() {
-    selectedDistricts = Array.from(document.querySelectorAll(".district-checkbox:checked"))
-                             .map(cb => cb.value);
-    console.log("Selected Districts:", selectedDistricts);
 }
