@@ -169,6 +169,7 @@ function displayStreet(coordinateGroups) {
 }
 
 document.getElementById("check-answer").addEventListener('input', () => {
+    console.log("trykket på send")
     checkAnswer();
 });
 
@@ -260,7 +261,7 @@ function setupSuggestionClicks() {
     });
 }
 
-document.getElementById('street-input').addEventListener('input', () => {
+document.getElementById('street-input').addfEventListener('input', () => {
     let input = document.getElementById("street-input").value.trim().toLowerCase();
     let suggestionsList = document.getElementById("suggestions");
     suggestionsList.innerHTML = ""; // Clear previous suggestions
