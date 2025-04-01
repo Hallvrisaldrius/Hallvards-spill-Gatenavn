@@ -261,7 +261,7 @@ function setupSuggestionClicks() {
     });
 }
 
-document.getElementById('street-input').addfEventListener('input', () => {
+document.getElementById('street-input').addEventListener('input', () => {
     let input = document.getElementById("street-input").value.trim().toLowerCase();
     let suggestionsList = document.getElementById("suggestions");
     suggestionsList.innerHTML = ""; // Clear previous suggestions
