@@ -168,6 +168,11 @@ function displayStreet(coordinateGroups) {
     map.fitBounds(bounds.pad(0.2)); // Add margin
 }
 
+document.getElementById("check-answer").addEventListener('input', () => {
+    checkAnswer();
+});
+
+
 // Check the user's answer
 function checkAnswer() {
     let inputBox = document.getElementById("street-input");
@@ -255,7 +260,7 @@ function setupSuggestionClicks() {
     });
 }
 
-function showSuggestions() {
+document.getElementById('street-input').addEventListener('input', () => {
     let input = document.getElementById("street-input").value.trim().toLowerCase();
     let suggestionsList = document.getElementById("suggestions");
     suggestionsList.innerHTML = ""; // Clear previous suggestions
@@ -285,13 +290,10 @@ function showSuggestions() {
     } else {
         suggestionsList.style.display = "none";
     }
-}
+});
 
 // Call the function to setup click handlers after page load
 setupSuggestionClicks();
-
-// Event listener for input field to show suggestions
-document.getElementById("street-input").addEventListener("input", showSuggestions);
 
 // Event listener for "Enter" key to submit the answer
 document.getElementById("street-input").addEventListener("keypress", function(event) {
