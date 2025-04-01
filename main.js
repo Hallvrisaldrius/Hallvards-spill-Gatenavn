@@ -50,7 +50,7 @@ document.getElementById('startButton').addEventListener('click', () => {
     startNewGame();
 });
 
-document.getElementById('"game-over-button"').addEventListener('click', () => {
+document.getElementById('game-over-button').addEventListener('click', () => {
     startNewGame();
 });
 
