@@ -2,6 +2,7 @@
 export async function loadStreetList(SHEET_ID, RANGE, API_KEY) {
     try {
         let districtSet = new Set();
+        let streetsData = []
         
         let url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${RANGE}?key=${API_KEY}`;
         console.log(url);
@@ -61,6 +62,6 @@ function populateDistrictFilter(districtList) {
         label.appendChild(checkbox);
         label.appendChild(document.createTextNode(" " + district));
         container.appendChild(label);
-        container.appendChild(document.createElement("br"));  // New line for readability
+        container.appendChild(document.createElement("br"));
     });
 }
