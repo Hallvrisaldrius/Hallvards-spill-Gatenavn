@@ -241,14 +241,14 @@ function displayStreet(coordinateGroups) {
 }
 
 // Check the user's answer
-async function checkAnswer() {
+function checkAnswer() {
     let inputBox = document.getElementById("street-input");
     let userInput = inputBox.value.trim();
     inputBox.value = "";
 
     if (userInput.toLowerCase() === currentStreet.toLowerCase()) {
         alert(`Korrekt! Dette er ${currentStreet}`);
-        await finishRound(); // End the round properly
+        finishRound(); // End the round properly
     } else {
         recordWrongGuess(userInput);
 
@@ -258,12 +258,8 @@ async function checkAnswer() {
         document.getElementById("hint").innerText = "Hint: " + currentStreet.slice(0, streetGuessAttempt) + "_".repeat(currentStreet.length - 2 * streetGuessAttempt) + currentStreet.slice(-streetGuessAttempt);
 
         if (currentPoints === 0) {
-            // ✅ Create a separate async function
-            (async function delayedFinishRound() {
-                await new Promise(resolve => setTimeout(resolve, 10)); // Small delay
-                alert(`Riktig svar er: ${currentStreet}`);
-                await finishRound(); // ✅ Now this works!
-            })();
+            alert(`Riktig svar er: ${currentStreet}`);
+            finishRound();
         } else {
             document.getElementById("points-display").innerText = `${currentPoints} poeng for riktig svar`;
         }
@@ -280,7 +276,7 @@ function recordWrongGuess(guess) {
     wrongGuessesList.insertBefore(listItem, wrongGuessesList.firstChild);
 }
 
-async function finishRound() {
+function finishRound() {
     document.getElementById("street-input").value = "";
     totalScore += currentPoints; 
     document.getElementById("total-score").innerText = `Poengsum: ${totalScore}`;
@@ -302,7 +298,7 @@ function updateGameStatistics(currentPoint) {
     const updateUrl = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/Sheet1!C${currentStreetIndex + 1}:D${currentStreetIndex + 1}?valueInputOption=USER_ENTERED&key=${apiKey}`;
 
     try {
-        await fetch(updateUrl, {
+        fetch(updateUrl, {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json",
@@ -365,7 +361,7 @@ document.getElementById("street-input").addEventListener("input", showSuggestion
 // Event listener for "Enter" key to submit the answer
 document.getElementById("street-input").addEventListener("keypress", function(event) {
     if (event.key === "Enter") {
-        await checkAnswer();
+        checkAnswer();
     }
 });
 
