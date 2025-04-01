@@ -168,8 +168,7 @@ function displayStreet(coordinateGroups) {
     map.fitBounds(bounds.pad(0.2)); // Add margin
 }
 
-document.getElementById("check-answer").addEventListener('input', () => {
-    console.log("trykket på send")
+document.getElementById("check-answer").addEventListener('click', () => {
     checkAnswer();
 });
 
