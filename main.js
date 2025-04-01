@@ -33,13 +33,6 @@ const SHEET_ID = "1RwK7sTXTL6VhxbXc7aPSMsXL_KTGImt-aisTLqlpWnQ";
 const API_KEY = "AIzaSyAOITVqx5tX6e2LfaH3wGyOUdJfP95BcWY";
 const RANGE = "Oslo!A:B";
 
-
-function updateSelectedDistricts() {
-    selectedDistricts = Array.from(document.querySelectorAll(".district-checkbox:checked"))
-                             .map(cb => cb.value);
-    console.log("Selected Districts:", selectedDistricts);
-}
-
 function setStreetsForGame() {
     filteredStreetData = streetsData
         .filter(streetObj => 

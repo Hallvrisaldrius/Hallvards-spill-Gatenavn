@@ -65,3 +65,9 @@ function populateDistrictFilter(districtList) {
         container.appendChild(document.createElement("br"));
     });
 }
+
+function updateSelectedDistricts() {
+    selectedDistricts = Array.from(document.querySelectorAll(".district-checkbox:checked"))
+                             .map(cb => cb.value);
+    console.log("Selected Districts:", selectedDistricts);
+}
