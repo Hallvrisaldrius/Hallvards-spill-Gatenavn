@@ -26,7 +26,7 @@ const maxRounds = 3;
 var streetsData = []; // all streets with districts
 var allStreets = []; // all streets
 let selectedDistricts = []; //the districts that the player chooses
-var streets = []; // all streets within the chosen districts
+var filteredStreetData = []; // all streets within the chosen districts
 
 const SHEET_ID = "1RwK7sTXTL6VhxbXc7aPSMsXL_KTGImt-aisTLqlpWnQ";
 const API_KEY = "AIzaSyAOITVqx5tX6e2LfaH3wGyOUdJfP95BcWY";
@@ -105,11 +105,10 @@ function updateSelectedDistricts() {
 }
 
 function setStreetsForGame() {
-    streets = streetsData
+    filteredStreetData = streetsData
         .filter(streetObj => 
             streetObj.districts.some(district => selectedDistricts.includes(district))
         )
-        .map(streetObj => streetObj.street);
     console.log("Number of streets in game:", streets.length);
 }
 
@@ -149,8 +148,9 @@ function startRound() {
 
 // Fetch street geometry from OpenStreetMap Overpass API
 async function fetchRandomStreetGeometry(fetchingAttempt = 1) {
-    currentStreetIndex = Math.floor(Math.random() * streets.length);
-    let currentStreetObject = streetsData[currentStreetIndex];
+    currentStreetIndex = Math.floor(Math.random() * filteredStreetData.length);
+    
+    let currentStreetObject = filteredStreetData[currentStreetIndex];
     currentStreet = currentStreetObject.street;
     currentStreetNumberOfGames = currentStreetObject.numberOfGames;
     currentStreetNumberOfPoints = currentStreetObject.totalPointsForStreet;
