@@ -140,7 +140,6 @@ function startRound() {
     document.getElementById("round-number").innerText = `Runde ${round} av ${maxRounds}`;
     document.getElementById("points-display").innerText = "3 poeng for riktig svar";
     document.getElementById("total-score").innerText = `Poengsum: ${totalScore}`;
-    document.getElementById("hint").innerText = "Hint: " + "_".repeat(currentStreet.length);
 
     document.getElementById("wrong-guesses").innerHTML = "";
     document.getElementById("street-input").value = "";
@@ -152,10 +151,10 @@ function startRound() {
 async function fetchRandomStreetGeometry(fetchingAttempt = 1) {
     currentStreetIndex = Math.floor(Math.random() * streets.length);
     let currentStreetObject = streetsData[currentStreetIndex];
-    currentStreet = streetsData.street;
-    currentStreetNumberOfGames = streetsData.currentStreetNumberOfGames;
-    currentStreetNumberOfPoints = streetsData.currentStreetNumberOfPoints;
-    console.log("✅ Selected street:", currentStreet);
+    currentStreet = currentStreetObject.street;
+    currentStreetNumberOfGames = currentStreetObject.numberOfGames;
+    currentStreetNumberOfPoints = currentStreetObject.totalPointsForStreet;
+    console.log("✅ Selected street:", currentStreetObject);
     
     document.getElementById('loading-spinner').style.display = 'flex';
     let query = `
