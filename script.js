@@ -294,7 +294,7 @@ function updateGameStatistics(currentPoint) {
     currentStreetNumberOfPoints += currentPoint;
     
     // Update the values in the sheet
-    const updateUrl = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/Sheet1!C${currentStreetIndex + 1}:D${currentStreetIndex + 1}?key=${API_KEY}`;
+    const updateUrl = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/Oslo!C${currentStreetIndex + 1}:D${currentStreetIndex + 1}?key=${API_KEY}`;
     
     try {
         fetch(updateUrl, {
