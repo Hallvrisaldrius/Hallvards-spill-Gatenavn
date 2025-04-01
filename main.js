@@ -50,6 +50,10 @@ document.getElementById('startButton').addEventListener('click', () => {
     startNewGame();
 });
 
+document.getElementById('"game-over-button"').addEventListener('click', () => {
+    startNewGame();
+});
+
 function startNewGame() {
     totalScore = 0
     round = 1
