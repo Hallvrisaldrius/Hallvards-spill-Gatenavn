@@ -315,7 +315,7 @@ function showGameOverScreen(score) {
 function populateDistrictFilter() {
     let container = document.getElementById("districtFilter");
 
-    let districtList = [...new Set(streetsData.flatMap(street => street.districts))];
+    let districtList = [...new Set(streetsData.flatMap(street => street.districts))].sort();
 
     districtList.forEach(district => {
         let label = document.createElement("label");
