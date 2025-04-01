@@ -109,7 +109,7 @@ function setStreetsForGame() {
         .filter(streetObj => 
             streetObj.districts.some(district => selectedDistricts.includes(district))
         )
-    console.log("Number of streets in game:", streets.length);
+    console.log("Number of streets in game:", filteredStreetData.length);
 }
 
 function startButtonPressed() { 
