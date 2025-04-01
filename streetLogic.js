@@ -38,7 +38,7 @@ export async function loadStreetList(SHEET_ID, RANGE, API_KEY) {
 
         console.log("✅ Streets Data:", streetsData);
 
-        allDistricts = Array.from(districtSet).sort();
+        let allDistricts = Array.from(districtSet).sort();
         populateDistrictFilter(allDistricts);
 
         return streetsData;
