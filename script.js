@@ -59,8 +59,8 @@ async function loadStreetList() {
         rows.forEach(row => {
             let street = row[0];
             let districtString = row[1];
-            let numberOfGames = parseInt(rows[rowIndex][2]) || 0;
-            let totalPointsForStreet = parseInt(rows[rowIndex][3]) || 0;
+            let numberOfGames = parseInt(row[2]) || 0;
+            let totalPointsForStreet = parseInt(row[3]) || 0;
 
             if (!street || !districtString) return;
 
