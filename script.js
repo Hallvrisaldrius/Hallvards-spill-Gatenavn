@@ -1,3 +1,5 @@
+import { loadStreetList } from './streetLogic.js';
+
 // Show the welcome screen when the page loads
 document.addEventListener("DOMContentLoaded", function() {
     document.getElementById("welcome-screen").style.display = "flex";
@@ -24,7 +26,6 @@ var totalScore = 0;
 var round = 1;
 const maxRounds = 3;
 var streetsData = []; // all streets with districts
-var allStreets = []; // all streets
 let selectedDistricts = []; //the districts that the player chooses
 var filteredStreetData = []; // all streets within the chosen districts
 
@@ -32,71 +33,6 @@ const SHEET_ID = "1RwK7sTXTL6VhxbXc7aPSMsXL_KTGImt-aisTLqlpWnQ";
 const API_KEY = "AIzaSyAOITVqx5tX6e2LfaH3wGyOUdJfP95BcWY";
 const RANGE = "Oslo!A:B";
 
-// Load streets from text file
-async function loadStreetList() {
-    try {
-        let districtSet = new Set();
-        
-        let url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${RANGE}?key=${API_KEY}`;
-        console.log(url);
-        let response = await fetch(url);
-        let data = await response.json();
-
-              // Check for errors
-        if (data.error) {
-            console.error("❌ Error fetching data:", data.error);
-            return;
-        }
-
-        let rows = data.values;
-        
-        // Skip header row if present
-        if (rows[0][0].toLowerCase() === "gate") {
-            rows.shift();
-        }
-
-        // Parse data
-        rows.forEach(row => {
-            let street = row[0];
-            let districtString = row[1];
-            let numberOfGames = parseInt(row[2]) || 0;
-            let totalPointsForStreet = parseInt(row[3]) || 0;
-
-            if (!street || !districtString) return;
-
-            let districtArray = districtString.split('/').map(d => d.trim());
-            districtArray.forEach(d => districtSet.add(d));
-            streetsData.push({ street, districts: districtArray, numberOfGames, totalPointsForStreet });
-        });
-
-        allStreets = streetsData.map(streetObj => streetObj.street);
-        allDistricts = Array.from(districtSet).sort();
-        populateDistrictFilter(allDistricts);
-
-        console.log("✅ Streets Data:", streetsData);
-    } catch (error) {
-        console.error("❌ Failed to fetch street data:", error);
-    }
-}
-
-function populateDistrictFilter(districtList) {
-    let container = document.getElementById("districtFilter");
-
-    districtList.forEach(district => {
-        let label = document.createElement("label");
-        let checkbox = document.createElement("input");
-        
-        checkbox.type = "checkbox";
-        checkbox.value = district;
-        checkbox.className = "district-checkbox";
-        checkbox.addEventListener("change", updateSelectedDistricts);
-        
-        label.appendChild(checkbox);
-        label.appendChild(document.createTextNode(" " + district));
-        container.appendChild(label);
-        container.appendChild(document.createElement("br"));  // New line for readability
-    });
-}
 
 function updateSelectedDistricts() {
     selectedDistricts = Array.from(document.querySelectorAll(".district-checkbox:checked"))
@@ -332,7 +268,12 @@ function showSuggestions() {
     suggestionsList.innerHTML = ""; // Clear previous suggestions
 
     if (input.length > 0) {
-        let matchedStreets = allStreets.filter(street => street.toLowerCase().includes(input));
+        let matchedStreets = streetsData.reduce((result, streetObj) => {
+            if (streetObj.street.toLowerCase().includes(input)) {
+              result.push(streetObj.street);
+            }
+            return result;
+          }, []);
         
         // Shuffle the results and limit to 10 suggestions for variety
         matchedStreets = matchedStreets.sort(() => Math.random() - 0.5).slice(0, 10);
@@ -379,4 +320,4 @@ function showGameOverScreen(score) {
 }
 
 // Load the street lists when the page loads
-loadStreetList();
+streetsData = await loadStreetList(SHEET_ID, RANGE, API_KEY);
