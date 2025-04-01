@@ -41,14 +41,14 @@ function setStreetsForGame() {
     console.log("Number of streets in game:", filteredStreetData.length);
 }
 
-function startButtonPressed() { 
+document.getElementById('startButton').addEventListener('click', () => {
     if (selectedDistricts.length === 0) {
         alert("Du må velge minst én bydel");
         return;
-    } 
+    }
     setStreetsForGame();
     startNewGame();
-}
+});
 
 function startNewGame() {
     totalScore = 0
