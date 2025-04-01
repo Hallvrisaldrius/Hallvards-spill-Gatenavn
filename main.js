@@ -312,8 +312,10 @@ function showGameOverScreen(score) {
     document.getElementById("game-over-screen").style.display = "flex";
 }
 
-function populateDistrictFilter(districtList) {
+function populateDistrictFilter() {
     let container = document.getElementById("districtFilter");
+
+    let districtList = [...new Set(streetsData.flatMap(street => street.districts))];
 
     districtList.forEach(district => {
         let label = document.createElement("label");
