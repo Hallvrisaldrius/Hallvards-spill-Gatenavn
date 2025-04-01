@@ -279,7 +279,7 @@ function finishRound() {
     document.getElementById("street-input").value = "";
     totalScore += currentPoints; 
     document.getElementById("total-score").innerText = `Poengsum: ${totalScore}`;
-    updateGameStatistics(currentPoints);
+    /*updateGameStatistics(currentPoints);*/
     if (round < maxRounds) {
         round++;
         startRound();
@@ -287,14 +287,14 @@ function finishRound() {
         showGameOverScreen(totalScore)
     }
 }
-
+ /*
 function updateGameStatistics(currentPoint) {
 
     currentStreetNumberOfGames++;
     currentStreetNumberOfPoints += currentPoint;
     
     // Update the values in the sheet
-    const updateUrl = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/Oslo!C${currentStreetIndex + 1}:D${currentStreetIndex + 1}?key=${API_KEY}`;
+    const updateUrl = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/Sheet1!C${currentStreetIndex + 1}:D${currentStreetIndex + 1}?valueInputOption=USER_ENTERED`;
     
     try {
         fetch(updateUrl, {
@@ -302,16 +302,17 @@ function updateGameStatistics(currentPoint) {
             headers: {
                 "Content-Type": "application/json",
             },
-            body: JSON.stringify({
-                valueInputOption: "USER_ENTERED",
-                values: [[currentStreetNumberOfGames, currentStreetNumberOfPoints]]
-            })
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${ACCESS_TOKEN}` // Use OAuth token here
+            },
         });
         console.log("✅ Street stats updated");
     } catch (error) {
         console.error("❌ Failed to update game statistics:", error);
     }
 }
+*/
 
 // Event listener for suggestions click
 function setupSuggestionClicks() {
