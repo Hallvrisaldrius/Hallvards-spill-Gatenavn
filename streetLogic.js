@@ -41,7 +41,7 @@ export async function loadStreetList(SHEET_ID, RANGE, API_KEY) {
     }
 }
 
-export async function fetchStreetGeometry(streetName, streetLayer) {
+export async function fetchStreetGeometry(streetName) {
     let query = `
         [out:json];
         way["name"="${streetName}"]["highway"](59.7,10.4,60.1,10.9);
@@ -61,9 +61,9 @@ export async function fetchStreetGeometry(streetName, streetLayer) {
         throw new Error("⚠️ Street not found:", streetName);
     }
 
-    let allCoordinates = extractAllCoordinates(data);
+    let allCoordinates = extractAllCoordinates(data).flat();
     if (allCoordinates.length) {
-        displayStreet(allCoordinates, streetLayer);
+        return coordinateGroups
     } else {
         throw new Error("❌ No valid coordinates found for", streetName);
     }
@@ -90,22 +90,4 @@ function extractAllCoordinates(data) {
     });
 
     return allCoordinates;
-}
-
-// Display the selected street on the map
-function displayStreet(coordinateGroups, streetLayer) {
-    streetLayer.clearLayers();
-    
-    let allCoords = coordinateGroups.flat();
-    if (allCoords.length === 0) {
-        console.error("⚠️ No valid coordinates for centering.");
-        return;
-    }
-
-    coordinateGroups.forEach(coords => {
-        L.polyline(coords, { color: "red", weight: 4 }).addTo(streetLayer);
-    });
-
-    let bounds = L.latLngBounds(allCoords);
-    map.fitBounds(bounds.pad(0.2)); // Add margin
 }

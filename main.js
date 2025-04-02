@@ -64,6 +64,8 @@ function startNewGame() {
 
 // Start a new round
 function startRound() {
+    fetchRandomStreet();
+
     currentPoints = 3;
     streetGuessAttempt = 0;
     
@@ -73,8 +75,7 @@ function startRound() {
 
     document.getElementById("wrong-guesses").innerHTML = "";
     document.getElementById("street-input").value = "";
-
-    fetchRandomStreet();
+    document.getElementById("hint").innerText = "Hint: " + "_".repeat(currentStreetName.length);
 }
 
 // Fetch street geometry from OpenStreetMap Overpass API
@@ -89,11 +90,18 @@ async function fetchRandomStreet(fetchingAttempt = 1) {
 
 
     try {
-        await fetchStreetGeometry(currentStreetName, streetLayer);
-        document.getElementById("hint").innerText = "Hint: " + "_".repeat(currentStreetName.length);
+        coordinateGroups = await fetchStreetGeometry(currentStreetName);
+        streetLayer.clearLayers();
+        coordinateGroups.forEach(coords => {
+            L.polyline(coords, { color: "red", weight: 4 }).addTo(streetLayer);
+        });
+
+        let bounds = L.latLngBounds(allCoords);
+        map.fitBounds(bounds.pad(0.2)); // Add margin
+        
     } catch (error) {
         if (fetchingAttempt >= MAX_STREET_FETCHING_ATTEMPTS) {
-            alert("❌ Feil med å hente gate: ", error);
+            alert("❌ Feil med å hente gate", error);
         } else {
             fetchRandomStreet(++fetchingAttempt)
         }
