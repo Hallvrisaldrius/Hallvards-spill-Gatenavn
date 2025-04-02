@@ -91,7 +91,6 @@ async function fetchRandomStreet(fetchingAttempt = 1) {
 
     try {
         coordinateGroups = await fetchStreetGeometry(currentStreetName);
-        console.log(coordinateGroups.length)
         streetLayer.clearLayers();
         coordinateGroups.forEach(coords => {
             L.polyline(coords, { color: "red", weight: 4 }).addTo(streetLayer);
@@ -104,6 +103,7 @@ async function fetchRandomStreet(fetchingAttempt = 1) {
         if (fetchingAttempt >= MAX_STREET_FETCHING_ATTEMPTS) {
             alert("❌ Feil med å hente gate", error);
         } else {
+            console.log("❌ Feil med å hente gate", error);
             fetchRandomStreet(++fetchingAttempt)
         }
     } finally {
