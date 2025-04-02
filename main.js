@@ -47,7 +47,7 @@ function createAreaButtons() {
 
 async function chooseArea(area) {
     console.log("Selected area:", area);
-    streetsData = await loadStreetList(SHEET_ID, availableAreas[area], API_KEY);
+    streetsData = await loadStreetList(SHEET_ID, availableAreas[area].coordinates, API_KEY);
     populateDistrictFilter();
 }
 
