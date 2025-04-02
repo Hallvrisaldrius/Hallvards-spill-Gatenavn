@@ -41,10 +41,11 @@ export async function loadStreetList(SHEET_ID, RANGE, API_KEY) {
     }
 }
 
+/* Oslo : (59.7,10.4,60.1,10.9) */
 export async function fetchStreetGeometry(streetName) {
     let query = `
         [out:json];
-        way["name"="${streetName}"]["highway"](59.7,10.4,60.1,10.9);
+        way["name"="${streetName}"]["highway"](68.7,16.8,69.0,17.5);
         (._;>;);
         out body;
     `;

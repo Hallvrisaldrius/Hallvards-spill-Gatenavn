@@ -29,7 +29,7 @@ var filteredStreetData = []; // all streets within the chosen districts
 const MAX_STREET_FETCHING_ATTEMPTS = 5;
 const SHEET_ID = "1RwK7sTXTL6VhxbXc7aPSMsXL_KTGImt-aisTLqlpWnQ";
 const API_KEY = "AIzaSyAOITVqx5tX6e2LfaH3wGyOUdJfP95BcWY";
-const RANGE = "Oslo!A:B";
+const RANGE = "Ibestad!A:B";
 
 function setStreetsForGame() {
     filteredStreetData = streetsData
