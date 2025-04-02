@@ -5,7 +5,6 @@ export async function loadStreetList(SHEET_ID, RANGE, API_KEY) {
         let streetsData = []
         
         let url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${RANGE}?key=${API_KEY}`;
-        console.log(url);
         let response = await fetch(url);
         let data = await response.json();
 
@@ -63,7 +62,6 @@ export async function fetchStreetGeometry(streetName) {
     }
 
     let allCoordinates = extractAllCoordinates(data);
-    console.log(allCoordinates);
     if (allCoordinates.length) {
         return allCoordinates;
     } else {

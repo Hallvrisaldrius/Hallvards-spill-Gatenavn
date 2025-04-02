@@ -5,7 +5,7 @@ document.addEventListener("DOMContentLoaded", function() {
     document.getElementById("welcome-screen").style.display = "flex";
 });
 
-// Initialize the map - with change
+// Initialize the map
 var map = L.map('map');
 L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager_nolabels/{z}/{x}/{y}.png', {
     attribution: '&copy; CartoDB, OpenStreetMap contributors'
@@ -21,11 +21,11 @@ var currentPoints = 3;
 var streetGuessAttempt = 0
 var totalScore = 0;
 var round = 1;
-const maxRounds = 3;
 var streetsData = []; // all streets with districts
-let selectedDistricts = []; //the districts that the player chooses
+var selectedDistricts = []; //the districts that the player chooses
 var filteredStreetData = []; // all streets within the chosen districts
 
+const ROUNDS_PER_GAME = 3;
 const MAX_STREET_FETCHING_ATTEMPTS = 5;
 const SHEET_ID = "1RwK7sTXTL6VhxbXc7aPSMsXL_KTGImt-aisTLqlpWnQ";
 const API_KEY = "AIzaSyAOITVqx5tX6e2LfaH3wGyOUdJfP95BcWY";
@@ -69,7 +69,7 @@ function startRound() {
     currentPoints = 3;
     streetGuessAttempt = 0;
     
-    document.getElementById("round-number").innerText = `Runde ${round} av ${maxRounds}`;
+    document.getElementById("round-number").innerText = `Runde ${round} av ${ROUNDS_PER_GAME}`;
     document.getElementById("points-display").innerText = "3 poeng for riktig svar";
     document.getElementById("total-score").innerText = `Poengsum: ${totalScore}`;
 
@@ -155,7 +155,7 @@ function finishRound() {
     document.getElementById("street-input").value = "";
     totalScore += currentPoints; 
     document.getElementById("total-score").innerText = `Poengsum: ${totalScore}`;
-    if (round < maxRounds) {
+    if (round < ROUNDS_PER_GAME) {
         round++;
         startRound();
     } else {
