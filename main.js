@@ -1,4 +1,4 @@
-import { loadStreetList } from './streetLogic.js';
+import { loadStreetList, fetchStreetGeometry } from './streetLogic.js';
 
 // Show the welcome screen when the page loads
 document.addEventListener("DOMContentLoaded", function() {
@@ -74,98 +74,32 @@ function startRound() {
     document.getElementById("wrong-guesses").innerHTML = "";
     document.getElementById("street-input").value = "";
 
-    fetchRandomStreetGeometry();
+    fetchRandomStreet();
 }
 
 // Fetch street geometry from OpenStreetMap Overpass API
-async function fetchRandomStreetGeometry(fetchingAttempt = 1) {
+async function fetchRandomStreet(fetchingAttempt = 1) {    
+    document.getElementById('loading-spinner').style.display = 'flex';
+    
     currentStreetIndex = Math.floor(Math.random() * filteredStreetData.length);
     
     let currentStreetObject = filteredStreetData[currentStreetIndex];
     currentStreetName = currentStreetObject.streetName;
     console.log("✅ Selected street:", currentStreetObject);
-    
-    document.getElementById('loading-spinner').style.display = 'flex';
-    let query = `
-        [out:json];
-        way["name"="${currentStreetName}"]["highway"](59.7,10.4,60.1,10.9);
-        (._;>;);
-        out body;
-    `;
-    let url = `https://overpass-api.de/api/interpreter?data=${encodeURIComponent(query)}`;
+
 
     try {
-        let response = await fetch(url);
-        if (!response.ok) {
-            throw new Error(`API error: ${response.statusText}`);
-        }
-        let data = await response.json();
-        console.log("🗺 Overpass API response:", data);
-
-        if (!data.elements.length) {
-            console.error("⚠️ Street not found:", currentStreetName);
-            throw new Error("⚠️ Street not found:", currentStreetName);
-            return;
-        }
-
-        let allCoordinates = extractAllCoordinates(data);
-        if (allCoordinates.length) {
-            displayStreet(allCoordinates);
-        } else {
-            throw new Error("❌ No valid coordinates found for", currentStreetName);
-        }
+        fetchStreetGeometry(currentStreetName);
         document.getElementById("hint").innerText = "Hint: " + "_".repeat(currentStreetName.length);
     } catch (error) {
         if (fetchingAttempt >= MAX_STREET_FETCHING_ATTEMPTS) {
-            alert("❌ Overpass API error:", error);
+            alert("❌ Feil med å hente gate: ", error);
         } else {
-            fetchingAttempt++
-            fetchRandomStreetGeometry(fetchingAttempt)
+            fetchRandomStreet(++fetchingAttempt)
         }
     } finally {
         document.getElementById('loading-spinner').style.display = 'none';
     }
-}
-
-// Extract all coordinates for a street
-function extractAllCoordinates(data) {
-    let nodes = {};
-    let allCoordinates = [];
-
-    data.elements.forEach(element => {
-        if (element.type === "node") {
-            nodes[element.id] = [element.lat, element.lon];
-        }
-    });
-
-    data.elements.forEach(element => {
-        if (element.type === "way") {
-            let wayCoords = element.nodes.map(nodeId => nodes[nodeId]).filter(coord => coord);
-            if (wayCoords.length) {
-                allCoordinates.push(wayCoords);
-            }
-        }
-    });
-
-    return allCoordinates;
-}
-
-// Display the selected street on the map
-function displayStreet(coordinateGroups) {
-    streetLayer.clearLayers();
-    
-    let allCoords = coordinateGroups.flat();
-    if (allCoords.length === 0) {
-        console.error("⚠️ No valid coordinates for centering.");
-        return;
-    }
-
-    coordinateGroups.forEach(coords => {
-        L.polyline(coords, { color: "red", weight: 4 }).addTo(streetLayer);
-    });
-
-    let bounds = L.latLngBounds(allCoords);
-    map.fitBounds(bounds.pad(0.2)); // Add margin
 }
 
 document.getElementById("check-answer").addEventListener('click', () => {
