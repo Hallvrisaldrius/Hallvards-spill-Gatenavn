@@ -89,7 +89,7 @@ async function fetchRandomStreet(fetchingAttempt = 1) {
 
 
     try {
-        fetchStreetGeometry(currentStreetName);
+        await fetchStreetGeometry(currentStreetName);
         document.getElementById("hint").innerText = "Hint: " + "_".repeat(currentStreetName.length);
     } catch (error) {
         if (fetchingAttempt >= MAX_STREET_FETCHING_ATTEMPTS) {
