@@ -41,7 +41,7 @@ export async function loadStreetList(SHEET_ID, RANGE, API_KEY) {
     }
 }
 
-export async function fetchStreetGeometry(streetName) {
+export async function fetchStreetGeometry(streetName, streetLayer) {
     let query = `
         [out:json];
         way["name"="${streetName}"]["highway"](59.7,10.4,60.1,10.9);
@@ -49,8 +49,6 @@ export async function fetchStreetGeometry(streetName) {
         out body;
     `;
     let url = `https://overpass-api.de/api/interpreter?data=${encodeURIComponent(query)}`;
-
-    console.log(url)
 
     let response = await fetch(url);
     if (!response.ok) {
@@ -65,7 +63,7 @@ export async function fetchStreetGeometry(streetName) {
 
     let allCoordinates = extractAllCoordinates(data);
     if (allCoordinates.length) {
-        displayStreet(allCoordinates);
+        displayStreet(allCoordinates, streetLayer);
     } else {
         throw new Error("❌ No valid coordinates found for", streetName);
     }
@@ -95,7 +93,7 @@ function extractAllCoordinates(data) {
 }
 
 // Display the selected street on the map
-function displayStreet(coordinateGroups) {
+function displayStreet(coordinateGroups, streetLayer) {
     streetLayer.clearLayers();
     
     let allCoords = coordinateGroups.flat();
