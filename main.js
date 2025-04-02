@@ -44,7 +44,7 @@ function createAreaButtons() {
         let button = document.createElement("button");
         button.textContent = area;
         button.className = "area-button";
-        button.style.backgroundColor = "blue";
+        button.style.backgroundColor = "lightblue";
         button.style.color = "white";
         button.style.padding = "10px";
         button.style.border = "none";
