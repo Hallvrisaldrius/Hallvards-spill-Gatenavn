@@ -44,7 +44,8 @@ function createAreaButtons() {
         areaContainer.appendChild(button);
     });
 }
-function chooseArea(area) {
+
+async function chooseArea(area) {
     console.log("Selected area:", area);
     streetsData = await loadStreetList(SHEET_ID, areaData[area], API_KEY);
     populateDistrictFilter();
