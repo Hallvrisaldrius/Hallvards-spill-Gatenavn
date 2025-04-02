@@ -183,7 +183,7 @@ document.getElementById('street-input').addEventListener('input', () => {
     if (input.length > 0) {
         let matchedStreets = streetsData.reduce((result, streetObj) => {
             if (streetObj.streetName.toLowerCase().includes(input)) {
-              result.push(streetObj.street);
+              result.push(streetObj.streetName);
             }
             return result;
           }, []);
