@@ -64,7 +64,7 @@ export async function fetchStreetGeometry(streetName) {
     let allCoordinates = extractAllCoordinates(data);
     console.log(allCoordinates);
     if (allCoordinates.length) {
-        return coordinateGroups.flat;
+        return coordinateGroups.flat();
     } else {
         throw new Error("❌ No valid coordinates found for", streetName);
     }
