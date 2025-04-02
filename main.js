@@ -13,12 +13,9 @@ L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager_nolabels/{z}/
 
 // Global variables
 var streetLayer = L.layerGroup().addTo(map);
-var maxStreetFetchingAttempts = 5;
 
 var currentStreetIndex = 0;
 var currentStreet = "";
-var currentStreetNumberOfGames = 0;
-var currentStreetNumberOfPoints = 0;
 
 var currentPoints = 3;
 var streetGuessAttempt = 0
@@ -29,6 +26,7 @@ var streetsData = []; // all streets with districts
 let selectedDistricts = []; //the districts that the player chooses
 var filteredStreetData = []; // all streets within the chosen districts
 
+const MAX_STREET_FETCHING_ATTEMPTS = 5;
 const SHEET_ID = "1RwK7sTXTL6VhxbXc7aPSMsXL_KTGImt-aisTLqlpWnQ";
 const API_KEY = "AIzaSyAOITVqx5tX6e2LfaH3wGyOUdJfP95BcWY";
 const RANGE = "Oslo!A:B";
@@ -120,7 +118,7 @@ async function fetchRandomStreetGeometry(fetchingAttempt = 1) {
         }
         document.getElementById("hint").innerText = "Hint: " + "_".repeat(currentStreet.length);
     } catch (error) {
-        if (fetchingAttempt >= maxStreetFetchingAttempts) {
+        if (fetchingAttempt >= MAX_STREET_FETCHING_ATTEMPTS) {
             alert("❌ Overpass API error:", error);
         } else {
             fetchingAttempt++
@@ -225,32 +223,6 @@ function finishRound() {
         showGameOverScreen(totalScore)
     }
 }
- /*
-function updateGameStatistics(currentPoint) {
-
-    currentStreetNumberOfGames++;
-    currentStreetNumberOfPoints += currentPoint;
-    
-    // Update the values in the sheet
-    const updateUrl = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/Sheet1!C${currentStreetIndex + 1}:D${currentStreetIndex + 1}?valueInputOption=USER_ENTERED`;
-    
-    try {
-        fetch(updateUrl, {
-            method: "PUT",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${ACCESS_TOKEN}` // Use OAuth token here
-            },
-        });
-        console.log("✅ Street stats updated");
-    } catch (error) {
-        console.error("❌ Failed to update game statistics:", error);
-    }
-}
-*/
 
 // Event listener for suggestions click
 function setupSuggestionClicks() {
