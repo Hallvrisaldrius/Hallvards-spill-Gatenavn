@@ -35,9 +35,6 @@ export async function loadStreetList(SHEET_ID, RANGE, API_KEY) {
             streetsData.push({ streetName, districts: districtArray, numberOfGames, totalPointsForStreet });
         });
 
-        console.log("✅ Streets Data:", streetsData);
-
-
         return streetsData;
     } catch (error) {
         console.error("❌ Failed to fetch street data:", error);
@@ -52,6 +49,8 @@ export async function fetchStreetGeometry(streetName) {
         out body;
     `;
     let url = `https://overpass-api.de/api/interpreter?data=${encodeURIComponent(query)}`;
+
+    console.log(url)
 
     let response = await fetch(url);
     if (!response.ok) {
