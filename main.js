@@ -47,7 +47,7 @@ function createAreaButtons() {
 
 async function chooseArea(area) {
     console.log("Selected area:", area);
-    streetsData = await loadStreetList(SHEET_ID, areaData[area], API_KEY);
+    streetsData = await loadStreetList(SHEET_ID, availableAreas[area], API_KEY);
     populateDistrictFilter();
 }
 
@@ -275,7 +275,3 @@ function updateSelectedDistricts() {
                              .map(cb => cb.value);
     console.log("Selected Districts:", selectedDistricts);
 }
-
-
-// Load the street lists when the page loads
-createAreaButtons();
