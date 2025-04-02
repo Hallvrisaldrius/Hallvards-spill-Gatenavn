@@ -15,7 +15,7 @@ L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager_nolabels/{z}/
 var streetLayer = L.layerGroup().addTo(map);
 
 var currentStreetIndex = 0;
-var currentStreet = "";
+var currentStreetName = "";
 
 var currentPoints = 3;
 var streetGuessAttempt = 0
@@ -82,7 +82,7 @@ async function fetchRandomStreetGeometry(fetchingAttempt = 1) {
     currentStreetIndex = Math.floor(Math.random() * filteredStreetData.length);
     
     let currentStreetObject = filteredStreetData[currentStreetIndex];
-    currentStreet = currentStreetObject.street;
+    currentStreetName = currentStreetObject.streetName;
     currentStreetNumberOfGames = currentStreetObject.numberOfGames;
     currentStreetNumberOfPoints = currentStreetObject.totalPointsForStreet;
     console.log("✅ Selected street:", currentStreetObject);
@@ -90,7 +90,7 @@ async function fetchRandomStreetGeometry(fetchingAttempt = 1) {
     document.getElementById('loading-spinner').style.display = 'flex';
     let query = `
         [out:json];
-        way["name"="${currentStreet}"]["highway"](59.7,10.4,60.1,10.9);
+        way["name"="${currentStreetName}"]["highway"](59.7,10.4,60.1,10.9);
         (._;>;);
         out body;
     `;
@@ -105,8 +105,8 @@ async function fetchRandomStreetGeometry(fetchingAttempt = 1) {
         console.log("🗺 Overpass API response:", data);
 
         if (!data.elements.length) {
-            console.error("⚠️ Street not found:", currentStreet);
-            throw new Error("⚠️ Street not found:", currentStreet);
+            console.error("⚠️ Street not found:", currentStreetName);
+            throw new Error("⚠️ Street not found:", currentStreetName);
             return;
         }
 
@@ -114,9 +114,9 @@ async function fetchRandomStreetGeometry(fetchingAttempt = 1) {
         if (allCoordinates.length) {
             displayStreet(allCoordinates);
         } else {
-            throw new Error("❌ No valid coordinates found for", currentStreet);
+            throw new Error("❌ No valid coordinates found for", currentStreetName);
         }
-        document.getElementById("hint").innerText = "Hint: " + "_".repeat(currentStreet.length);
+        document.getElementById("hint").innerText = "Hint: " + "_".repeat(currentStreetName.length);
     } catch (error) {
         if (fetchingAttempt >= MAX_STREET_FETCHING_ATTEMPTS) {
             alert("❌ Overpass API error:", error);
@@ -181,8 +181,8 @@ function checkAnswer() {
     let userInput = inputBox.value.trim();
     inputBox.value = "";
 
-    if (userInput.toLowerCase() === currentStreet.toLowerCase()) {
-        alert(`Korrekt! Dette er ${currentStreet}`);
+    if (userInput.toLowerCase() === currentStreetName.toLowerCase()) {
+        alert(`Korrekt! Dette er ${currentStreetName}`);
         finishRound(); // End the round properly
     } else {
         recordWrongGuess(userInput);
@@ -190,10 +190,10 @@ function checkAnswer() {
         streetGuessAttempt++;
         currentPoints--;
 
-        document.getElementById("hint").innerText = "Hint: " + currentStreet.slice(0, streetGuessAttempt) + "_".repeat(currentStreet.length - 2 * streetGuessAttempt) + currentStreet.slice(-streetGuessAttempt);
+        document.getElementById("hint").innerText = "Hint: " + currentStreetName.slice(0, streetGuessAttempt) + "_".repeat(currentStreetName.length - 2 * streetGuessAttempt) + currentStreetName.slice(-streetGuessAttempt);
 
         if (currentPoints === 0) {
-            alert(`Riktig svar er: ${currentStreet}`);
+            alert(`Riktig svar er: ${currentStreetName}`);
             finishRound();
         } else {
             document.getElementById("points-display").innerText = `${currentPoints} poeng for riktig svar`;

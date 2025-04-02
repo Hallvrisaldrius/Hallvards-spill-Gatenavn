@@ -24,15 +24,15 @@ export async function loadStreetList(SHEET_ID, RANGE, API_KEY) {
 
         // Parse data
         rows.forEach(row => {
-            let street = row[0];
+            let streetName = row[0];
             let districtString = row[1];
             let numberOfGames = parseInt(row[2]) || 0;
             let totalPointsForStreet = parseInt(row[3]) || 0;
 
-            if (!street || !districtString) return;
+            if (!streetName || !districtString) return;
 
             let districtArray = districtString.split('/').map(d => d.trim());
-            streetsData.push({ street, districts: districtArray, numberOfGames, totalPointsForStreet });
+            streetsData.push({ streetName, districts: districtArray, numberOfGames, totalPointsForStreet });
         });
 
         console.log("✅ Streets Data:", streetsData);
