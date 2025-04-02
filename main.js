@@ -96,7 +96,7 @@ async function fetchRandomStreet(fetchingAttempt = 1) {
             L.polyline(coords, { color: "red", weight: 4 }).addTo(streetLayer);
         });
 
-        let bounds = L.latLngBounds(allCoords);
+        let bounds = L.latLngBounds(coordinateGroups);
         map.fitBounds(bounds.pad(0.2)); // Add margin
         
     } catch (error) {
