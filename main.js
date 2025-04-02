@@ -83,8 +83,6 @@ async function fetchRandomStreetGeometry(fetchingAttempt = 1) {
     
     let currentStreetObject = filteredStreetData[currentStreetIndex];
     currentStreetName = currentStreetObject.streetName;
-    currentStreetNumberOfGames = currentStreetObject.numberOfGames;
-    currentStreetNumberOfPoints = currentStreetObject.totalPointsForStreet;
     console.log("✅ Selected street:", currentStreetObject);
     
     document.getElementById('loading-spinner').style.display = 'flex';
