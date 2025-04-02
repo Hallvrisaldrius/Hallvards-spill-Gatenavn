@@ -2,6 +2,7 @@ import { loadStreetList, fetchStreetGeometry } from './streetLogic.js';
 
 // Show the welcome screen when the page loads
 document.addEventListener("DOMContentLoaded", function() {
+    createAreaButtons();
     document.getElementById("welcome-screen").style.display = "flex";
 });
 
@@ -13,6 +14,8 @@ L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager_nolabels/{z}/
 
 // Global variables
 var streetLayer = L.layerGroup().addTo(map);
+
+var availableAreas = {"Oslo": {coordinates: '(59.7,10.4,60.1,10.9)'}, "Ibestad": {coordinates: '(68.7,16.8,69.0,17.5)'}};
 
 var currentStreetIndex = 0;
 var currentStreetName = "";
@@ -29,7 +32,23 @@ const ROUNDS_PER_GAME = 3;
 const MAX_STREET_FETCHING_ATTEMPTS = 5;
 const SHEET_ID = "1RwK7sTXTL6VhxbXc7aPSMsXL_KTGImt-aisTLqlpWnQ";
 const API_KEY = "AIzaSyAOITVqx5tX6e2LfaH3wGyOUdJfP95BcWY";
-const RANGE = "Ibestad!A:B";
+
+function createAreaButtons() {
+    let areaContainer = document.getElementById("areaButtons");
+
+    Object.keys(availableAreas).forEach(area => {
+        let button = document.createElement("button");
+        button.textContent = area;
+        button.className = "area-button";
+        button.onclick = () => chooseArea(area);
+        areaContainer.appendChild(button);
+    });
+}
+function chooseArea(area) {
+    console.log("Selected area:", area);
+    streetsData = await loadStreetList(SHEET_ID, areaData[area], API_KEY);
+    populateDistrictFilter();
+}
 
 function setStreetsForGame() {
     filteredStreetData = streetsData
@@ -90,7 +109,7 @@ async function fetchRandomStreet(fetchingAttempt = 1) {
 
 
     try {
-        let coordinateGroups = await fetchStreetGeometry(currentStreetName);
+        let coordinateGroups = await fetchStreetGeometry(currentStreetName, areaCoordinates);
         streetLayer.clearLayers();
         coordinateGroups.forEach(coords => {
             L.polyline(coords, { color: "red", weight: 4 }).addTo(streetLayer);
@@ -258,5 +277,4 @@ function updateSelectedDistricts() {
 
 
 // Load the street lists when the page loads
-streetsData = await loadStreetList(SHEET_ID, RANGE, API_KEY);
-populateDistrictFilter();
+createAreaButtons();
