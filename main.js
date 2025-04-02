@@ -90,7 +90,7 @@ async function fetchRandomStreet(fetchingAttempt = 1) {
 
 
     try {
-        coordinateGroups = await fetchStreetGeometry(currentStreetName);
+        let coordinateGroups = await fetchStreetGeometry(currentStreetName);
         streetLayer.clearLayers();
         coordinateGroups.forEach(coords => {
             L.polyline(coords, { color: "red", weight: 4 }).addTo(streetLayer);
