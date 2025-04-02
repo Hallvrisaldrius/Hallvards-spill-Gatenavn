@@ -44,7 +44,7 @@ export async function loadStreetList(SHEET_ID, RANGE, API_KEY) {
     }
 }
 
-export async function fetchStreetGeometry() {
+export async function fetchStreetGeometry(streetName) {
     let query = `
         [out:json];
         way["name"="${streetName}"]["highway"](59.7,10.4,60.1,10.9);
