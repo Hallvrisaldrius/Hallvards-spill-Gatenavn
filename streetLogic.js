@@ -42,10 +42,10 @@ export async function loadStreetList(SHEET_ID, area, API_KEY) {
     }
 }
 
-export async function fetchStreetGeometry(streetName, areaCoordinates) {
+export async function fetchStreetGeometry(streetName, coordinates) {
     let query = `
         [out:json];
-        way["name"="${streetName}"]["highway"]${areaCoordinates};
+        way["name"="${streetName}"]["highway"]${coordinates};
         (._;>;);
         out body;
     `;

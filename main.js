@@ -16,6 +16,7 @@ L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager_nolabels/{z}/
 var streetLayer = L.layerGroup().addTo(map);
 
 var availableAreas = {"Oslo": {coordinates: '(59.7,10.4,60.1,10.9)'}, "Ibestad": {coordinates: '(68.7,16.8,69.0,17.5)'}};
+var currentAreaCoordinates;
 
 var currentStreetIndex = 0;
 var currentStreetName = "";
@@ -47,7 +48,8 @@ function createAreaButtons() {
 
 async function chooseArea(area) {
     console.log("Selected area:", area);
-    streetsData = await loadStreetList(SHEET_ID, availableAreas[area].coordinates, API_KEY);
+    currentAreaCoordinates = availableAreas[area].coordinates;
+    streetsData = await loadStreetList(SHEET_ID, area, API_KEY);
     populateDistrictFilter();
 }
 
@@ -110,7 +112,7 @@ async function fetchRandomStreet(fetchingAttempt = 1) {
 
 
     try {
-        let coordinateGroups = await fetchStreetGeometry(currentStreetName, areaCoordinates);
+        let coordinateGroups = await fetchStreetGeometry(currentStreetName, currentAreaCoordinates);
         streetLayer.clearLayers();
         coordinateGroups.forEach(coords => {
             L.polyline(coords, { color: "red", weight: 4 }).addTo(streetLayer);
