@@ -15,7 +15,12 @@ L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager_nolabels/{z}/
 // Global variables
 var streetLayer = L.layerGroup().addTo(map);
 
-var availableAreas = {"Oslo": {coordinates: '(59.7,10.4,60.1,10.9)'}, "Ibestad": {coordinates: '(68.7,16.8,69.0,17.5)'}};
+var availableAreas = {
+    "Ibestad": {coordinates: '(68.7,16.8,69.0,17.5)'}
+    "Oslo": {coordinates: '(59.7,10.4,60.1,10.9)'}, 
+    "Trondheim": {coordinates: '(63.1,10.0,63.5,10.7)'}, 
+};
+
 var currentAreaCoordinates;
 
 var currentStreetIndex = 0;
