@@ -36,11 +36,19 @@ const API_KEY = "AIzaSyAOITVqx5tX6e2LfaH3wGyOUdJfP95BcWY";
 
 function createAreaButtons() {
     let areaContainer = document.getElementById("areaButtons");
-
+    areaContainer.style.display = "flex";
+    areaContainer.style.flexDirection = "column";
+    areaContainer.style.gap = "10px"; // Add spacing between buttons
+    
     Object.keys(availableAreas).forEach(area => {
         let button = document.createElement("button");
         button.textContent = area;
         button.className = "area-button";
+        button.style.backgroundColor = "blue";
+        button.style.color = "white";
+        button.style.padding = "10px";
+        button.style.border = "none";
+        button.style.borderRadius = "5px";
         button.onclick = () => chooseArea(area);
         areaContainer.appendChild(button);
     });
@@ -50,7 +58,9 @@ async function chooseArea(area) {
     console.log("Selected area:", area);
     currentAreaCoordinates = availableAreas[area].coordinates;
     streetsData = await loadStreetList(SHEET_ID, area, API_KEY);
+    document.getElementById("areaButtons").style.display = "none";
     populateDistrictFilter();
+    document.getElementById('startButton').style.display = 'block';
 }
 
 function setStreetsForGame() {
