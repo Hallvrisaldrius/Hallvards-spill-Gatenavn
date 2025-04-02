@@ -115,7 +115,7 @@ function checkAnswer() {
 
     if (userInput.toLowerCase() === currentStreetName.toLowerCase()) {
         alert(`Korrekt! Dette er ${currentStreetName}`);
-        finishRound(); // End the round properly
+        finishRound();
     } else {
         recordWrongGuess(userInput);
 
@@ -139,7 +139,6 @@ function recordWrongGuess(guess) {
     let listItem = document.createElement("li");
     listItem.innerHTML = `❌ ${guess}`;
 
-    // Insert the new item at the beginning of the list
     wrongGuessesList.insertBefore(listItem, wrongGuessesList.firstChild);
 }
 
@@ -147,7 +146,6 @@ function finishRound() {
     document.getElementById("street-input").value = "";
     totalScore += currentPoints; 
     document.getElementById("total-score").innerText = `Poengsum: ${totalScore}`;
-    /*updateGameStatistics(currentPoints);*/
     if (round < maxRounds) {
         round++;
         startRound();
