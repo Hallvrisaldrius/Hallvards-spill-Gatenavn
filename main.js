@@ -60,12 +60,14 @@ function createAreaButtons() {
 }
 
 async function chooseArea(area) {
+    document.getElementById('loading-spinner').style.display = 'flex';
     console.log("Selected area:", area);
     currentAreaCoordinates = availableAreas[area].coordinates;
     streetsData = await loadStreetList(SHEET_ID, area, API_KEY);
     document.getElementById("areaButtons").style.display = "none";
     populateDistrictFilter();
     document.getElementById('startButton').style.display = 'block';
+    document.getElementById('loading-spinner').style.display = 'none';
 }
 
 function setStreetsForGame() {
