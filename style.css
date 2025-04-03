@@ -15,8 +15,8 @@ html, body {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    background-color: rgb(244, 244, 244); /* Slight transparency */
-    z-index: 8000; /* Ensures it’s on top */
+    background-color: rgb(244, 244, 244);
+    z-index: 8000;
 }
 
 #welcome-screen h1 {
