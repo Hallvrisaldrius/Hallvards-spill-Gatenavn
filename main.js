@@ -1,4 +1,4 @@
-import { loadStreetList } from './backendAPI.js';
+import { loadStreetList, updateStreetStats } from './backendAPI.js';
 import { fetchStreetGeometry } from './streetLogic.js';
 
 // Show the welcome screen when the page loads
@@ -25,7 +25,7 @@ var availableAreas = {
 var currentAreaCoordinates;
 
 var currentStreetIndex = 0;
-var currentStreetName = "";
+var currentStreet;
 
 var currentPoints = 3;
 var streetGuessAttempt = 0
@@ -115,7 +115,7 @@ function startRound() {
 
     document.getElementById("wrong-guesses").innerHTML = "";
     document.getElementById("street-input").value = "";
-    document.getElementById("hint").innerText = "Hint: " + "_".repeat(currentStreetName.length);
+    document.getElementById("hint").innerText = "Hint: " + "_".repeat(currentStreet.streetName.length);
 }
 
 // Fetch street geometry from OpenStreetMap Overpass API
@@ -124,13 +124,12 @@ async function fetchRandomStreet(fetchingAttempt = 1) {
     
     currentStreetIndex = Math.floor(Math.random() * filteredStreetData.length);
     
-    let currentStreetObject = filteredStreetData[currentStreetIndex];
-    currentStreetName = currentStreetObject.streetName;
-    console.log("✅ Selected street:", currentStreetObject);
+    currentStreet = filteredStreetData[currentStreetIndex];
+    console.log("✅ Selected street:", currentStreet);
 
 
     try {
-        let coordinateGroups = await fetchStreetGeometry(currentStreetName, currentAreaCoordinates);
+        let coordinateGroups = await fetchStreetGeometry(currentStreet.streetName, currentAreaCoordinates);
         streetLayer.clearLayers();
         coordinateGroups.forEach(coords => {
             L.polyline(coords, { color: "red", weight: 4 }).addTo(streetLayer);
@@ -162,8 +161,8 @@ function checkAnswer() {
     let userInput = inputBox.value.trim();
     inputBox.value = "";
 
-    if (userInput.toLowerCase() === currentStreetName.toLowerCase()) {
-        alert(`Korrekt! Dette er ${currentStreetName}`);
+    if (userInput.toLowerCase() === currentStreet.streetName.toLowerCase()) {
+        alert(`Korrekt! Dette er ${currentStreet.streetName}`);
         finishRound();
     } else {
         recordWrongGuess(userInput);
@@ -171,10 +170,10 @@ function checkAnswer() {
         streetGuessAttempt++;
         currentPoints--;
 
-        document.getElementById("hint").innerText = "Hint: " + currentStreetName.slice(0, streetGuessAttempt) + "_".repeat(currentStreetName.length - 2 * streetGuessAttempt) + currentStreetName.slice(-streetGuessAttempt);
+        document.getElementById("hint").innerText = "Hint: " + currentStreet.streetName.slice(0, streetGuessAttempt) + "_".repeat(currentStreet.streetName.length - 2 * streetGuessAttempt) + currentStreet.streetName.slice(-streetGuessAttempt);
 
         if (currentPoints === 0) {
-            alert(`Riktig svar er: ${currentStreetName}`);
+            alert(`Riktig svar er: ${currentStreet.streetName}`);
             finishRound();
         } else {
             document.getElementById("points-display").innerText = `${currentPoints} poeng for riktig svar`;
@@ -195,6 +194,7 @@ function finishRound() {
     document.getElementById("street-input").value = "";
     totalScore += currentPoints; 
     document.getElementById("total-score").innerText = `Poengsum: ${totalScore}`;
+    updateStreetStats()
     if (round < ROUNDS_PER_GAME) {
         round++;
         startRound();
