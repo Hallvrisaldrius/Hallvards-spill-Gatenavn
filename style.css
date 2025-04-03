@@ -15,7 +15,7 @@ html, body {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    background-color: rgba(244, 244, 244, 0.95); /* Slight transparency */
+    background-color: rgb(244, 244, 244); /* Slight transparency */
     z-index: 8000; /* Ensures it’s on top */
 }
 
