@@ -1,4 +1,5 @@
-import { loadStreetList, fetchStreetGeometry } from './streetLogic.js';
+import { loadStreetList } from './backendAPI.js';
+import { fetchStreetGeometry } from './streetLogic.js';
 
 // Show the welcome screen when the page loads
 document.addEventListener("DOMContentLoaded", function() {
