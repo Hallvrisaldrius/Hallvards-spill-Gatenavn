@@ -41,3 +41,7 @@ export async function loadStreetList(SHEET_ID, area, API_KEY) {
         console.error("❌ Failed to fetch street data:", error);
     }
 }
+
+export function updateStreetStats() {
+    return;
+}
