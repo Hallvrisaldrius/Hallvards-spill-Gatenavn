@@ -38,7 +38,6 @@ var filteredStreetData = []; // all streets within the chosen districts
 const ROUNDS_PER_GAME = 3;
 const MAX_STREET_FETCHING_ATTEMPTS = 5;
 const SHEET_ID = "1RwK7sTXTL6VhxbXc7aPSMsXL_KTGImt-aisTLqlpWnQ";
-const API_KEY = "AIzaSyAOITVqx5tX6e2LfaH3wGyOUdJfP95BcWY";
 
 function createAreaButtons() {
     let areaContainer = document.getElementById("areaButtons");
