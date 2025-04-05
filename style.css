@@ -43,7 +43,7 @@ html, body {
     margin-bottom: 20px; /* Space below the district buttons */
 }
 
-#welcome-screen button {
+#startButton {
     font-size: 1.2rem;
     padding: 10px 20px;
     background-color: #4CAF50;
@@ -53,7 +53,7 @@ html, body {
     border-radius: 5px;
 }
 
-#welcome-screen button:hover {
+#startButton:hover {
     background-color: #45a049;
 }
 
