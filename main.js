@@ -38,22 +38,15 @@ var filteredStreetData = []; // all streets within the chosen districts
 const ROUNDS_PER_GAME = 3;
 const MAX_STREET_FETCHING_ATTEMPTS = 5;
 const SHEET_ID = "1RwK7sTXTL6VhxbXc7aPSMsXL_KTGImt-aisTLqlpWnQ";
+const API_KEY = "AIzaSyAOITVqx5tX6e2LfaH3wGyOUdJfP95BcWY";
 
 function createAreaButtons() {
     let areaContainer = document.getElementById("areaButtons");
-    areaContainer.style.display = "flex";
-    areaContainer.style.flexDirection = "column";
-    areaContainer.style.gap = "10px"; // Add spacing between buttons
-    
+
     Object.keys(availableAreas).forEach(area => {
         let button = document.createElement("button");
         button.textContent = area;
         button.className = "area-button";
-        button.style.backgroundColor = "blue";
-        button.style.color = "white";
-        button.style.padding = "10px";
-        button.style.border = "none";
-        button.style.borderRadius = "5px";
         button.onclick = () => chooseArea(area);
         areaContainer.appendChild(button);
     });

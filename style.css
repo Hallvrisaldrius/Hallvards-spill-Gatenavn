@@ -24,6 +24,21 @@ html, body {
     margin-bottom: 20px;
 }
 
+#areaButtons {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.area-button {
+    background-color: blue;
+    color: white;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
 #districtFilter {
     margin-bottom: 20px; /* Space below the district buttons */
 }
